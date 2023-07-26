@@ -27,11 +27,13 @@
     "postbuild": "next-sitemap"
   },
   "dependencies": {
+    "firebase": "^10.1.0",
     "next": "^13.4.9",
     "next-seo": "^6.1.0",
     "next-sitemap": "^4.1.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
