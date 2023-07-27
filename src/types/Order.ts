@@ -4,11 +4,11 @@ import { Menu } from "./Menu";
 // import { WantedInfo } from "./WantedInfo";
 
 export interface Order {
-	id: string | null,
+	id: string,
 	// shopOwnerProfile: UserProfile,
 	isCloseOrder: boolean,
 	// time: number,
   // wanted: WantedInfo,
 	menus: Menu[],
-	// tableData: DrinkTableData,
+	tableDataId: string,
 }

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { collection, addDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Order } from "@/types";
-import { NEW_ORDER } from "@/constants";
+import { NEW_ORDER, NEW_DRINK_TABLE } from "@/constants";
 import Router from "next/router";
 
 const CreateOrderPage = () => {
@@ -25,9 +25,10 @@ const CreateOrderPage = () => {
   };
 
   const _createOrder = async () => {
-    await addDoc(collection(db, "orders"), NEW_ORDER);
+    const tableData = await addDoc(collection(db, "table-data"), NEW_DRINK_TABLE);
+    const newOrder = {...NEW_ORDER, tableDataId: tableData.id}
+    await addDoc(collection(db, "orders"), newOrder);
     _fetchOrders();
-    // Router.push(`/order/${orderDoc.id}`);
   };
 
   const _openOrder = (id: string | null) => {
