@@ -8,7 +8,7 @@ type IMainProps = {
 };
 
 const Main = (props: IMainProps) => (
-  <div className="w-full text-gray-700 antialiased p-5 bg-gray-200">
+  <div className="w-full text-gray-800 antialiased p-5 font-nunito">
     {props.meta}
 
     <div className="flex h-12 py-1 pl-2 pr-4 bg-gray-400 rounded-xl justify-between items-center">
@@ -26,7 +26,7 @@ const Main = (props: IMainProps) => (
       </div>
     </div>
 
-<img className="w-7/12 m-auto mt-5" src={LogoImages.title_logo.src} alt="title-logo" />
+<img className="w-7/12 m-auto mt-12" src={LogoImages.title_logo.src} alt="title-logo" />
 
     <main>{props.children}</main>
   </div>

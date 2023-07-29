@@ -13,6 +13,7 @@ import {
 import { db } from "@/firebase";
 import { Main } from "@/templates/Main";
 import { Meta } from "@/layouts/Meta";
+import { Icons } from "@/images";
 
 const OrderPage = ({ query }: { query: any }) => {
   const [order, setOrder] = useState<Order | any>({
@@ -70,10 +71,9 @@ const OrderPage = ({ query }: { query: any }) => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="flex flex-col bg-white mt-5 h-screen">
-        <div>{query.slug}</div>
-        <div>Shop Owner: {order.shopOwnerName}</div>
-        <div>Momo: {order.shopOwnerMomo}</div>
+      <div className="flex flex-col mt-12 h-screen gap-5">
+        <HeaderSection order={order} />
+        <SharedLink orderId={query.slug} />
         <div>Discount: {order.discount}</div>
         <div>
           <div>Ship Fee:</div>
@@ -116,4 +116,59 @@ export default OrderPage;
 OrderPage.getInitialProps = async (context: any) => {
   const { query } = context;
   return { query };
+};
+
+const HeaderSection = ({ order }: { order: Order }) => {
+  return (
+    <div className="flex w-full gap-4">
+      <ShopOwner order={order} />
+      <TranferInfo order={order} />
+    </div>
+  );
+};
+
+const TranferInfo = ({ order }: { order: Order }) => {
+  return (
+    <div className="flex flex-col gap-2 items-center rounded-3xl border-2 border-gray-500 w-48 py-3 px-3">
+      <div className="font-bold">TRANSFER INFO</div>
+      <div className="flex flex-col gap-2 items-start w-full">
+        <div className="flex w-full">
+          <div className="w-1/3">Momo</div>
+          <div className="w-1/12">:</div>
+          <div>{order.shopOwnerMomo}</div>
+        </div>
+        <div className="flex w-full">
+          <div className="w-1/3">Bank</div>
+          <div>:</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ShopOwner = ({ order }: { order: Order }) => {
+  return (
+    <div className="flex flex-col gap-1 items-center rounded-3xl border-2 border-gray-500 w-48 py-3 px-8">
+      <div className="font-bold">SHOP OWNER</div>
+      <div className="bg-white rounded-full p-1">
+        <img
+          className="rounded-full bg-gray-200"
+          src={Icons.user_icon.src}
+          alt="user-icon"
+        />
+      </div>
+      <div>{order.shopOwnerName}</div>
+    </div>
+  );
+};
+
+const SharedLink = ({ orderId }: { orderId: string }) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <div>Share this link :</div>
+      <div className="border-2 rounded-lg w-fit py-1 px-3">
+        <div>https://weorder/order/{orderId}</div>
+      </div>
+    </div>
+  );
 };
