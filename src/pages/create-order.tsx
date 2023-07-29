@@ -1,10 +1,11 @@
 import React from "react";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { collection, addDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Order, User, Menu } from "@/types";
 import Router from "next/router";
+import { Main } from "@/templates/Main";
+import { Meta } from "@/layouts/Meta";
 
 const CreateOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -56,33 +57,34 @@ const CreateOrderPage = () => {
     //     selectedMenuLink: '',
     //   };
     const newOrder = {
-          shipFee: 0,
-          discount: 0,
-          shopOwnerName: '',
-          shopOwnerMomo: '',
-          selectedMenuName: '',
-          selectedMenuLink: '',
-        }
-      await addDoc(collection(db, "orders"), newOrder);
+      shipFee: 0,
+      discount: 0,
+      shopOwnerName: "",
+      shopOwnerMomo: "",
+      selectedMenuName: "",
+      selectedMenuLink: "",
+    };
+    await addDoc(collection(db, "orders"), newOrder);
   };
 
   return (
-    <div className="flex flex-col gap-4 w-96 bg-green-100">
-      <Link href="/">Landing Page</Link>
-      <div>Anonymous</div>
-      {/* <AnonymousUser user={user} setUser={setUser} /> */}
-      <div>Menu:</div>
-      <AddMenu />
-      <MenuList menus={menus} setSelectedMenu={setSelectedMenu}/>
-      <div className="flex flex-col">
-        <div>Selected Menu</div>
-        <div>{selectedMenu.name}</div>
+    <Main meta={<Meta title="Order" description="" />}>
+      <div className="flex flex-col gap-4 w-96 bg-green-100">
+        <div>Anonymous</div>
+        {/* <AnonymousUser user={user} setUser={setUser} /> */}
+        <div>Menu:</div>
+        <AddMenu />
+        <MenuList menus={menus} setSelectedMenu={setSelectedMenu} />
+        <div className="flex flex-col">
+          <div>Selected Menu</div>
+          <div>{selectedMenu.name}</div>
+        </div>
+        <button type="button" onClick={_createOrder}>
+          Create Order
+        </button>
+        <OrderList orders={orders} />
       </div>
-      <button type="button" onClick={_createOrder}>
-        Create Order
-      </button>
-      <OrderList orders={orders} />
-    </div>
+    </Main>
   );
 };
 

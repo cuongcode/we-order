@@ -1,7 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-import Link from "next/link";
 import { DrinkTableRow, Order } from "@/types";
 
 import {
@@ -12,6 +11,8 @@ import {
   collection,
 } from "firebase/firestore";
 import { db } from "@/firebase";
+import { Main } from "@/templates/Main";
+import { Meta } from "@/layouts/Meta";
 
 const OrderPage = ({ query }: { query: any }) => {
   const [order, setOrder] = useState<Order | any>({
@@ -68,45 +69,45 @@ const OrderPage = ({ query }: { query: any }) => {
   };
 
   return (
-    <div className="flex flex-col bg-green-100 w-96">
-      <Link href="/">Landing Page</Link>
-      <Link href="/create-order/">Create Order</Link>
-      <div>{query.slug}</div>
-      <div>Shop Owner: {order.shopOwnerName}</div>
-      <div>Momo: {order.shopOwnerMomo}</div>
-      <div>Discount: {order.discount}</div>
-      <div>
-        <div>Ship Fee:</div>
-        <input
-          className="border-2"
-          type="number"
-          value={order.shipFee}
-          name="shipFee"
-          onChange={(e) => _updateOrder(e.target.name, e.target.value)}
-        />
+    <Main meta={<Meta title="Order" description="" />}>
+      <div className="flex flex-col bg-white mt-5 h-screen">
+        <div>{query.slug}</div>
+        <div>Shop Owner: {order.shopOwnerName}</div>
+        <div>Momo: {order.shopOwnerMomo}</div>
+        <div>Discount: {order.discount}</div>
+        <div>
+          <div>Ship Fee:</div>
+          <input
+            className="border-2"
+            type="number"
+            value={order.shipFee}
+            name="shipFee"
+            onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+          />
+        </div>
+        <button type="button" onClick={_addRow}>
+          Add Row
+        </button>
+        <div>
+          {rows.map((row: DrinkTableRow) => (
+            <div key={row.id}>
+              <input
+                type="text"
+                placeholder="Type Here"
+                value={row.name}
+                name="name"
+                onChange={(e) =>
+                  _updateRow(row.id, e.target.name, e.target.value)
+                }
+              />
+              <span>{row.drink}</span>
+            </div>
+          ))}
+        </div>
+        <div>Menu: {order.selectedsMenuName}</div>
+        <div>Menu: {order.selectedMenuLink}</div>
       </div>
-      <button type="button" onClick={_addRow}>
-        Add Row
-      </button>
-      <div>
-        {rows.map((row: DrinkTableRow) => (
-          <div key={row.id}>
-            <input
-              type="text"
-              placeholder="Type Here"
-              value={row.name}
-              name="name"
-              onChange={(e) =>
-                _updateRow(row.id, e.target.name, e.target.value)
-              }
-            />
-            <span>{row.drink}</span>
-          </div>
-        ))}
-      </div>
-      <div>Menu: {order.selectedsMenuName}</div>
-      <div>Menu: {order.selectedMenuLink}</div>
-    </div>
+    </Main>
   );
 };
 
