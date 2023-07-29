@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { collection, addDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase";
 import { Order, User, Menu } from "@/types";
-import { NEW_ORDER, NEW_DRINK_TABLE } from "@/constants";
 import Router from "next/router";
 
 const CreateOrderPage = () => {
@@ -47,15 +46,18 @@ const CreateOrderPage = () => {
   };
 
   const _createOrder = async () => {
-    // const newUser = await
-
-    const tableData = await addDoc(
-      collection(db, "table-data"),
-      NEW_DRINK_TABLE
-    );
-    const newOrder = { ...NEW_ORDER, tableDataId: tableData.id };
-    await addDoc(collection(db, "orders"), newOrder);
-    _fetchOrders();
+    if (user.name != '' && user.momo != '' && selectedMenu.link != '') {
+      const newOrder = {
+        shipFee: 0,
+        discount: 0,
+        shopOwnerName: user.name,
+        shopOwnerMomo: user.momo,
+        selectedMenuName: selectedMenu.name,
+        selectedMenuLink: selectedMenu.link,
+      };
+      await addDoc(collection(db, "orders"), newOrder);
+    }
+    return
   };
 
   return (
@@ -109,7 +111,7 @@ const AnonymousUser = ({
       <div>Momo</div>
       <input
         className="border-2"
-        type="number"
+        type="string"
         value={user.momo}
         onChange={(e) => _onMomoChange(e)}
       />
