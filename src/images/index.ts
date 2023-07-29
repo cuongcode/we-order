@@ -1,5 +1,5 @@
-import logo from './logo/logo_modified.png'
-import title_logo from './logo/title_logo_modified.png'
+import logo from './logo/logo.png'
+import title_logo from './logo/title_logo.png'
 
 export const LogoImages = {
   logo: logo,
