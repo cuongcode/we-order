@@ -1,4 +1,5 @@
 export interface DrinkTableRow {
+  id: string,
 	// avatar: string, //img link
 	name: string,
 	drink: string,
