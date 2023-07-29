@@ -8,12 +8,12 @@ import Router from "next/router";
 
 const CreateOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [user, setUser] = useState<User>({
-    id: "",
-    name: "",
-    momo: "",
-    menus: [],
-  });
+  // const [user, setUser] = useState<User>({
+  //   id: "",
+  //   name: "",
+  //   momo: "",
+  //   menus: [],
+  // });
   const [menus, setMenus] = useState<Menu[]>([]);
   const [selectedMenu, setSelectedMenu] = useState<Menu>({
     id: "",
@@ -46,25 +46,31 @@ const CreateOrderPage = () => {
   };
 
   const _createOrder = async () => {
-    if (user.name != '' && user.momo != '' && selectedMenu.link != '') {
-      const newOrder = {
-        shipFee: 0,
-        discount: 0,
-        shopOwnerName: user.name,
-        shopOwnerMomo: user.momo,
-        selectedMenuName: selectedMenu.name,
-        selectedMenuLink: selectedMenu.link,
-      };
+    // if (user.name != '' && user.momo != '' && selectedMenu.link != '') {
+    //   const newOrder = {
+    //     shipFee: 0,
+    //     discount: 0,
+    //     shopOwnerName: '',
+    //     shopOwnerMomo: '',
+    //     selectedMenuName: '',
+    //     selectedMenuLink: '',
+    //   };
+    const newOrder = {
+          shipFee: 0,
+          discount: 0,
+          shopOwnerName: '',
+          shopOwnerMomo: '',
+          selectedMenuName: '',
+          selectedMenuLink: '',
+        }
       await addDoc(collection(db, "orders"), newOrder);
-    }
-    return
   };
 
   return (
     <div className="flex flex-col gap-4 w-96 bg-green-100">
       <Link href="/">Landing Page</Link>
       <div>Anonymous</div>
-      <AnonymousUser user={user} setUser={setUser} />
+      {/* <AnonymousUser user={user} setUser={setUser} /> */}
       <div>Menu:</div>
       <AddMenu />
       <MenuList menus={menus} setSelectedMenu={setSelectedMenu}/>

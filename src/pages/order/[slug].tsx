@@ -2,77 +2,110 @@ import React from "react";
 import { useState, useEffect } from "react";
 
 import Link from "next/link";
-import { Order, Menu } from "@/types";
-import { EMPTY_ORDER, NEW_DRINK_TABLE } from "@/constants";
+import { DrinkTableRow, Order } from "@/types";
 
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  onSnapshot,
+  updateDoc,
+  addDoc,
+  collection,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 
 const OrderPage = ({ query }: { query: any }) => {
-  const [order, setOrder] = useState<Order | any>(EMPTY_ORDER);
-  const [table, setTable] = useState<any>(NEW_DRINK_TABLE);
+  const [order, setOrder] = useState<Order | any>({
+    id: "",
+    shipFee: 0,
+    discount: 0,
+    shopOwnerName: "",
+    shopOwnerMomo: "",
+    selectedMenuName: "",
+    selectedMenuLink: "",
+  });
+
+  const [rows, setRows] = useState<DrinkTableRow[]>([]);
 
   useEffect(() => {
     _fetchOrder();
+    _fetchRows();
   }, []);
-
-  //fail here
-  useEffect(() => {
-    if (order.tableDataId)
-    _fetchTableData(order)
-  }, []);
-
-  // const _fetchOrders = async () => {
-  //   const query = collection(db, "orders");
-  //   onSnapshot(query, (snapshot) => {
-  //     const updatedOrders = snapshot.docs.map((doc: any) => {
-  //       return { ...doc.data(), id: doc.id };
-  //     });
-  //     setOrders(updatedOrders);
-  //   });
-  // };
 
   const _fetchOrder = async () => {
-    const orderRef = doc(db, "orders", query.slug);
-    const orderSnapshot = await getDoc(orderRef);
-    const updatedOrder = { ...orderSnapshot.data(), id: orderSnapshot.id };
-    setOrder(updatedOrder);
-    _fetchTableData(updatedOrder)
+    const docRef = doc(db, "orders", query.slug);
+    onSnapshot(docRef, (doc) => {
+      setOrder({ ...doc.data(), id: doc.id });
+    });
   };
 
-  const _fetchTableData = async (fetchOrder:any) => {
-    const tableRef = doc(db, "table-data", fetchOrder.tableDataId);
-    const tableSnapshot = await getDoc(tableRef);
-    const updatedTable = { ...tableSnapshot.data(), id: tableSnapshot.id };
-    setTable(updatedTable);
+  const _fetchRows = async () => {
+    const q = collection(db, "orders", query.slug, "rows");
+    onSnapshot(q, (snapshot) => {
+      const updatedRows = snapshot.docs.map((doc: any) => {
+        return { ...doc.data(), id: doc.id };
+      });
+      setRows(updatedRows);
+    });
   };
 
-const _test = async () => {
-  const updatedTable = {...table, shipFee: table.shipFee + 1}
-  const tableRef = doc(db, "table-data", table.id);
-  await updateDoc(tableRef, updatedTable)
-}
+  const _updateOrder = async (field: string, newValue: any) => {
+    const docRef = doc(db, "orders", query.slug);
+    await updateDoc(docRef, {
+      [field]: newValue,
+    });
+  };
+
+  const _addRow = async () => {
+    const newRow = { name: "", drink: "" };
+    await addDoc(collection(db, "orders", query.slug, "rows"), newRow);
+  };
+
+  const _updateRow = async (rowId: string, field: string, newValue: any) => {
+    const docRef = doc(db, "orders", query.slug, "rows", rowId);
+    await updateDoc(docRef, {
+      [field]: newValue,
+    });
+  };
 
   return (
-    <div>
+    <div className="flex flex-col bg-green-100 w-96">
       <Link href="/">Landing Page</Link>
       <Link href="/create-order/">Create Order</Link>
       <div>{query.slug}</div>
-      <button type="button" onClick={_fetchOrder}>
-        Fetch Order
+      <div>Shop Owner: {order.shopOwnerName}</div>
+      <div>Momo: {order.shopOwnerMomo}</div>
+      <div>Discount: {order.discount}</div>
+      <div>
+        <div>Ship Fee:</div>
+        <input
+          className="border-2"
+          type="number"
+          value={order.shipFee}
+          name="shipFee"
+          onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+        />
+      </div>
+      <button type="button" onClick={_addRow}>
+        Add Row
       </button>
       <div>
-        {order.menus.map((menu: Menu) => (
-          <div className="flex flex-col">
-            <span>{menu.name}</span>
-            <span>{menu.link}</span>
+        {rows.map((row: DrinkTableRow) => (
+          <div key={row.id}>
+            <input
+              type="text"
+              placeholder="Type Here"
+              value={row.name}
+              name="name"
+              onChange={(e) =>
+                _updateRow(row.id, e.target.name, e.target.value)
+              }
+            />
+            <span>{row.drink}</span>
           </div>
         ))}
       </div>
-      <div>Table Id: {table.id}</div>
-      <div>Ship fee: {table.shipFee}</div>
-      <button type="button" onClick={_test}>Ship fee + 1</button>
-      <div>Discount: {table.discount}</div>
+      <div>Menu: {order.selectedsMenuName}</div>
+      <div>Menu: {order.selectedMenuLink}</div>
     </div>
   );
 };
