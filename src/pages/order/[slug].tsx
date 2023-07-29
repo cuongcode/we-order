@@ -69,7 +69,7 @@ const OrderPage = ({ query }: { query: any }) => {
   };
 
   return (
-    <Main meta={<Meta title="Order" description="" />}>
+    <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="flex flex-col bg-white mt-5 h-screen">
         <div>{query.slug}</div>
         <div>Shop Owner: {order.shopOwnerName}</div>

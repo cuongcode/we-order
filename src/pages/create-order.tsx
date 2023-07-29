@@ -68,7 +68,7 @@ const CreateOrderPage = () => {
   };
 
   return (
-    <Main meta={<Meta title="Order" description="" />}>
+    <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="flex flex-col gap-4 w-96 bg-green-100">
         <div>Anonymous</div>
         {/* <AnonymousUser user={user} setUser={setUser} /> */}

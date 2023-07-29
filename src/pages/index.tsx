@@ -4,7 +4,7 @@ import { Meta } from "@/layouts/Meta";
 
 const LandingPage = () => {
   return (
-    <Main meta={<Meta title="Landing" description="" />}>
+    <Main meta={<Meta title="WeOrder" description="" />}>
       <div>
         <div>We Order</div>
         <Link href="/create-order/">Order</Link>
