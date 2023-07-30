@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { collection, addDoc, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase";
-import { Order, User, Menu } from "@/types";
+import { Order, Menu } from "@/types";
 import Router from "next/router";
 import { Main } from "@/templates/Main";
 import { Meta } from "@/layouts/Meta";
