@@ -90,42 +90,42 @@ const CreateOrderPage = () => {
 
 export default CreateOrderPage;
 
-const AnonymousUser = ({
-  user,
-  setUser,
-}: {
-  user: User;
-  setUser: (user: User) => void;
-}) => {
-  const _onNameChange = (e: any) => {
-    const updatedUser = { ...user, name: e.target.value };
-    setUser(updatedUser);
-  };
+// const AnonymousUser = ({
+//   user,
+//   setUser,
+// }: {
+//   user: User;
+//   setUser: (user: User) => void;
+// }) => {
+//   const _onNameChange = (e: any) => {
+//     const updatedUser = { ...user, name: e.target.value };
+//     setUser(updatedUser);
+//   };
 
-  const _onMomoChange = (e: any) => {
-    const updatedUser = { ...user, momo: e.target.value };
-    setUser(updatedUser);
-  };
+//   const _onMomoChange = (e: any) => {
+//     const updatedUser = { ...user, momo: e.target.value };
+//     setUser(updatedUser);
+//   };
 
-  return (
-    <div className="flex flex-col">
-      <div>Name</div>
-      <input
-        className="border-2"
-        type="text"
-        value={user.name}
-        onChange={(e) => _onNameChange(e)}
-      />
-      <div>Momo</div>
-      <input
-        className="border-2"
-        type="string"
-        value={user.momo}
-        onChange={(e) => _onMomoChange(e)}
-      />
-    </div>
-  );
-};
+//   return (
+//     <div className="flex flex-col">
+//       <div>Name</div>
+//       <input
+//         className="border-2"
+//         type="text"
+//         value={user.name}
+//         onChange={(e) => _onNameChange(e)}
+//       />
+//       <div>Momo</div>
+//       <input
+//         className="border-2"
+//         type="string"
+//         value={user.momo}
+//         onChange={(e) => _onMomoChange(e)}
+//       />
+//     </div>
+//   );
+// };
 
 const OrderList = ({ orders }: { orders: Order[] }) => {
   const _openOrder = (id: string | null) => {
