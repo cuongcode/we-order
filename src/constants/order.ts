@@ -1,26 +1,25 @@
-import { DrinkTableData, Order } from '@/types'
+import { Menu, Order } from '@/types'
 
 export const NEW_ORDER:Order = {
   id: '',
-  isCloseOrder: false,
-  menus: [
-    {
-      name: 'Koi',
-      link: 'https://shopeefood.vn/ho-chi-minh/koi-the-ngo-duc-ke',
-    }
-  ],
-  tableDataId: '',
-}
-
-export const NEW_DRINK_TABLE:DrinkTableData = {
-  rows: [],
+  // isCloseOrder: false,
   shipFee: 0,
-	discount: 0,
+  discount: 0,
+  // time: number,
+  // wanted: WantedInfo,
+  shopOwnerId: '',
+  selectedMenuId: '',
 }
 
-export const EMPTY_ORDER:Order = {
+export const NEW_MENU:Menu = {
   id: '',
-  isCloseOrder: false,
-  menus: [],
-  tableDataId: '',
+	name: '',
+	link: '',
 }
+
+// menus: [
+//   {
+//     name: 'Koi',
+//     link: 'https://shopeefood.vn/ho-chi-minh/koi-the-ngo-duc-ke',
+//   }
+// ],

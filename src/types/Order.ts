@@ -1,14 +1,14 @@
-// import { UserProfile } from "./UserProfile";
-import { Menu } from "./Menu";
-// import { DrinkTableData } from "./DrinkTableData";
 // import { WantedInfo } from "./WantedInfo";
 
 export interface Order {
 	id: string,
-	// shopOwnerProfile: UserProfile,
-	isCloseOrder: boolean,
+	// isCloseOrder: boolean,
+  shipFee: number,
+  discount: number,
 	// time: number,
   // wanted: WantedInfo,
-	menus: Menu[],
-	tableDataId: string,
+  shopOwnerName: string,
+  shopOwnerMomo: string,
+  selectedMenuName: string,
+  selectedMenuLink: string,
 }

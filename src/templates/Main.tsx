@@ -1,7 +1,6 @@
-import Link from 'next/link';
-import type { ReactNode } from 'react';
-
-import { AppConfig } from '@/utils/AppConfig';
+import Link from "next/link";
+import { LogoImages } from "@/images";
+import type { ReactNode } from "react";
 
 type IMainProps = {
   meta: ReactNode;
@@ -9,68 +8,27 @@ type IMainProps = {
 };
 
 const Main = (props: IMainProps) => (
-  <div className="w-full px-1 text-gray-700 antialiased">
+  <div className="w-full text-gray-800 antialiased p-5 font-nunito">
     {props.meta}
 
-    <div className="mx-auto max-w-screen-md">
-      <header className="border-b border-gray-300">
-        <div className="pb-8 pt-16">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {AppConfig.title}
-          </h1>
-          <h2 className="text-xl">{AppConfig.description}</h2>
-        </div>
-        <nav>
-          <ul className="flex flex-wrap text-xl">
-            <li className="mr-6">
-              <Link
-                href="/"
-                className="border-none text-gray-700 hover:text-gray-900"
-              >
-                Home
-              </Link>
-            </li>
-            <li className="mr-6">
-              <Link
-                href="/about/"
-                className="border-none text-gray-700 hover:text-gray-900"
-              >
-                About
-              </Link>
-            </li>
-            <li className="mr-6">
-              <a
-                className="border-none text-gray-700 hover:text-gray-900"
-                href="https://github.com/ixartz/Next-js-Boilerplate"
-              >
-                GitHub
-              </a>
-            </li>
-            <li className="mr-6">
-              <Link
-                href="/blog/"
-                className="border-none text-gray-700 hover:text-gray-900"
-              >
-                Blog
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </header>
-
-      <main className="content py-5 text-xl">{props.children}</main>
-
-      <footer className="border-t border-gray-300 py-8 text-center text-sm">
-        © Copyright {new Date().getFullYear()} {AppConfig.title}. Made with{' '}
-        <a href="https://creativedesignsguru.com">CreativeDesignsGuru</a>.
-        {/*
-         * PLEASE READ THIS SECTION
-         * I'm an indie maker with limited resources and funds, I'll really appreciate if you could have a link to my website.
-         * The link doesn't need to appear on every pages, one link on one page is enough.
-         * For example, in the `About` page. Thank you for your support, it'll mean a lot to me.
-         */}
-      </footer>
+    <div className="flex h-12 py-1 pl-2 pr-4 bg-gray-400 rounded-xl justify-between items-center">
+      <div className="flex gap-4 h-full items-center">
+        <Link className="bg-white p-2 rounded-full h-full" href="/">
+          <img className="h-full" src={LogoImages.logo.src} alt="logo" />
+        </Link>
+        <Link href="/create-order/" className="py-1 px-2 rounded-lg bg-white">
+          Create Order
+        </Link>
+      </div>
+      <div className="flex gap-4">
+        <div>Login</div>
+        <div>Register</div>
+      </div>
     </div>
+
+<img className="w-7/12 m-auto mt-12" src={LogoImages.title_logo.src} alt="title-logo" />
+
+    <main>{props.children}</main>
   </div>
 );
 

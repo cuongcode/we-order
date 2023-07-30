@@ -1,12 +1,11 @@
-import Link from 'next/link'
+// import Link from "next/link";
+import { Main } from "@/templates/Main";
+import { Meta } from "@/layouts/Meta";
 
 const LandingPage = () => {
-
   return (
-    <div>
-      <div>We Order</div>
-      <Link href='/create-order/' >Order</Link>
-    </div>
+    <Main meta={<Meta title="WeOrder" description="" />}>
+    </Main>
   );
 };
 
