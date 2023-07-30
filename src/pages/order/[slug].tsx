@@ -3,7 +3,13 @@ import { useState, useEffect } from "react";
 
 import { DrinkTableRow, Order } from "@/types";
 
-import { ClipboardDocumentIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+  ClipboardDocumentIcon,
+  PlusIcon,
+  QuestionMarkCircleIcon,
+  MinusIcon,
+  Bars2Icon,
+} from "@heroicons/react/24/outline";
 
 import {
   doc,
@@ -58,17 +64,11 @@ const OrderPage = ({ query }: { query: any }) => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="flex flex-col mt-12 h-screen gap-5 p-5 w-full">
+      <div className="flex flex-col mt-12 h-screen gap-5 w-full">
         <HeaderSection order={order} />
-        <SharedLink orderId={query.slug} />
-        <ShipFeeInput order={order} orderId={query.slug} />
-        <DiscountInput order={order} orderId={query.slug} />
-        <AddRowButton orderId={query.slug} />
-        <div className="flex flex-col gap-2 w-full">
-          {rows.map((row: DrinkTableRow) => (
-            <Row row={row} orderId={query.slug} />
-          ))}
-        </div>
+        <SharedLink orderId={order.id} />
+        <Table rows={rows} orderId={order.id} />
+        <CalculateTotal order={order} />
         <div>Menu: {order.selectedsMenuName}</div>
         <div>Menu: {order.selectedMenuLink}</div>
       </div>
@@ -83,6 +83,26 @@ OrderPage.getInitialProps = async (context: any) => {
   return { query };
 };
 
+const Table = ({
+  rows,
+  orderId,
+}: {
+  rows: DrinkTableRow[];
+  orderId: string;
+}) => {
+  return (
+    <div className="p-3 border-2 rounded-xl flex flex-col gap-3 bg-gray-200">
+      <TableHeader />
+      <div className="flex flex-col gap-2 w-full">
+        {rows.map((row: DrinkTableRow) => (
+          <Row row={row} orderId={orderId} />
+        ))}
+      </div>
+      <AddRowButton orderId={orderId} />
+    </div>
+  );
+};
+
 const Row = ({ row, orderId }: { row: DrinkTableRow; orderId: string }) => {
   const _updateRow = async (rowId: string, field: string, newValue: any) => {
     const docRef = doc(db, "orders", orderId, "rows", rowId);
@@ -91,18 +111,17 @@ const Row = ({ row, orderId }: { row: DrinkTableRow; orderId: string }) => {
     });
   };
   return (
-    <div key={row.id} className="flex gap-2 items-center w-full">
-      <div className="border-2 rounded-lg w-2/12">
+    <div key={row.id} className="flex gap-2 items-center w-full text-xs">
+      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
-          placeholder="Type Here"
           value={row.name}
           name="name"
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="border-2 rounded-lg w-6/12">
+      <div className="grow p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
@@ -112,73 +131,124 @@ const Row = ({ row, orderId }: { row: DrinkTableRow; orderId: string }) => {
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="border-2 rounded-lg w-1/12">
+      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
           className="w-full"
           type="number"
-          placeholder="Type Here"
           value={row.price}
           name="price"
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="border-2 rounded-lg w-1/12">
+      <div className="w-9 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
-          className="w-full"
+          className="w-full text-center"
           type="number"
-          placeholder="Type Here"
           value={row.count}
           name="count"
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="border-2 rounded-lg w-1/12">
+      <div className="w-9 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
-          className="w-full"
+          className="w-full text-center"
           type="text"
-          placeholder="Type Here"
           value={row.size}
           name="size"
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="border-2 rounded-lg w-1/12">
+      <div className="w-12 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
-          placeholder="Type Here"
           value={row.sugar}
           name="sugar"
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="w-1/12">
+      <div className="w-12 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
-          className="border-2 rounded-lg w-full"
+          className="w-full"
           type="text"
-          placeholder="Type Here"
           value={row.ice}
           name="ice"
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="border-2 rounded-lg w-6/12">
+      <div className="w-44 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
-          placeholder="Type Here"
+          placeholder="No topping"
           value={row.topping}
           name="topping"
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
+      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+        Thuong
+      </div>
+      <div className="w-20  flex items-center gap-1">
+        <div className="w-14 p-1 bg-gray-400 drop-shadow-md rounded-md">
+          50000
+        </div>
+        <div className="cursor-pointer">
+          <QuestionMarkCircleIcon className="w-5 h-5" />
+        </div>
+      </div>
     </div>
+  );
+};
+
+const TableHeader = () => {
+  return (
+    <div className="flex gap-2 items-center w-full font-semibold text-xs">
+      <div className="w-14">Name</div>
+      <div className="grow">Drink</div>
+      <div className="w-14 ">Price</div>
+      <div className="w-9">Count</div>
+      <div className="w-9">Size</div>
+      <div className="w-12">Sugar</div>
+      <div className="w-12">Ice</div>
+      <div className="w-44">Topping</div>
+      <div className="w-14">Offer by</div>
+      <div className="w-20">Transfer</div>
+    </div>
+  );
+};
+
+const AddRowButton = ({ orderId }: { orderId: string }) => {
+  const _addRow = async () => {
+    const newRow = {
+      timestamp: serverTimestamp(),
+      name: "",
+      drink: "",
+      size: "S",
+      count: 1,
+      price: 0,
+      sugar: "100%",
+      ice: "100%",
+      topping: "",
+      heart: 0,
+      isTick: false,
+    };
+    await addDoc(collection(db, "orders", orderId, "rows"), newRow);
+  };
+  return (
+    <button
+      className="w-full bg-white drop-shadow-sm px-2 py-1 rounded-lg hover:drop-shadow-md "
+      type="button"
+      onClick={_addRow}
+    >
+      <PlusIcon className="w-5 h-5 m-auto" />
+    </button>
   );
 };
 
 const HeaderSection = ({ order }: { order: Order }) => {
   return (
-    <div className="flex w-full gap-4">
+    <div className="flex w-full gap-4 text-sm">
       <ShopOwner order={order} />
       <TranferInfo order={order} />
     </div>
@@ -187,7 +257,7 @@ const HeaderSection = ({ order }: { order: Order }) => {
 
 const TranferInfo = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col gap-2 items-center rounded-3xl border-2 border-gray-300 w-48 py-3 px-3">
+    <div className="flex flex-col gap-2 items-center rounded-3xl border-2 bg-white w-48 h-36 py-3 px-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
       <div className="flex flex-col gap-2 items-start w-full">
         <div className="flex w-full">
@@ -206,9 +276,9 @@ const TranferInfo = ({ order }: { order: Order }) => {
 
 const ShopOwner = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col gap-1 items-center rounded-3xl border-2 border-gray-300 w-48 py-3 px-8">
+    <div className="flex flex-col items-center rounded-3xl border-2 bg-white w-36 h-36 py-3 px-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
-      <div className="bg-gray-200 rounded-full p-1">
+      <div className="bg-gray-200 rounded-full p-1 w-20">
         <img
           className="rounded-full bg-gray-200"
           src={Icons.user_icon.src}
@@ -238,52 +308,50 @@ const SharedLink = ({ orderId }: { orderId: string }) => {
   );
 };
 
-const AddRowButton = ({ orderId }: { orderId: string }) => {
-  const _addRow = async () => {
-    const newRow = {
-      timestamp: serverTimestamp(),
-      name: "",
-      drink: "",
-      size: "S",
-      count: 1,
-      price: 0,
-      sugar: "100%",
-      ice: "100%",
-      topping: "",
-      heart: 0,
-      isTick: false,
-    };
-    await addDoc(collection(db, "orders", orderId, "rows"), newRow);
-  };
+const CalculateTotal = ({
+  order,
+}: {
+  order: Order;
+}) => {
   return (
-    <button
-      className="w-fit border-2 px-2 py-1 rounded-lg"
-      type="button"
-      onClick={_addRow}
-    >
+    <div className="flex items-center bg-gray-200 px-3 pt-9 pb-5 rounded-xl">
+      <div className="relative w-fit">
+        <div className="absolute -top-5 left-1 text-sm">Total</div>
+        <div className="border-2 px-2 py-1 rounded-lg w-24 bg-gray-400">
+          360000
+        </div>
+      </div>
       <PlusIcon className="w-5 h-5" />
-    </button>
+      <ShipFeeInput order={order} />
+      <MinusIcon className="w-5 h-5" />
+      <DiscountInput order={order} />
+      <Bars2Icon className="w-5 h-5" />
+      <div className="relative w-fit ml-4">
+        <div className="absolute -top-5 left-1 text-sm">Shop Owner Pay</div>
+        <div className="border-2 px-2 py-1 rounded-lg w-32 bg-gray-400 text-2xl text-center">
+          320000
+        </div>
+      </div>
+    </div>
   );
 };
 
 const ShipFeeInput = ({
   order,
-  orderId,
 }: {
   order: Order;
-  orderId: string;
 }) => {
   const _updateOrder = async (field: string, newValue: any) => {
-    const docRef = doc(db, "orders", orderId);
+    const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
       [field]: newValue,
     });
   };
   return (
-    <div className="w-fit">
-      <div>Ship Fee</div>
+    <div className="relative w-fit">
+      <div className="absolute -top-5 left-1 text-sm">Ship Fee</div>
       <input
-        className="border-2 px-1 rounded-lg w-24"
+        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
         type="number"
         value={order.shipFee}
         name="shipFee"
@@ -295,22 +363,20 @@ const ShipFeeInput = ({
 
 const DiscountInput = ({
   order,
-  orderId,
 }: {
   order: Order;
-  orderId: string;
 }) => {
   const _updateOrder = async (field: string, newValue: any) => {
-    const docRef = doc(db, "orders", orderId);
+    const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
       [field]: newValue,
     });
   };
   return (
-    <div className="w-fit">
-      <div>Discount</div>
+    <div className="relative w-fit">
+      <div className="absolute -top-5 left-1 text-sm">Discount</div>
       <input
-        className="border-2 px-1 rounded-lg w-24"
+        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
         type="number"
         value={order.discount}
         name="discount"
