@@ -66,9 +66,9 @@ const OrderPage = ({ query }: { query: any }) => {
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="flex flex-col mt-12 h-screen gap-5 w-full">
         <HeaderSection order={order} />
-        <SharedLink orderId={query.slug} />
-        <Table rows={rows} orderId={query.slug} />
-        <CalculateTotal order={order} orderId={query.slug} />
+        <SharedLink orderId={order.id} />
+        <Table rows={rows} orderId={order.id} />
+        <CalculateTotal order={order} />
         <div>Menu: {order.selectedsMenuName}</div>
         <div>Menu: {order.selectedMenuLink}</div>
       </div>
@@ -248,7 +248,7 @@ const AddRowButton = ({ orderId }: { orderId: string }) => {
 
 const HeaderSection = ({ order }: { order: Order }) => {
   return (
-    <div className="flex w-full gap-4">
+    <div className="flex w-full gap-4 text-sm">
       <ShopOwner order={order} />
       <TranferInfo order={order} />
     </div>
@@ -257,7 +257,7 @@ const HeaderSection = ({ order }: { order: Order }) => {
 
 const TranferInfo = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col gap-2 items-center rounded-3xl border-2 border-gray-300 w-48 py-3 px-3">
+    <div className="flex flex-col gap-2 items-center rounded-3xl border-2 bg-white w-48 h-36 py-3 px-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
       <div className="flex flex-col gap-2 items-start w-full">
         <div className="flex w-full">
@@ -276,9 +276,9 @@ const TranferInfo = ({ order }: { order: Order }) => {
 
 const ShopOwner = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col gap-1 items-center rounded-3xl border-2 border-gray-300 w-48 py-3 px-8">
+    <div className="flex flex-col items-center rounded-3xl border-2 bg-white w-36 h-36 py-3 px-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
-      <div className="bg-gray-200 rounded-full p-1">
+      <div className="bg-gray-200 rounded-full p-1 w-20">
         <img
           className="rounded-full bg-gray-200"
           src={Icons.user_icon.src}
@@ -310,23 +310,21 @@ const SharedLink = ({ orderId }: { orderId: string }) => {
 
 const CalculateTotal = ({
   order,
-  orderId,
 }: {
   order: Order;
-  orderId: string;
 }) => {
   return (
     <div className="flex items-center bg-gray-200 px-3 pt-9 pb-5 rounded-xl">
-      <div className="relative w-fit ml-4">
+      <div className="relative w-fit">
         <div className="absolute -top-5 left-1 text-sm">Total</div>
         <div className="border-2 px-2 py-1 rounded-lg w-24 bg-gray-400">
           360000
         </div>
       </div>
       <PlusIcon className="w-5 h-5" />
-      <ShipFeeInput order={order} orderId={orderId} />
+      <ShipFeeInput order={order} />
       <MinusIcon className="w-5 h-5" />
-      <DiscountInput order={order} orderId={orderId} />
+      <DiscountInput order={order} />
       <Bars2Icon className="w-5 h-5" />
       <div className="relative w-fit ml-4">
         <div className="absolute -top-5 left-1 text-sm">Shop Owner Pay</div>
@@ -340,13 +338,11 @@ const CalculateTotal = ({
 
 const ShipFeeInput = ({
   order,
-  orderId,
 }: {
   order: Order;
-  orderId: string;
 }) => {
   const _updateOrder = async (field: string, newValue: any) => {
-    const docRef = doc(db, "orders", orderId);
+    const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
       [field]: newValue,
     });
@@ -355,7 +351,7 @@ const ShipFeeInput = ({
     <div className="relative w-fit">
       <div className="absolute -top-5 left-1 text-sm">Ship Fee</div>
       <input
-        className="border-2 px-2 py-1 rounded-lg w-24"
+        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
         type="number"
         value={order.shipFee}
         name="shipFee"
@@ -367,13 +363,11 @@ const ShipFeeInput = ({
 
 const DiscountInput = ({
   order,
-  orderId,
 }: {
   order: Order;
-  orderId: string;
 }) => {
   const _updateOrder = async (field: string, newValue: any) => {
-    const docRef = doc(db, "orders", orderId);
+    const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
       [field]: newValue,
     });
@@ -382,7 +376,7 @@ const DiscountInput = ({
     <div className="relative w-fit">
       <div className="absolute -top-5 left-1 text-sm">Discount</div>
       <input
-        className="border-2 px-2 py-1 rounded-lg w-24"
+        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
         type="number"
         value={order.discount}
         name="discount"
