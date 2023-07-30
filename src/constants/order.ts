@@ -1,6 +1,6 @@
-import { Menu, Order } from '@/types'
+import { Menu } from '@/types'
 
-export const NEW_ORDER:Order = {
+export const NEW_ORDER = {
   id: '',
   // isCloseOrder: false,
   shipFee: 0,
