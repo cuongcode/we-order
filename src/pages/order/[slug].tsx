@@ -70,10 +70,10 @@ const OrderPage = ({ query }: { query: any }) => {
           <SharedLink orderId={order.id} />
         </div>
         <div className="mb-5">
-          <Table rows={rows} orderId={order.id} />
+          <Table rows={rows} order={order} />
         </div>
         <div className="mb-10">
-          <CalculateTotal order={order} />
+          <CalculateTotal order={order} rows={rows}/>
         </div>
         <div>
           <div>Menu: {order.selectedsMenuName}</div>

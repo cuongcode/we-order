@@ -9,7 +9,7 @@ import { doc, updateDoc } from "firebase/firestore";
 
 export const TranferInfo = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-3xl border-2 bg-white w-52 h-40 py-3 px-3 drop-shadow-md">
+    <div className="flex flex-col items-center gap-2 rounded-3xl border-2 bg-white w-56 h-40 py-3 px-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
       <div className="flex flex-col gap-2 items-start w-full">
         <div className="flex w-full items-center h-6">

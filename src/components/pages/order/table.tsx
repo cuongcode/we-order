@@ -1,4 +1,8 @@
-import { DrinkTableRow } from "@/types";
+import { useState, useEffect } from "react";
+
+import { DrinkTableRow, Order } from "@/types";
+
+import { numberArraySum } from "@/utils/base";
 
 import {
   doc,
@@ -9,34 +13,57 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 
-import {
-  PlusIcon,
-  QuestionMarkCircleIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
 export const Table = ({
   rows,
-  orderId,
+  order,
 }: {
   rows: DrinkTableRow[];
-  orderId: string;
+  order: Order;
 }) => {
   return (
     <div className="p-3 border-2 rounded-xl flex flex-col gap-3 bg-gray-200">
       <TableHeader />
       <div className="flex flex-col gap-2 w-full">
         {rows.map((row: DrinkTableRow) => (
-          <Row row={row} orderId={orderId} />
+          <Row key={row.id} row={row} order={order} rows={rows} />
         ))}
       </div>
-      <AddRowButton orderId={orderId} />
+      <AddRowButton orderId={order.id} />
     </div>
   );
 };
 
-const Row = ({ row, orderId }: { row: DrinkTableRow; orderId: string }) => {
+const Row = ({
+  rows,
+  row,
+  order,
+}: {
+  rows: DrinkTableRow[];
+  row: DrinkTableRow;
+  order: Order;
+}) => {
+  const [transfer, setTransfer] = useState(0);
+
+  const counts = rows.map((row: DrinkTableRow) => Number(row.count));
+  const quanity = numberArraySum(counts);
+  const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
+  const roundedBonus = Math.ceil(bonus / 100) * 100;
+  const currentTransfer = Number(row.price) + roundedBonus;
+
+  // const prices = rows.map((row: DrinkTableRow) => Number(row.price));
+  // const total = numberArraySum(prices);
+  // const currentShopOwnerPay =
+  // total + Number(order.shipFee) - Number(order.discount);
+
+
+  useEffect(() => {
+    setTransfer(currentTransfer);
+  }, [currentTransfer]);
+
   const _updateRow = async (rowId: string, field: string, newValue: any) => {
-    const docRef = doc(db, "orders", orderId, "rows", rowId);
+    const docRef = doc(db, "orders", order.id, "rows", rowId);
     await updateDoc(docRef, {
       [field]: newValue,
     });
@@ -122,7 +149,7 @@ const Row = ({ row, orderId }: { row: DrinkTableRow; orderId: string }) => {
       </div>
       <div className="w-20  flex items-center gap-1">
         <div className="w-14 p-1 bg-gray-400 drop-shadow-md rounded-md">
-          50000
+          {transfer}
         </div>
         <div className="cursor-pointer">
           <QuestionMarkCircleIcon className="w-5 h-5" />

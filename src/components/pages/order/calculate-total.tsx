@@ -1,28 +1,40 @@
-import { Order } from "@/types";
+import { useEffect, useState } from "react";
 
-import {
-  PlusIcon,
-  MinusIcon,
-  Bars2Icon,
-} from "@heroicons/react/24/outline";
+import { Order, DrinkTableRow } from "@/types";
 
-import {
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { numberArraySum } from "@/utils/base";
+
+import { PlusIcon, MinusIcon, Bars2Icon } from "@heroicons/react/24/outline";
+
+import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
 export const CalculateTotal = ({
   order,
+  rows,
 }: {
   order: Order;
+  rows: DrinkTableRow[];
 }) => {
+  const [total, setTotal] = useState(0);
+  const [shopOwnerPay, setShopOwnerPay] = useState(0);
+
+  const prices = rows.map((row: DrinkTableRow) => Number(row.price));
+  const currentTotal = numberArraySum(prices);
+  const currentShopOwnerPay =
+    currentTotal + Number(order.shipFee) - Number(order.discount);
+
+  useEffect(() => {
+    setTotal(currentTotal);
+    setShopOwnerPay(currentShopOwnerPay);
+  }, [currentTotal, currentShopOwnerPay]);
+
   return (
     <div className="flex items-center bg-gray-200 px-3 pt-9 pb-5 rounded-xl">
       <div className="relative w-fit">
         <div className="absolute -top-5 left-1 text-sm">Total</div>
         <div className="border-2 px-2 py-1 rounded-lg w-24 bg-gray-400">
-          360000
+          {total}
         </div>
       </div>
       <PlusIcon className="w-5 h-5" />
@@ -33,18 +45,14 @@ export const CalculateTotal = ({
       <div className="relative w-fit ml-4">
         <div className="absolute -top-5 left-1 text-sm">Shop Owner Pay</div>
         <div className="border-2 px-2 py-1 rounded-lg w-32 bg-gray-400 text-2xl text-center">
-          320000
+          {shopOwnerPay}
         </div>
       </div>
     </div>
   );
 };
 
-const ShipFeeInput = ({
-  order,
-}: {
-  order: Order;
-}) => {
+const ShipFeeInput = ({ order }: { order: Order }) => {
   const _updateOrder = async (field: string, newValue: any) => {
     const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
@@ -65,11 +73,7 @@ const ShipFeeInput = ({
   );
 };
 
-const DiscountInput = ({
-  order,
-}: {
-  order: Order;
-}) => {
+const DiscountInput = ({ order }: { order: Order }) => {
   const _updateOrder = async (field: string, newValue: any) => {
     const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
