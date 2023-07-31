@@ -16,8 +16,8 @@ export const CalculateTotal = ({
   order: Order;
   rows: DrinkTableRow[];
 }) => {
-  const [total, setTotal] = useState(0);
-  const [shopOwnerPay, setShopOwnerPay] = useState(0);
+  const [total, setTotal] = useState('');
+  const [shopOwnerPay, setShopOwnerPay] = useState('');
 
   const prices = rows.map((row: DrinkTableRow) => Number(row.price));
   const currentTotal = numberArraySum(prices);
@@ -25,8 +25,8 @@ export const CalculateTotal = ({
     currentTotal + Number(order.shipFee) - Number(order.discount);
 
   useEffect(() => {
-    setTotal(currentTotal);
-    setShopOwnerPay(currentShopOwnerPay);
+    setTotal(currentTotal.toLocaleString("en-US"));
+    setShopOwnerPay(currentShopOwnerPay.toLocaleString("en-US"));
   }, [currentTotal, currentShopOwnerPay]);
 
   return (

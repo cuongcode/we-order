@@ -44,7 +44,7 @@ const Row = ({
   row: DrinkTableRow;
   order: Order;
 }) => {
-  const [transfer, setTransfer] = useState(0);
+  const [transfer, setTransfer] = useState('');
 
   const counts = rows.map((row: DrinkTableRow) => Number(row.count));
   const quanity = numberArraySum(counts);
@@ -59,7 +59,7 @@ const Row = ({
 
 
   useEffect(() => {
-    setTransfer(currentTransfer);
+    setTransfer(currentTransfer.toLocaleString("en-US"));
   }, [currentTransfer]);
 
   const _updateRow = async (rowId: string, field: string, newValue: any) => {
