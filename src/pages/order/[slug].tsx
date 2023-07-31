@@ -3,22 +3,16 @@ import { useState, useEffect } from "react";
 
 import { DrinkTableRow, Order } from "@/types";
 
-import {
-  ClipboardDocumentIcon,
-  PlusIcon,
-  QuestionMarkCircleIcon,
-  MinusIcon,
-  Bars2Icon,
-} from "@heroicons/react/24/outline";
+import { Table, CalculateTotal } from "@/components/pages";
+
+import { ClipboardDocumentIcon, PencilIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 import {
   doc,
   onSnapshot,
-  updateDoc,
-  addDoc,
   collection,
-  serverTimestamp,
   orderBy,
+  updateDoc,
   query as firestoreQuery,
 } from "firebase/firestore";
 import { db } from "@/firebase";
@@ -83,169 +77,6 @@ OrderPage.getInitialProps = async (context: any) => {
   return { query };
 };
 
-const Table = ({
-  rows,
-  orderId,
-}: {
-  rows: DrinkTableRow[];
-  orderId: string;
-}) => {
-  return (
-    <div className="p-3 border-2 rounded-xl flex flex-col gap-3 bg-gray-200">
-      <TableHeader />
-      <div className="flex flex-col gap-2 w-full">
-        {rows.map((row: DrinkTableRow) => (
-          <Row row={row} orderId={orderId} />
-        ))}
-      </div>
-      <AddRowButton orderId={orderId} />
-    </div>
-  );
-};
-
-const Row = ({ row, orderId }: { row: DrinkTableRow; orderId: string }) => {
-  const _updateRow = async (rowId: string, field: string, newValue: any) => {
-    const docRef = doc(db, "orders", orderId, "rows", rowId);
-    await updateDoc(docRef, {
-      [field]: newValue,
-    });
-  };
-  return (
-    <div key={row.id} className="flex gap-2 items-center w-full text-xs">
-      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full"
-          type="text"
-          value={row.name}
-          name="name"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="grow p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full"
-          type="text"
-          placeholder="Type Here"
-          value={row.drink}
-          name="drink"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full"
-          type="number"
-          value={row.price}
-          name="price"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="w-9 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full text-center"
-          type="number"
-          value={row.count}
-          name="count"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="w-9 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full text-center"
-          type="text"
-          value={row.size}
-          name="size"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="w-12 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full"
-          type="text"
-          value={row.sugar}
-          name="sugar"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="w-12 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full"
-          type="text"
-          value={row.ice}
-          name="ice"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="w-44 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        <input
-          className="w-full"
-          type="text"
-          placeholder="No topping"
-          value={row.topping}
-          name="topping"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
-        />
-      </div>
-      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        Thuong
-      </div>
-      <div className="w-20  flex items-center gap-1">
-        <div className="w-14 p-1 bg-gray-400 drop-shadow-md rounded-md">
-          50000
-        </div>
-        <div className="cursor-pointer">
-          <QuestionMarkCircleIcon className="w-5 h-5" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const TableHeader = () => {
-  return (
-    <div className="flex gap-2 items-center w-full font-semibold text-xs">
-      <div className="w-14">Name</div>
-      <div className="grow">Drink</div>
-      <div className="w-14 ">Price</div>
-      <div className="w-9">Count</div>
-      <div className="w-9">Size</div>
-      <div className="w-12">Sugar</div>
-      <div className="w-12">Ice</div>
-      <div className="w-44">Topping</div>
-      <div className="w-14">Offer by</div>
-      <div className="w-20">Transfer</div>
-    </div>
-  );
-};
-
-const AddRowButton = ({ orderId }: { orderId: string }) => {
-  const _addRow = async () => {
-    const newRow = {
-      timestamp: serverTimestamp(),
-      name: "",
-      drink: "",
-      size: "S",
-      count: 1,
-      price: 0,
-      sugar: "100%",
-      ice: "100%",
-      topping: "",
-      heart: 0,
-      isTick: false,
-    };
-    await addDoc(collection(db, "orders", orderId, "rows"), newRow);
-  };
-  return (
-    <button
-      className="w-full bg-white drop-shadow-sm px-2 py-1 rounded-lg hover:drop-shadow-md "
-      type="button"
-      onClick={_addRow}
-    >
-      <PlusIcon className="w-5 h-5 m-auto" />
-    </button>
-  );
-};
-
 const HeaderSection = ({ order }: { order: Order }) => {
   return (
     <div className="flex w-full gap-4 text-sm">
@@ -257,16 +88,18 @@ const HeaderSection = ({ order }: { order: Order }) => {
 
 const TranferInfo = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col gap-2 items-center rounded-3xl border-2 bg-white w-48 h-36 py-3 px-3 drop-shadow-md">
+    <div className="flex flex-col items-center gap-2 rounded-3xl border-2 bg-white w-56 h-40 py-3 px-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
       <div className="flex flex-col gap-2 items-start w-full">
-        <div className="flex w-full">
-          <div className="w-1/3">Momo</div>
-          <div className="w-1/12">:</div>
-          <div>{order.shopOwnerMomo}</div>
+        <div className="flex w-full items-center h-6">
+          <div className="w-11">Momo</div>
+          <div className="mr-2">:</div>
+          <div className="grow">
+            <ShopOwnerMomoInput order={order} />
+          </div>
         </div>
         <div className="flex w-full">
-          <div className="w-1/3">Bank</div>
+          <div className="w-11">Bank</div>
           <div>:</div>
         </div>
       </div>
@@ -276,16 +109,18 @@ const TranferInfo = ({ order }: { order: Order }) => {
 
 const ShopOwner = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col items-center rounded-3xl border-2 bg-white w-36 h-36 py-3 px-3 drop-shadow-md">
+    <div className="flex flex-col items-center rounded-3xl border-2 bg-white w-36 h-40 py-3 px-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
-      <div className="bg-gray-200 rounded-full p-1 w-20">
+      <div className="bg-gray-200 rounded-full p-1 w-20 mt-2">
         <img
           className="rounded-full bg-gray-200"
           src={Icons.user_icon.src}
           alt="user-icon"
         />
       </div>
-      <div>{order.shopOwnerName}</div>
+      <div className="mt-1">
+        <ShopOwnerNameInput order={order} />
+      </div>
     </div>
   );
 };
@@ -308,39 +143,8 @@ const SharedLink = ({ orderId }: { orderId: string }) => {
   );
 };
 
-const CalculateTotal = ({
-  order,
-}: {
-  order: Order;
-}) => {
-  return (
-    <div className="flex items-center bg-gray-200 px-3 pt-9 pb-5 rounded-xl">
-      <div className="relative w-fit">
-        <div className="absolute -top-5 left-1 text-sm">Total</div>
-        <div className="border-2 px-2 py-1 rounded-lg w-24 bg-gray-400">
-          360000
-        </div>
-      </div>
-      <PlusIcon className="w-5 h-5" />
-      <ShipFeeInput order={order} />
-      <MinusIcon className="w-5 h-5" />
-      <DiscountInput order={order} />
-      <Bars2Icon className="w-5 h-5" />
-      <div className="relative w-fit ml-4">
-        <div className="absolute -top-5 left-1 text-sm">Shop Owner Pay</div>
-        <div className="border-2 px-2 py-1 rounded-lg w-32 bg-gray-400 text-2xl text-center">
-          320000
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ShipFeeInput = ({
-  order,
-}: {
-  order: Order;
-}) => {
+const ShopOwnerNameInput = ({ order }: { order: Order }) => {
+  const [isEdit, setIsEdit] = useState(false);
   const _updateOrder = async (field: string, newValue: any) => {
     const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
@@ -348,24 +152,45 @@ const ShipFeeInput = ({
     });
   };
   return (
-    <div className="relative w-fit">
-      <div className="absolute -top-5 left-1 text-sm">Ship Fee</div>
-      <input
-        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
-        type="number"
-        value={order.shipFee}
-        name="shipFee"
-        onChange={(e) => _updateOrder(e.target.name, e.target.value)}
-      />
+    <div className="relative">
+      {isEdit ? (
+        <>
+        <input
+          className="h-6 border-2 w-20 text-center rounded-md hover:border-gray-600"
+          type="text"
+          value={order.shopOwnerName}
+          name="shopOwnerName"
+          onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+        />
+        <button
+            className="absolute top-0 -right-5"
+            onClick={() => {
+              setIsEdit(!isEdit);
+            }}
+          >
+            <CheckIcon className="w-4 h-4" />
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="h-6 border-2 w-20 text-center border-white">{order.shopOwnerName}</div>
+          <button
+            className="absolute top-1 -right-5"
+            onClick={() => {
+              setIsEdit(!isEdit);
+            }}
+          >
+            <PencilIcon className="w-3 h-3" />
+          </button>
+        </>
+      )}
     </div>
   );
 };
 
-const DiscountInput = ({
-  order,
-}: {
-  order: Order;
-}) => {
+const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
+  const [isEdit, setIsEdit] = useState(false);
+
   const _updateOrder = async (field: string, newValue: any) => {
     const docRef = doc(db, "orders", order.id);
     await updateDoc(docRef, {
@@ -373,15 +198,40 @@ const DiscountInput = ({
     });
   };
   return (
-    <div className="relative w-fit">
-      <div className="absolute -top-5 left-1 text-sm">Discount</div>
-      <input
-        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
-        type="number"
-        value={order.discount}
-        name="discount"
-        onChange={(e) => _updateOrder(e.target.name, e.target.value)}
-      />
+    <div className="flex justify-between items-center">
+      {isEdit ? (
+        <>
+          <input
+            className="border-2 px-1 rounded-md w-28 hover:border-gray-600"
+            type="text"
+            value={order.shopOwnerMomo}
+            name="shopOwnerMomo"
+            onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+          />
+          <button
+            className=""
+            onClick={() => {
+              setIsEdit(!isEdit);
+            }}
+          >
+            <CheckIcon className="w-4 h-4" />
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="border-2 px-1 rounded-md w-28 border-white">
+            {order.shopOwnerMomo}
+          </div>
+          <button
+            className=""
+            onClick={() => {
+              setIsEdit(!isEdit);
+            }}
+          >
+            <PencilIcon className="w-3 h-3" />
+          </button>
+        </>
+      )}
     </div>
   );
 };
