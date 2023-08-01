@@ -5,6 +5,8 @@ import { useCheckClickOutside } from "@/hooks";
 
 import { DrinkTableRow, Order, Menu } from "@/types";
 
+import { PlusIcon } from "@heroicons/react/24/outline";
+
 import {
   Table,
   CalculateTotal,
@@ -65,23 +67,23 @@ const OrderPage = ({ query }: { query: any }) => {
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="flex flex-col mt-12 h-fit w-full lg:flex lg:flex-row lg:gap-5">
         <div className="flex flex-col lg:grow">
-        <div className="mb-10 flex w-full gap-4 text-sm">
-          <ShopOwner order={order} />
-          <TranferInfo order={order} />
+          <div className="mb-10 flex w-full gap-4 text-sm">
+            <ShopOwner order={order} />
+            <TranferInfo order={order} />
+          </div>
+          <div className="mb-10">
+            <SharedLink orderId={order.id} />
+          </div>
+          <div className="mb-5">
+            <Table rows={rows} order={order} />
+          </div>
+          <div className="mb-10">
+            <CalculateTotal order={order} rows={rows} />
+          </div>
         </div>
-        <div className="mb-10">
-          <SharedLink orderId={order.id} />
-        </div>
-        <div className="mb-5">
-          <Table rows={rows} order={order} />
-        </div>
-        <div className="mb-10">
-          <CalculateTotal order={order} rows={rows} />
-        </div>
-        </div>
-        
+
         <div className="flex flex-col gap-3 lg:w-2/5">
-          <MenuDropdown order={order} />
+          <MenusDropdown order={order} />
           <iframe
             src={order.selectedMenuLink}
             className="w-full h-screen border-2 p-5 rounded-xl"
@@ -99,31 +101,35 @@ OrderPage.getInitialProps = async (context: any) => {
   return { query };
 };
 
-const MenuDropdown = ({ order }: { order: Order }) => {
+const MenusDropdown = ({ order }: { order: Order }) => {
   const [isDropdown, setIsDropdown] = useState(false);
+
+  const dropdownRef = useCheckClickOutside(() => setIsDropdown(false));
 
   return (
     <div className="relative">
       <button
         type="button"
-        className="w-fit bg-gray-200 px-3 py-2 rounded-lg"
+        className="w-fit bg-gray-200 px-3 py-2 rounded-lg drop-shadow-md"
         onClick={() => setIsDropdown(true)}
       >
         {order.selectedMenuName}
       </button>
       {isDropdown ? (
-        <div className="absolute top-12 w-full">
-          <Menus onClose={() => setIsDropdown(false)} />
+        <div
+          ref={dropdownRef}
+          className="absolute top-12 flex flex-col gap-2 bg-gray-200 rounded-lg p-2"
+        >
+          <AddMenuForm />
+          <Menus />
         </div>
       ) : null}
     </div>
   );
 };
 
-const Menus = ({ onClose }: { onClose: () => void }) => {
+const Menus = () => {
   const [menus, setMenus] = useState<Menu[]>([]);
-
-  const dropdownRef = useCheckClickOutside(() => onClose());
 
   useEffect(() => {
     _fetchMenus();
@@ -138,20 +144,47 @@ const Menus = ({ onClose }: { onClose: () => void }) => {
     });
   };
 
+  const _selectMenu = () => {
+    //
+  };
+
   return (
-    <div
-      ref={dropdownRef}
-      className="flex flex-wrap gap-2 p-2 border-2 bg-gray-200 rounded-lg w-full"
-    >
+    <div className="flex flex-wrap gap-2">
       {menus.map((menu: Menu) => (
         <button
-          className="px-3 py-1 border-2 rounded-lg bg-white hover:bg-gray-400"
+          className="px-3 py-1 rounded-lg bg-white hover:bg-gray-400"
           type="button"
           key={menu.id}
+          onClick={_selectMenu}
         >
           {menu.name}
         </button>
       ))}
+    </div>
+  );
+};
+
+const AddMenuForm = () => {
+  return (
+    <div className="flex gap-2 items-center">
+      <div>Name:</div>
+      <input
+        className="px-1 rounded-md border-2 hover:border-gray-600 w-28"
+        type="text"
+        placeholder="menu name"
+      />
+      <div>Link:</div>
+      <input
+        className="px-1 rounded-md border-2 hover:border-gray-600 w-56"
+        type="text"
+        placeholder="paste link here"
+      />
+      <button
+        type="button"
+        className="p-1 bg-white rounded-md hover:bg-gray-400"
+      >
+        <PlusIcon className="w-4 h-4" />
+      </button>
     </div>
   );
 };
