@@ -63,7 +63,8 @@ const OrderPage = ({ query }: { query: any }) => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="flex flex-col mt-12 h-screen w-full">
+      <div className="flex flex-col mt-12 h-fit w-full lg:flex lg:flex-row lg:gap-5">
+        <div className="flex flex-col lg:grow">
         <div className="mb-10 flex w-full gap-4 text-sm">
           <ShopOwner order={order} />
           <TranferInfo order={order} />
@@ -77,7 +78,9 @@ const OrderPage = ({ query }: { query: any }) => {
         <div className="mb-10">
           <CalculateTotal order={order} rows={rows} />
         </div>
-        <div className="flex flex-col gap-3">
+        </div>
+        
+        <div className="flex flex-col gap-3 lg:w-2/5">
           <MenuDropdown order={order} />
           <iframe
             src={order.selectedMenuLink}
