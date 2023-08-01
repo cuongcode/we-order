@@ -26,7 +26,11 @@ const Main = (props: IMainProps) => (
       </div>
     </div>
 
-<img className="w-7/12 m-auto mt-12" src={LogoImages.title_logo.src} alt="title-logo" />
+    <img
+      className="w-7/12 m-auto mt-12"
+      src={LogoImages.title_logo.src}
+      alt="title-logo"
+    />
 
     <main>{props.children}</main>
   </div>
