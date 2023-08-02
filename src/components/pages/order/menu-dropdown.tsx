@@ -18,7 +18,7 @@ import { db } from "@/firebase";
 export const MenusDropdown = ({ order }: { order: Order }) => {
   const [isDropdown, setIsDropdown] = useState(false);
 
-  const dropdownRef = useCheckClickOutside(() => setIsDropdown(false));
+  const menuDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
 
   return (
     <div className="relative">
@@ -31,7 +31,7 @@ export const MenusDropdown = ({ order }: { order: Order }) => {
       </button>
       {isDropdown ? (
         <div
-          ref={dropdownRef}
+          ref={menuDropdownRef}
           className="absolute top-12 flex flex-col gap-2 bg-gray-200 rounded-lg p-2 w-full"
         >
           <AddMenuForm />
