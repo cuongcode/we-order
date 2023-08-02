@@ -5,7 +5,6 @@ export interface DrinkTableRow {
 	name: string,
 	drink: string,
 	size: string,
-	count: number,
 	price: number,
 	sugar: string,
 	ice: string,
