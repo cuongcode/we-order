@@ -4,16 +4,25 @@ import { DrinkTableRow, Order } from "@/types";
 
 import { numberArraySum } from "@/utils/base";
 
+import { useCheckClickOutside } from "@/hooks";
+
 import {
   doc,
   updateDoc,
   addDoc,
   collection,
   serverTimestamp,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase";
 
-import { PlusIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import {
+  PlusIcon,
+  QuestionMarkCircleIcon,
+  TrashIcon,
+  CheckIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 export const Table = ({
   rows,
@@ -44,7 +53,7 @@ const Row = ({
   row: DrinkTableRow;
   order: Order;
 }) => {
-  const [transfer, setTransfer] = useState('');
+  const [transfer, setTransfer] = useState("");
 
   const counts = rows.map((row: DrinkTableRow) => Number(row.count));
   const quanity = numberArraySum(counts);
@@ -57,7 +66,6 @@ const Row = ({
   // const currentShopOwnerPay =
   // total + Number(order.shipFee) - Number(order.discount);
 
-
   useEffect(() => {
     setTransfer(currentTransfer.toLocaleString("en-US"));
   }, [currentTransfer]);
@@ -68,6 +76,7 @@ const Row = ({
       [field]: newValue,
     });
   };
+
   return (
     <div key={row.id} className="flex gap-2 items-center w-full text-xs">
       <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
@@ -134,7 +143,7 @@ const Row = ({
           onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
         />
       </div>
-      <div className="w-44 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="w-36 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
@@ -145,15 +154,16 @@ const Row = ({
         />
       </div>
       <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        Thuong
+        --
       </div>
-      <div className="w-20  flex items-center gap-1">
+      <div className="w-24  flex items-center gap-1">
         <div className="w-14 p-1 bg-gray-400 drop-shadow-md rounded-md">
           {transfer}
         </div>
         <div className="cursor-pointer">
           <QuestionMarkCircleIcon className="w-5 h-5" />
         </div>
+        <DeleteRowButton order={order} row={row} />
       </div>
     </div>
   );
@@ -169,9 +179,9 @@ const TableHeader = () => {
       <div className="w-9">Size</div>
       <div className="w-12">Sugar</div>
       <div className="w-12">Ice</div>
-      <div className="w-44">Topping</div>
+      <div className="w-36">Notes</div>
       <div className="w-14">Offer by</div>
-      <div className="w-20">Transfer</div>
+      <div className="w-24">Transfer</div>
     </div>
   );
 };
@@ -201,5 +211,47 @@ const AddRowButton = ({ orderId }: { orderId: string }) => {
     >
       <PlusIcon className="w-5 h-5 m-auto" />
     </button>
+  );
+};
+
+const DeleteRowButton = ({
+  order,
+  row,
+}: {
+  order: Order;
+  row: DrinkTableRow;
+}) => {
+  const [isDropdown, setIsDropdown] = useState(false);
+
+  const deleteRowButtonRef = useCheckClickOutside(() => setIsDropdown(false));
+
+  const _deleteRow = async () => {
+    const docRef = doc(db, "orders", order.id, "rows", row.id);
+    await deleteDoc(docRef);
+  };
+
+  return (
+    <div ref={deleteRowButtonRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setIsDropdown(true)}
+        className="p-1 bg-gray-400 rounded-md hover:bg-gray-500"
+      >
+        <TrashIcon className="w-3 h-3" />
+      </button>
+      {isDropdown ? (
+        <div className="z-10 absolute top-6 -left-7 flex gap-1 bg-white p-1 rounded-md">
+          <button className="p-1 rounded-md bg-gray-200" onClick={_deleteRow}>
+            <CheckIcon className="w-3 h-3" />
+          </button>
+          <button
+            className="p-1 rounded-md bg-gray-200"
+            onClick={() => setIsDropdown(false)}
+          >
+            <XMarkIcon className="w-3 h-3" />
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 };
