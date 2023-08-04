@@ -19,7 +19,9 @@ export const CalculateTotal = ({
   const [total, setTotal] = useState('');
   const [shopOwnerPay, setShopOwnerPay] = useState('');
 
+  // use memo
   const prices = rows.map((row: DrinkTableRow) => Number(row.price));
+  // use memo
   const currentTotal = numberArraySum(prices);
   const currentShopOwnerPay =
     currentTotal + Number(order.shipFee) - Number(order.discount);
@@ -55,6 +57,7 @@ export const CalculateTotal = ({
 const ShipFeeInput = ({ order }: { order: Order }) => {
   const _updateOrder = async (field: string, newValue: any) => {
     const docRef = doc(db, "orders", order.id);
+    // ux loading
     await updateDoc(docRef, {
       [field]: newValue,
     });
@@ -67,6 +70,7 @@ const ShipFeeInput = ({ order }: { order: Order }) => {
         type="number"
         value={order.shipFee}
         name="shipFee"
+        // {name, value} = e.target
         onChange={(e) => _updateOrder(e.target.name, e.target.value)}
       />
     </div>
