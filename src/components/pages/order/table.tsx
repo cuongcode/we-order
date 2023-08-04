@@ -84,10 +84,11 @@ const Row = ({
     setTransfer(currentTransfer.toLocaleString("en-US"));
   }, [currentTransfer]);
 
-  const _updateRow = async (rowId: string, field: string, newValue: any) => {
-    const docRef = doc(db, "orders", order.id, "rows", rowId);
+  const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = e.target
+    const docRef = doc(db, "orders", order.id, "rows", row.id);
     await updateDoc(docRef, {
-      [field]: newValue,
+      [name]: value,
     });
   };
 
@@ -101,7 +102,7 @@ const Row = ({
           type="text"
           value={row.name}
           name="name"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
       <div className="grow p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
@@ -111,7 +112,7 @@ const Row = ({
           placeholder="Type Here"
           value={row.drink.toUpperCase()}
           name="drink"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
       <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
@@ -120,13 +121,13 @@ const Row = ({
           type="number"
           value={row.price}
           name="price"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
       <div className="z-30 w-8 p-1 bg-white border-2 drop-shadow-md rounded-md">
         <OptionsDropdown row={row} order={order} options={SIZES} field="size" />
       </div>
-      <div className="z-20 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="z-20 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md">
         <OptionsDropdown
           row={row}
           order={order}
@@ -134,7 +135,7 @@ const Row = ({
           field="sugar"
         />
       </div>
-      <div className="z-10 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="z-10 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md">
         <OptionsDropdown
           row={row}
           order={order}
@@ -149,7 +150,7 @@ const Row = ({
           placeholder="No topping"
           value={row.topping}
           name="topping"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
       <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
