@@ -1,1 +1,1 @@
-export * from './use-check-click-outside'
+export * from './use-check-click-outside';

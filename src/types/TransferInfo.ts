@@ -1,6 +1,6 @@
-import { BankInfo } from "./BankInfo"
+import type { BankInfo } from './BankInfo';
 
 export interface TranferInfo {
-	momo: string | null,
-	bank: BankInfo[] | null
+  momo: string | null;
+  bank: BankInfo[] | null;
 }

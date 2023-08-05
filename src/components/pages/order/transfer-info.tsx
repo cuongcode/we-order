@@ -1,18 +1,16 @@
-import { useState } from "react";
+import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { doc, updateDoc } from 'firebase/firestore';
+import { useState } from 'react';
 
-import { Order } from "@/types";
-
-import { PencilIcon, CheckIcon } from "@heroicons/react/24/outline";
-
-import { db } from "@/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { db } from '@/firebase';
+import type { Order } from '@/types';
 
 export const TranferInfo = ({ order }: { order: Order }) => {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-3xl border-2 bg-white w-56 h-40 py-3 px-3 drop-shadow-md">
+    <div className="flex h-40 w-56 flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
-      <div className="flex flex-col gap-2 items-start w-full">
-        <div className="flex w-full items-center h-6">
+      <div className="flex w-full flex-col items-start gap-2">
+        <div className="flex h-6 w-full items-center">
           <div className="w-11">Momo</div>
           <div className="mr-2">:</div>
           <div className="grow">
@@ -32,17 +30,17 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
   const [isEdit, setIsEdit] = useState(false);
 
   const _updateOrder = async (field: string, newValue: any) => {
-    const docRef = doc(db, "orders", order.id);
+    const docRef = doc(db, 'orders', order.id);
     await updateDoc(docRef, {
       [field]: newValue,
     });
   };
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex items-center justify-between">
       {isEdit ? (
         <>
           <input
-            className="border-2 px-1 rounded-md w-28 hover:border-gray-600"
+            className="w-28 rounded-md border-2 px-1 hover:border-gray-600"
             type="text"
             value={order.shopOwnerMomo}
             name="shopOwnerMomo"
@@ -54,12 +52,12 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
               setIsEdit(!isEdit);
             }}
           >
-            <CheckIcon className="w-4 h-4" />
+            <CheckIcon className="h-4 w-4" />
           </button>
         </>
       ) : (
         <>
-          <div className="border-2 px-1 rounded-md w-28 border-white">
+          <div className="w-28 rounded-md border-2 border-white px-1">
             {order.shopOwnerMomo}
           </div>
           <button
@@ -68,7 +66,7 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilIcon className="w-3 h-3" />
+            <PencilIcon className="h-3 w-3" />
           </button>
         </>
       )}
