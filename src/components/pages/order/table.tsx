@@ -124,12 +124,13 @@ const Row = ({
           name="drink"
           onChange={_updateRow}
         />
+        {/* <DrinkInput order={order} row={row} /> */}
       </div>
       <div className="w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <input
           className="w-full"
           type="number"
-          value={row.price}
+          value={row.price !== 0 ? row.price : ''}
           name="price"
           onChange={_updateRow}
         />
@@ -415,3 +416,50 @@ const OfferByDropdown = ({
     </div>
   );
 };
+
+// const DrinkInput = ({ order, row }: { order: Order; row: DrinkTableRow }) => {
+//   const [isEdit, setIsEdit] = useState(false);
+//   const [drink, setDrink] = useState('');
+
+//   const _onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { value } = e.target;
+//     setDrink(value);
+//   };
+//   const _updateRow = async () => {
+//     const docRef = doc(db, 'orders', order.id, 'rows', row.id);
+//     await updateDoc(docRef, {
+//       drink,
+//     });
+//     setIsEdit(false);
+//   };
+
+//   return (
+//     <div className="relative">
+//       {isEdit || row.drink === '' ? (
+//         <>
+//           <input
+//             className="w-full"
+//             type="text"
+//             placeholder="Type Here"
+//             value={drink.toUpperCase()}
+//             name="drink"
+//             onChange={_onChange}
+//           />
+//           <button className="absolute right-0 top-0" onClick={_updateRow}>
+//             <CheckIcon className="h-4 w-4" />
+//           </button>
+//         </>
+//       ) : (
+//         <>
+//           <div className="w-full">{row.drink.toUpperCase()}</div>
+//           <button
+//             className="absolute right-0 top-0"
+//             onClick={() => setIsEdit(!isEdit)}
+//           >
+//             <PencilSquareIcon className="h-4 w-4" />
+//           </button>
+//         </>
+//       )}
+//     </div>
+//   );
+// };
