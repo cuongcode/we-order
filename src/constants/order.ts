@@ -1,4 +1,4 @@
-import { Menu } from '@/types'
+import type { Menu } from '@/types';
 
 export const NEW_ORDER = {
   id: '',
@@ -9,13 +9,13 @@ export const NEW_ORDER = {
   // wanted: WantedInfo,
   shopOwnerId: '',
   selectedMenuId: '',
-}
+};
 
-export const NEW_MENU:Menu = {
+export const NEW_MENU: Menu = {
   id: '',
-	name: '',
-	link: '',
-}
+  name: '',
+  link: '',
+};
 
 // menus: [
 //   {

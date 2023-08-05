@@ -1,7 +1,7 @@
-import { DrinkTableRow } from "./DrinkTableRow";
+import type { DrinkTableRow } from './DrinkTableRow';
 
 export interface DrinkTableData {
-	rows: DrinkTableRow[],
-	shipFee: number,
-	discount: number,
+  rows: DrinkTableRow[];
+  shipFee: number;
+  discount: number;
 }

@@ -28,7 +28,7 @@
         "plugin:tailwindcss/recommended",
         "airbnb",
         "airbnb-typescript",
-        "airbnb/hooks",
+        // "airbnb/hooks",
         "next/core-web-vitals",
         "plugin:prettier/recommended"
       ],
@@ -71,11 +71,11 @@
         "unused-imports/no-unused-vars": [
           "error",
           { "argsIgnorePattern": "^_" }
-        ],
-        "jsx-a11y/click-events-have-key-events": "off",
-        "jsx-a11y/no-noninteractive-element-interactions": "off",
-        "react/no-array-index-key": "off",
-        "consistent-return": "off"
+        ]
+        // "jsx-a11y/click-events-have-key-events": "off",
+        // "jsx-a11y/no-noninteractive-element-interactions": "off",
+        // "react/no-array-index-key": "off",
+        // "consistent-return": "off"
       }
     },
     // Configuration for testing

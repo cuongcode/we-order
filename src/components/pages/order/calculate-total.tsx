@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
+import { Bars2Icon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { doc, updateDoc } from 'firebase/firestore';
+import { useEffect, useState } from 'react';
 
-import { Order, DrinkTableRow } from "@/types";
-
-import { numberArraySum } from "@/utils/base";
-
-import { PlusIcon, MinusIcon, Bars2Icon } from "@heroicons/react/24/outline";
-
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebase";
+import { db } from '@/firebase';
+import type { DrinkTableRow, Order } from '@/types';
+import { numberArraySum } from '@/utils/base';
 
 export const CalculateTotal = ({
   order,
@@ -27,26 +24,26 @@ export const CalculateTotal = ({
     currentTotal + Number(order.shipFee) - Number(order.discount);
 
   useEffect(() => {
-    setTotal(currentTotal.toLocaleString("en-US"));
-    setShopOwnerPay(currentShopOwnerPay.toLocaleString("en-US"));
+    setTotal(currentTotal.toLocaleString('en-US'));
+    setShopOwnerPay(currentShopOwnerPay.toLocaleString('en-US'));
   }, [currentTotal, currentShopOwnerPay]);
 
   return (
-    <div className="flex items-center bg-gray-200 px-3 pt-9 pb-5 rounded-xl">
+    <div className="flex items-center rounded-xl bg-gray-200 px-3 pb-5 pt-9">
       <div className="relative w-fit">
         <div className="absolute -top-5 left-1 text-sm">Total</div>
-        <div className="border-2 px-2 py-1 rounded-lg w-24 bg-gray-400">
+        <div className="w-24 rounded-lg border-2 bg-gray-400 px-2 py-1">
           {total}
         </div>
       </div>
-      <PlusIcon className="w-5 h-5" />
+      <PlusIcon className="h-5 w-5" />
       <ShipFeeInput order={order} />
-      <MinusIcon className="w-5 h-5" />
+      <MinusIcon className="h-5 w-5" />
       <DiscountInput order={order} />
-      <Bars2Icon className="w-5 h-5" />
-      <div className="relative w-fit ml-4">
+      <Bars2Icon className="h-5 w-5" />
+      <div className="relative ml-4 w-fit">
         <div className="absolute -top-5 left-1 text-sm">Shop Owner Pay</div>
-        <div className="border-2 px-2 py-1 rounded-lg w-32 bg-gray-400 text-2xl text-center">
+        <div className="w-32 rounded-lg border-2 bg-gray-400 px-2 py-1 text-center text-2xl">
           {shopOwnerPay}
         </div>
       </div>
@@ -56,7 +53,7 @@ export const CalculateTotal = ({
 
 const ShipFeeInput = ({ order }: { order: Order }) => {
   const _updateOrder = async (field: string, newValue: any) => {
-    const docRef = doc(db, "orders", order.id);
+    const docRef = doc(db, 'orders', order.id);
     // ux loading
     await updateDoc(docRef, {
       [field]: newValue,
@@ -66,7 +63,7 @@ const ShipFeeInput = ({ order }: { order: Order }) => {
     <div className="relative w-fit">
       <div className="absolute -top-5 left-1 text-sm">Ship Fee</div>
       <input
-        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
+        className="w-24 rounded-lg border-2 px-2 py-1 hover:border-gray-600"
         type="number"
         value={order.shipFee}
         name="shipFee"
@@ -79,7 +76,7 @@ const ShipFeeInput = ({ order }: { order: Order }) => {
 
 const DiscountInput = ({ order }: { order: Order }) => {
   const _updateOrder = async (field: string, newValue: any) => {
-    const docRef = doc(db, "orders", order.id);
+    const docRef = doc(db, 'orders', order.id);
     await updateDoc(docRef, {
       [field]: newValue,
     });
@@ -88,7 +85,7 @@ const DiscountInput = ({ order }: { order: Order }) => {
     <div className="relative w-fit">
       <div className="absolute -top-5 left-1 text-sm">Discount</div>
       <input
-        className="border-2 px-2 py-1 rounded-lg w-24 hover:border-gray-600"
+        className="w-24 rounded-lg border-2 px-2 py-1 hover:border-gray-600"
         type="number"
         value={order.discount}
         name="discount"

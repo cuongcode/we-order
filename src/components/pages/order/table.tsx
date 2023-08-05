@@ -1,30 +1,25 @@
-import { useState, useEffect } from "react";
-
-import { range } from "lodash";
-
-import clsx from "clsx";
-
-import { DrinkTableRow, Order } from "@/types";
-
-import { useCheckClickOutside } from "@/hooks";
-
 import {
-  doc,
-  updateDoc,
-  addDoc,
-  collection,
-  serverTimestamp,
-  deleteDoc,
-} from "firebase/firestore";
-import { db } from "@/firebase";
-
-import {
+  CheckIcon,
   PlusIcon,
   QuestionMarkCircleIcon,
   TrashIcon,
-  CheckIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
+import clsx from 'clsx';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from 'firebase/firestore';
+import { range } from 'lodash';
+import { useEffect, useState } from 'react';
+
+import { db } from '@/firebase';
+import { useCheckClickOutside } from '@/hooks';
+import type { DrinkTableRow, Order } from '@/types';
 
 export const Table = ({
   rows,
@@ -36,9 +31,9 @@ export const Table = ({
   const numberArray = range(1, rows.length + 1, 1);
 
   return (
-    <div className="p-3 border-2 rounded-xl flex flex-col gap-3 bg-gray-200">
+    <div className="flex flex-col gap-3 rounded-xl border-2 bg-gray-200 p-3">
       <TableHeader />
-      <div className="flex flex-col gap-2 w-full">
+      <div className="flex w-full flex-col gap-2">
         {rows.map((row: DrinkTableRow, index: number) => (
           <Row
             key={row.id}
@@ -65,10 +60,10 @@ const Row = ({
   order: Order;
   rowIndex: any;
 }) => {
-  const [transfer, setTransfer] = useState("");
+  const [transfer, setTransfer] = useState('');
 
-  const SIZES = ["S", "M", "L", "XL"];
-  const PERCENTAGE = ["100%", "80%", "50%", "20%", "0%"];
+  const SIZES = ['S', 'M', 'L', 'XL'];
+  const PERCENTAGE = ['100%', '80%', '50%', '20%', '0%'];
 
   const quanity = rows.length;
   const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
@@ -81,22 +76,22 @@ const Row = ({
   // total + Number(order.shipFee) - Number(order.discount);
 
   useEffect(() => {
-    setTransfer(currentTransfer.toLocaleString("en-US"));
+    setTransfer(currentTransfer.toLocaleString('en-US'));
   }, [currentTransfer]);
 
   const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const docRef = doc(db, "orders", order.id, "rows", row.id);
+    const docRef = doc(db, 'orders', order.id, 'rows', row.id);
     await updateDoc(docRef, {
       [name]: value,
     });
   };
 
   return (
-    <div key={row.id} className="flex gap-2 items-center w-full text-xs">
+    <div key={row.id} className="flex w-full items-center gap-2 text-xs">
       <div className="w-4">{rowIndex}</div>
 
-      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
@@ -105,7 +100,7 @@ const Row = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="grow p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="grow rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
@@ -115,7 +110,7 @@ const Row = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <input
           className="w-full"
           type="number"
@@ -124,10 +119,10 @@ const Row = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="z-30 w-8 p-1 bg-white border-2 drop-shadow-md rounded-md">
+      <div className="z-30 w-8 rounded-md border-2 bg-white p-1 drop-shadow-md">
         <OptionsDropdown row={row} order={order} options={SIZES} field="size" />
       </div>
-      <div className="z-20 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md">
+      <div className="z-20 w-11 rounded-md border-2 bg-white p-1 drop-shadow-md">
         <OptionsDropdown
           row={row}
           order={order}
@@ -135,7 +130,7 @@ const Row = ({
           field="sugar"
         />
       </div>
-      <div className="z-10 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md">
+      <div className="z-10 w-11 rounded-md border-2 bg-white p-1 drop-shadow-md">
         <OptionsDropdown
           row={row}
           order={order}
@@ -143,7 +138,7 @@ const Row = ({
           field="ice"
         />
       </div>
-      <div className="w-36 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="w-36 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
@@ -153,15 +148,15 @@ const Row = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="z-10 w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="z-10 w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <OfferByDropdown rows={rows} />
       </div>
-      <div className="w-24  flex items-center gap-1">
-        <div className="w-14 p-1 bg-gray-400 drop-shadow-md rounded-md">
+      <div className="flex  w-24 items-center gap-1">
+        <div className="w-14 rounded-md bg-gray-400 p-1 drop-shadow-md">
           {transfer}
         </div>
         <div className="cursor-pointer">
-          <QuestionMarkCircleIcon className="w-5 h-5" />
+          <QuestionMarkCircleIcon className="h-5 w-5" />
         </div>
         <DeleteRowButton order={order} row={row} />
       </div>
@@ -171,8 +166,8 @@ const Row = ({
 
 const TableHeader = () => {
   return (
-    <div className="flex gap-2 items-center w-full font-semibold text-xs">
-      <div className="w-4"></div>
+    <div className="flex w-full items-center gap-2 text-xs font-semibold">
+      <div className="w-4" />
       <div className="w-14">Name</div>
       <div className="grow">Drink</div>
       <div className="w-14 ">Price</div>
@@ -190,25 +185,25 @@ const AddRowButton = ({ orderId }: { orderId: string }) => {
   const _addRow = async () => {
     const newRow = {
       timestamp: serverTimestamp(),
-      name: "",
-      drink: "",
-      size: "S",
+      name: '',
+      drink: '',
+      size: 'S',
       price: 0,
-      sugar: "100%",
-      ice: "100%",
-      topping: "",
+      sugar: '100%',
+      ice: '100%',
+      topping: '',
       heart: 0,
       isTick: false,
     };
-    await addDoc(collection(db, "orders", orderId, "rows"), newRow);
+    await addDoc(collection(db, 'orders', orderId, 'rows'), newRow);
   };
   return (
     <button
-      className="w-full bg-white drop-shadow-sm px-2 py-1 rounded-lg hover:drop-shadow-md "
+      className="w-full rounded-lg bg-white px-2 py-1 drop-shadow-sm hover:drop-shadow-md "
       type="button"
       onClick={_addRow}
     >
-      <PlusIcon className="w-5 h-5 m-auto" />
+      <PlusIcon className="m-auto h-5 w-5" />
     </button>
   );
 };
@@ -225,7 +220,7 @@ const DeleteRowButton = ({
   const deleteRowButtonRef = useCheckClickOutside(() => setIsDropdown(false));
 
   const _deleteRow = async () => {
-    const docRef = doc(db, "orders", order.id, "rows", row.id);
+    const docRef = doc(db, 'orders', order.id, 'rows', row.id);
     await deleteDoc(docRef);
   };
 
@@ -234,20 +229,20 @@ const DeleteRowButton = ({
       <button
         type="button"
         onClick={() => setIsDropdown(true)}
-        className="p-1 bg-gray-400 rounded-md hover:bg-gray-500"
+        className="rounded-md bg-gray-400 p-1 hover:bg-gray-500"
       >
-        <TrashIcon className="w-3 h-3" />
+        <TrashIcon className="h-3 w-3" />
       </button>
       {isDropdown ? (
-        <div className="z-10 absolute top-6 -left-7 flex gap-1 bg-white p-1 rounded-md">
-          <button className="p-1 rounded-md bg-gray-200" onClick={_deleteRow}>
-            <CheckIcon className="w-3 h-3" />
+        <div className="absolute -left-7 top-6 z-10 flex gap-1 rounded-md bg-white p-1">
+          <button className="rounded-md bg-gray-200 p-1" onClick={_deleteRow}>
+            <CheckIcon className="h-3 w-3" />
           </button>
           <button
-            className="p-1 rounded-md bg-gray-200"
+            className="rounded-md bg-gray-200 p-1"
             onClick={() => setIsDropdown(false)}
           >
-            <XMarkIcon className="w-3 h-3" />
+            <XMarkIcon className="h-3 w-3" />
           </button>
         </div>
       ) : null}
@@ -268,12 +263,12 @@ const OptionsDropdown = ({
 }) => {
   const [isDropdown, setIsDropdown] = useState(false);
 
-  const showOptions = options.filter((option: string) => option != row[field]);
+  const showOptions = options.filter((option: string) => option !== row[field]);
 
   const optionDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
 
   const _updateRow = async (newValue: string) => {
-    const docRef = doc(db, "orders", order.id, "rows", row.id);
+    const docRef = doc(db, 'orders', order.id, 'rows', row.id);
     await updateDoc(docRef, {
       [field]: newValue,
     });
@@ -292,19 +287,20 @@ const OptionsDropdown = ({
       {isDropdown ? (
         <div
           className={clsx({
-            "absolute flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg":
+            'absolute flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg':
               true,
-            "-top-1 left-10": field === "sugar" || field === "ice",
-            "-top-1 left-7": field === "size",
+            '-top-1 left-10': field === 'sugar' || field === 'ice',
+            '-top-1 left-7': field === 'size',
           })}
         >
           {showOptions.map((option: string) => (
             <button
+              key={option}
               type="button"
               className={clsx({
-                "bg-white rounded-md text-center hover:bg-gray-500": true,
-                "w-9 h-6": field === "sugar" || field === "ice",
-                "w-6 h-6": field === "size",
+                'bg-white rounded-md text-center hover:bg-gray-500': true,
+                'w-9 h-6': field === 'sugar' || field === 'ice',
+                'w-6 h-6': field === 'size',
               })}
               onClick={() => _updateRow(option)}
             >
@@ -319,10 +315,10 @@ const OptionsDropdown = ({
 
 const OfferByDropdown = ({ rows }: { rows: DrinkTableRow[] }) => {
   const [isDropdown, setIsDropdown] = useState(false);
-  const [offerBy, setOfferBy] = useState<string>("--");
+  const [offerBy, setOfferBy] = useState<string>('--');
 
   const showOptions = [
-    "--",
+    '--',
     ...rows.map((row: DrinkTableRow) => row.name),
   ].filter((option: string) => option !== offerBy);
 
@@ -338,11 +334,12 @@ const OfferByDropdown = ({ rows }: { rows: DrinkTableRow[] }) => {
         {offerBy}
       </button>
       {isDropdown ? (
-        <div className="absolute -top-1 left-14 flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg">
+        <div className="absolute -top-1 left-14 flex flex-col items-center gap-1 rounded-lg bg-gray-400 p-1">
           {showOptions.map((option: string) => (
             <button
+              key={option}
               type="button"
-              className="bg-white w-14 h-6 rounded-md text-center hover:bg-gray-500"
+              className="h-6 w-14 rounded-md bg-white text-center hover:bg-gray-500"
               onClick={() => setOfferBy(option)}
             >
               {option}
