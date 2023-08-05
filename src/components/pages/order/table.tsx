@@ -84,10 +84,11 @@ const Row = ({
     setTransfer(currentTransfer.toLocaleString("en-US"));
   }, [currentTransfer]);
 
-  const _updateRow = async (rowId: string, field: string, newValue: any) => {
-    const docRef = doc(db, "orders", order.id, "rows", rowId);
+  const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const docRef = doc(db, "orders", order.id, "rows", row.id);
     await updateDoc(docRef, {
-      [field]: newValue,
+      [name]: value,
     });
   };
 
@@ -101,7 +102,7 @@ const Row = ({
           type="text"
           value={row.name}
           name="name"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
       <div className="grow p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
@@ -111,7 +112,7 @@ const Row = ({
           placeholder="Type Here"
           value={row.drink.toUpperCase()}
           name="drink"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
       <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
@@ -120,13 +121,13 @@ const Row = ({
           type="number"
           value={row.price}
           name="price"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
       <div className="z-30 w-8 p-1 bg-white border-2 drop-shadow-md rounded-md">
         <OptionsDropdown row={row} order={order} options={SIZES} field="size" />
       </div>
-      <div className="z-20 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="z-20 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md">
         <OptionsDropdown
           row={row}
           order={order}
@@ -134,7 +135,7 @@ const Row = ({
           field="sugar"
         />
       </div>
-      <div className="z-10 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+      <div className="z-10 w-11 p-1 bg-white border-2 drop-shadow-md rounded-md">
         <OptionsDropdown
           row={row}
           order={order}
@@ -149,11 +150,11 @@ const Row = ({
           placeholder="No topping"
           value={row.topping}
           name="topping"
-          onChange={(e) => _updateRow(row.id, e.target.name, e.target.value)}
+          onChange={_updateRow}
         />
       </div>
-      <div className="w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
-        --
+      <div className="z-10 w-14 p-1 bg-white border-2 drop-shadow-md rounded-md hover:border-gray-600">
+        <OfferByDropdown rows={rows} />
       </div>
       <div className="w-24  flex items-center gap-1">
         <div className="w-14 p-1 bg-gray-400 drop-shadow-md rounded-md">
@@ -283,7 +284,7 @@ const OptionsDropdown = ({
     <div ref={optionDropdownRef} className="relative">
       <button
         type="button"
-        className="text-cente w-full"
+        className="w-full"
         onClick={() => setIsDropdown(true)}
       >
         {row[field]}
@@ -293,8 +294,8 @@ const OptionsDropdown = ({
           className={clsx({
             "absolute flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg":
               true,
-            "-top-1 left-12": field === "sugar" || field === "ice",
-            "-top-1 left-9": field === "size",
+            "-top-1 left-10": field === "sugar" || field === "ice",
+            "-top-1 left-7": field === "size",
           })}
         >
           {showOptions.map((option: string) => (
@@ -306,6 +307,43 @@ const OptionsDropdown = ({
                 "w-6 h-6": field === "size",
               })}
               onClick={() => _updateRow(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+const OfferByDropdown = ({ rows }: { rows: DrinkTableRow[] }) => {
+  const [isDropdown, setIsDropdown] = useState(false);
+  const [offerBy, setOfferBy] = useState<string>("--");
+
+  const showOptions = [
+    "--",
+    ...rows.map((row: DrinkTableRow) => row.name),
+  ].filter((option: string) => option !== offerBy);
+
+  const optionDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
+
+  return (
+    <div ref={optionDropdownRef} className="relative">
+      <button
+        type="button"
+        className="w-full text-left"
+        onClick={() => setIsDropdown(true)}
+      >
+        {offerBy}
+      </button>
+      {isDropdown ? (
+        <div className="absolute -top-1 left-14 flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg">
+          {showOptions.map((option: string) => (
+            <button
+              type="button"
+              className="bg-white w-14 h-6 rounded-md text-center hover:bg-gray-500"
+              onClick={() => setOfferBy(option)}
             >
               {option}
             </button>
