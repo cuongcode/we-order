@@ -15,7 +15,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { range } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
@@ -28,6 +28,23 @@ export const Table = ({
   rows: DrinkTableRow[];
   order: Order;
 }) => {
+  const quanity = rows.length;
+  const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
+  const roundedBonus = Math.ceil(bonus / 100) * 100;
+
+  const transferList: number[] = rows.map((row: DrinkTableRow) => {
+    if (row.offerBy !== '--') {
+      return 0;
+    }
+    let transfer = Number(row.price) + roundedBonus;
+    for (let i = 0; i < rows.length; i += 1) {
+      if (rows[i]?.offerBy === row.name) {
+        transfer += Number(rows[i]?.price) + roundedBonus;
+      }
+    }
+    return transfer;
+  });
+
   const numberArray = range(1, rows.length + 1, 1);
 
   return (
@@ -41,6 +58,7 @@ export const Table = ({
             order={order}
             rows={rows}
             rowIndex={numberArray[index]}
+            transfer={transferList[index]}
           />
         ))}
       </div>
@@ -54,30 +72,27 @@ const Row = ({
   row,
   order,
   rowIndex,
+  transfer,
 }: {
   rows: DrinkTableRow[];
   row: DrinkTableRow;
   order: Order;
   rowIndex: any;
+  transfer: number | undefined;
 }) => {
-  const [transfer, setTransfer] = useState('');
-
   const SIZES = ['S', 'M', 'L', 'XL'];
   const PERCENTAGE = ['100%', '80%', '50%', '20%', '0%'];
-
-  const quanity = rows.length;
-  const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
-  const roundedBonus = Math.ceil(bonus / 100) * 100;
-  const currentTransfer = Number(row.price) + roundedBonus;
+  const offerByOptions = [
+    '--',
+    ...rows
+      .filter((_row: DrinkTableRow) => _row.offerBy === '--')
+      .map((_row: DrinkTableRow) => _row.name),
+  ].filter((option: string) => option !== row.name);
 
   // const prices = rows.map((row: DrinkTableRow) => Number(row.price));
   // const total = numberArraySum(prices);
   // const currentShopOwnerPay =
   // total + Number(order.shipFee) - Number(order.discount);
-
-  useEffect(() => {
-    setTransfer(currentTransfer.toLocaleString('en-US'));
-  }, [currentTransfer]);
 
   const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -148,12 +163,17 @@ const Row = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="z-10 w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
-        <OfferByDropdown rows={rows} />
+      <div className="z-10 w-14 rounded-md border-2 bg-white p-1 drop-shadow-md">
+        <OptionsDropdown
+          row={row}
+          order={order}
+          options={offerByOptions}
+          field="offerBy"
+        />
       </div>
       <div className="flex  w-24 items-center gap-1">
         <div className="w-14 rounded-md bg-gray-400 p-1 drop-shadow-md">
-          {transfer}
+          {transfer?.toLocaleString('en-US')}
         </div>
         <div className="cursor-pointer">
           <QuestionMarkCircleIcon className="h-5 w-5" />
@@ -193,6 +213,7 @@ const AddRowButton = ({ orderId }: { orderId: string }) => {
       ice: '100%',
       topping: '',
       heart: 0,
+      offerBy: '--',
       isTick: false,
     };
     await addDoc(collection(db, 'orders', orderId, 'rows'), newRow);
@@ -291,6 +312,7 @@ const OptionsDropdown = ({
               true,
             '-top-1 left-10': field === 'sugar' || field === 'ice',
             '-top-1 left-7': field === 'size',
+            '-top-1 left-14': field === 'offerBy',
           })}
         >
           {showOptions.map((option: string) => (
@@ -301,46 +323,9 @@ const OptionsDropdown = ({
                 'bg-white rounded-md text-center hover:bg-gray-500': true,
                 'w-9 h-6': field === 'sugar' || field === 'ice',
                 'w-6 h-6': field === 'size',
+                'h-6 w-14': field === 'offerBy',
               })}
               onClick={() => _updateRow(option)}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-const OfferByDropdown = ({ rows }: { rows: DrinkTableRow[] }) => {
-  const [isDropdown, setIsDropdown] = useState(false);
-  const [offerBy, setOfferBy] = useState<string>('--');
-
-  const showOptions = [
-    '--',
-    ...rows.map((row: DrinkTableRow) => row.name),
-  ].filter((option: string) => option !== offerBy);
-
-  const optionDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
-
-  return (
-    <div ref={optionDropdownRef} className="relative">
-      <button
-        type="button"
-        className="w-full text-left"
-        onClick={() => setIsDropdown(true)}
-      >
-        {offerBy}
-      </button>
-      {isDropdown ? (
-        <div className="absolute -top-1 left-14 flex flex-col items-center gap-1 rounded-lg bg-gray-400 p-1">
-          {showOptions.map((option: string) => (
-            <button
-              key={option}
-              type="button"
-              className="h-6 w-14 rounded-md bg-white text-center hover:bg-gray-500"
-              onClick={() => setOfferBy(option)}
             >
               {option}
             </button>

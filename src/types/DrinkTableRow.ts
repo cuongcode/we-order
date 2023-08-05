@@ -10,6 +10,6 @@ export interface DrinkTableRow {
   ice: string;
   topping: string;
   heart: number;
-  // offerBy: string,
+  offerBy: string;
   isTick: boolean;
 }
