@@ -164,15 +164,16 @@ const Row = ({
         />
       </div>
       <div className="z-10 w-14 rounded-md border-2 bg-white p-1 drop-shadow-md">
-        <OptionsDropdown
+        <OfferByDropdown
+          rows={rows}
           row={row}
           order={order}
           options={offerByOptions}
           field="offerBy"
         />
       </div>
-      <div className="flex  w-24 items-center gap-1">
-        <div className="w-14 rounded-md bg-gray-400 p-1 drop-shadow-md">
+      <div className="flex w-28 items-center gap-1">
+        <div className="w-16 rounded-md bg-gray-400 p-1 drop-shadow-md">
           {transfer?.toLocaleString('en-US')}
         </div>
         <div className="cursor-pointer">
@@ -196,7 +197,7 @@ const TableHeader = () => {
       <div className="w-11">Ice</div>
       <div className="w-36">Notes</div>
       <div className="w-14">Offer by</div>
-      <div className="w-24">Transfer</div>
+      <div className="w-28">Transfer</div>
     </div>
   );
 };
@@ -277,10 +278,10 @@ const OptionsDropdown = ({
   row,
   field,
 }: {
-  field: keyof DrinkTableRow;
   options: string[];
   order: Order;
   row: DrinkTableRow;
+  field: keyof DrinkTableRow;
 }) => {
   const [isDropdown, setIsDropdown] = useState(false);
 
@@ -293,6 +294,85 @@ const OptionsDropdown = ({
     await updateDoc(docRef, {
       [field]: newValue,
     });
+    setIsDropdown(false);
+  };
+
+  return (
+    <div ref={optionDropdownRef} className="relative">
+      <button
+        type="button"
+        className="w-full"
+        onClick={() => setIsDropdown(true)}
+      >
+        {row[field]}
+      </button>
+      {isDropdown ? (
+        <div
+          className={clsx({
+            'absolute flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg':
+              true,
+            '-top-1 left-10': field === 'sugar' || field === 'ice',
+            '-top-1 left-7': field === 'size',
+            '-top-1 left-14': field === 'offerBy',
+          })}
+        >
+          {showOptions.map((option: string) => (
+            <button
+              key={option}
+              type="button"
+              className={clsx({
+                'bg-white rounded-md text-center hover:bg-gray-500': true,
+                'w-9 h-6': field === 'sugar' || field === 'ice',
+                'w-6 h-6': field === 'size',
+                'h-6 w-14': field === 'offerBy',
+              })}
+              onClick={() => _updateRow(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+const OfferByDropdown = ({
+  rows,
+  options,
+  order,
+  row,
+  field,
+}: {
+  rows: DrinkTableRow[];
+  options: string[];
+  order: Order;
+  row: DrinkTableRow;
+  field: keyof DrinkTableRow;
+}) => {
+  const [isDropdown, setIsDropdown] = useState(false);
+
+  const showOptions = options.filter((option: string) => option !== row[field]);
+
+  const optionDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
+
+  const _updateRow = async (newValue: string) => {
+    const updatedRows = rows.filter(
+      (r: DrinkTableRow) => r.offerBy === row.name,
+    );
+
+    const docRef = doc(db, 'orders', order.id, 'rows', row.id);
+    await updateDoc(docRef, {
+      [field]: newValue,
+    });
+
+    updatedRows.forEach(async (r: DrinkTableRow) => {
+      const ref = doc(db, 'orders', order.id, 'rows', r.id);
+      await updateDoc(ref, {
+        [field]: newValue,
+      });
+    });
+
     setIsDropdown(false);
   };
 
