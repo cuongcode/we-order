@@ -8,6 +8,7 @@ import {
 import { HeartIcon as SolidHeart } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import { deleteDoc, doc, increment, updateDoc } from 'firebase/firestore';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import { db } from '@/firebase';
@@ -126,9 +127,15 @@ export const TableRow = ({
         <div className="w-16 rounded-md bg-gray-400 p-1 drop-shadow-md">
           {transfer?.toLocaleString('en-US')}
         </div>
-        <div className="cursor-pointer">
-          <QuestionMarkCircleIcon className="h-5 w-5" />
-        </div>
+        <Question>
+          <TransferFormula
+            row={row}
+            transfer={transfer}
+            order={order}
+            rows={rows}
+          />
+          <BonusFormula order={order} rows={rows} />
+        </Question>
         <DeleteRowButton order={order} row={row} />
       </div>
     </div>
@@ -343,6 +350,118 @@ const Heart = ({ order, row }: { order: Order; row: DrinkTableRow }) => {
   );
 };
 
+const Question = ({ children }: { children: ReactNode }) => {
+  const [isHover, setIsHover] = useState(false);
+
+  return (
+    <div
+      className="relative cursor-pointer"
+      onMouseOver={() => setIsHover(true)}
+      onFocus={() => setIsHover(true)}
+      onMouseOut={() => setIsHover(false)}
+      onBlur={() => setIsHover(false)}
+    >
+      <QuestionMarkCircleIcon className="h-5 w-5" />
+      {isHover ? (
+        <div className="absolute -top-28 right-0 z-10 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
+          {children}
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+const TransferFormula = ({
+  transfer,
+  row,
+  order,
+  rows,
+}: {
+  transfer: number | undefined;
+  row: DrinkTableRow;
+  order: Order;
+  rows: DrinkTableRow[];
+}) => {
+  const quantity = rows.length;
+  const bonus = (order.shipFee - order.discount) / quantity;
+
+  return (
+    <div className="flex gap-1">
+      <div>
+        <div className="font-semibold">transfer</div>
+        <div>{transfer?.toLocaleString('en-US')}</div>
+      </div>
+      <div>
+        <div>=</div>
+        <div>=</div>
+      </div>
+      <div>
+        <div className="font-semibold">price</div>
+        <div>{Number(row.price).toLocaleString('en-US')}</div>
+      </div>
+      <div>
+        <div>+</div>
+        <div>+</div>
+      </div>
+      <div className="text-red-400">
+        <div className="font-semibold">bonus</div>
+        <div>({bonus.toLocaleString('en-US')})</div>
+      </div>
+    </div>
+  );
+};
+
+const BonusFormula = ({
+  rows,
+  order,
+}: {
+  rows: DrinkTableRow[];
+  order: Order;
+}) => {
+  const quantity = rows.length;
+  const bonus = (order.shipFee - order.discount) / quantity;
+
+  return (
+    <div className="flex gap-1">
+      <div className="text-red-400">
+        <div className="font-semibold">bonus</div>
+        <div>{bonus.toLocaleString('en-US')}</div>
+      </div>
+      <div>
+        <div>=</div>
+        <div>=</div>
+      </div>
+      <div>
+        <div>(</div>
+        <div>(</div>
+      </div>
+      <div className="min-w-fit">
+        <div className="font-semibold">ship fee</div>
+        <div>{Number(order.shipFee).toLocaleString('en-US')}</div>
+      </div>
+      <div>
+        <div>-</div>
+        <div>-</div>
+      </div>
+      <div>
+        <div className="font-semibold">discount</div>
+        <div>{Number(order.discount).toLocaleString('en-US')}</div>
+      </div>
+      <div>
+        <div>)</div>
+        <div>)</div>
+      </div>
+      <div>
+        <div>/</div>
+        <div>/</div>
+      </div>
+      <div>
+        <div>quantity</div>
+        <div>{quantity}</div>
+      </div>
+    </div>
+  );
+};
 // const DrinkInput = ({ order, row }: { order: Order; row: DrinkTableRow }) => {
 //   const [isEdit, setIsEdit] = useState(false);
 //   const [drink, setDrink] = useState('');
