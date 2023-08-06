@@ -1,11 +1,14 @@
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
+import { selector } from '@/redux';
 import type { Order } from '@/types';
 
-export const TranferInfo = ({ order }: { order: Order }) => {
+export const TranferInfo = () => {
+  const { redux_order } = useSelector(selector.order);
   return (
     <div className="flex h-40 w-56 flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
@@ -14,7 +17,7 @@ export const TranferInfo = ({ order }: { order: Order }) => {
           <div className="w-11">Momo</div>
           <div className="mr-2">:</div>
           <div className="grow">
-            <ShopOwnerMomoInput order={order} />
+            <ShopOwnerMomoInput order={redux_order} />
           </div>
         </div>
         <div className="flex w-full">

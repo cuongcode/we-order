@@ -7,12 +7,16 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
+import { selector } from '@/redux';
 import type { Menu, Order } from '@/types';
 
-export const MenusDropdown = ({ order }: { order: Order }) => {
+export const MenusDropdown = () => {
+  const { redux_order } = useSelector(selector.order);
+
   const [isDropdown, setIsDropdown] = useState(false);
 
   const menuDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
@@ -24,7 +28,7 @@ export const MenusDropdown = ({ order }: { order: Order }) => {
         className="w-fit rounded-lg bg-gray-200 px-3 py-2 drop-shadow-md"
         onClick={() => setIsDropdown(true)}
       >
-        {order.selectedMenuName}
+        {redux_order.selectedMenuName}
       </button>
       {isDropdown ? (
         <div
@@ -32,7 +36,7 @@ export const MenusDropdown = ({ order }: { order: Order }) => {
           className="absolute top-12 flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2"
         >
           <AddMenuForm />
-          <Menus order={order} />
+          <Menus order={redux_order} />
         </div>
       ) : null}
     </div>
@@ -46,6 +50,7 @@ const Menus = ({ order }: { order: Order }) => {
     _fetchMenus();
   }, []);
 
+  // will change to fetch user's menus
   const _fetchMenus = async () => {
     onSnapshot(collection(db, 'menus'), (snapshot) => {
       const updatedMenus = snapshot.docs.map((menu: any) => {

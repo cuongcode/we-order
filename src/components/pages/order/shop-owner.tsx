@@ -1,12 +1,15 @@
 import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { Icons } from '@/images';
+import { selector } from '@/redux';
 import type { Order } from '@/types';
 
-export const ShopOwner = ({ order }: { order: Order }) => {
+export const ShopOwner = () => {
+  const { redux_order } = useSelector(selector.order);
   return (
     <div className="flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
@@ -18,7 +21,7 @@ export const ShopOwner = ({ order }: { order: Order }) => {
         />
       </div>
       <div className="mt-1">
-        <ShopOwnerNameInput order={order} />
+        <ShopOwnerNameInput order={redux_order} />
       </div>
     </div>
   );

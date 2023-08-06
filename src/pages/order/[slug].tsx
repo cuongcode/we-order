@@ -6,6 +6,7 @@ import {
   query as firestoreQuery,
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   CalculateTotal,
@@ -17,19 +18,14 @@ import {
 } from '@/components/pages/order';
 import { db } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
+import { OrderActions, selector } from '@/redux';
 import { Main } from '@/templates/Main';
 import type { DrinkTableRow, Order } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
-  const [order, setOrder] = useState<Order | any>({
-    id: '',
-    shipFee: 0,
-    discount: 0,
-    shopOwnerName: '',
-    shopOwnerMomo: '',
-    selectedMenuName: '',
-    selectedMenuLink: '',
-  });
+  // test redux
+  const { redux_order } = useSelector(selector.order);
+  const dispatch = useDispatch();
 
   const [rows, setRows] = useState<DrinkTableRow[]>([]);
 
@@ -41,7 +37,16 @@ const OrderPage = ({ query }: { query: any }) => {
   const _fetchOrder = async () => {
     const docRef = doc(db, 'orders', query.slug);
     onSnapshot(docRef, (document) => {
-      setOrder({ ...document.data(), id: document.id });
+      const newOrder: Order = {
+        id: document.id,
+        shipFee: document.data()?.shipFee,
+        discount: document.data()?.discount,
+        shopOwnerName: document.data()?.shopOwnerName,
+        shopOwnerMomo: document.data()?.shopOwnerMomo,
+        selectedMenuName: document.data()?.selectedMenuName,
+        selectedMenuLink: document.data()?.selectedMenuLink,
+      };
+      dispatch(OrderActions.setOrder(newOrder));
     });
   };
 
@@ -61,25 +66,25 @@ const OrderPage = ({ query }: { query: any }) => {
       <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
         <div className="flex flex-col lg:grow">
           <div className="mb-10 flex w-full gap-4 text-sm">
-            <ShopOwner order={order} />
-            <TranferInfo order={order} />
+            <ShopOwner />
+            <TranferInfo />
           </div>
           <div className="mb-10">
-            <SharedLink orderId={order.id} />
+            <SharedLink />
           </div>
           <div className="mb-5">
-            <Table rows={rows} order={order} />
+            <Table rows={rows} />
           </div>
           <div className="mb-10">
-            <CalculateTotal order={order} rows={rows} />
+            <CalculateTotal rows={rows} />
           </div>
         </div>
 
         <div className="flex flex-col gap-3 lg:w-2/5">
-          <MenusDropdown order={order} />
+          <MenusDropdown />
           <iframe
             title="menu-frame"
-            src={order.selectedMenuLink}
+            src={redux_order.selectedMenuLink}
             className="h-screen w-full rounded-xl border-2 p-5"
           />
         </div>
