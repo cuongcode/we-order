@@ -267,7 +267,7 @@ const OfferByDropdown = ({
               true,
             '-top-1 left-10': field === 'sugar' || field === 'ice',
             '-top-1 left-7': field === 'size',
-            '-top-1 left-14': field === 'offerBy',
+            '-top-1 left-16': field === 'offerBy',
           })}
         >
           {showOptions.map((option: string) => (
