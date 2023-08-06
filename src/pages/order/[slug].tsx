@@ -5,7 +5,7 @@ import {
   orderBy,
   query as firestoreQuery,
 } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -18,16 +18,14 @@ import {
 } from '@/components/pages/order';
 import { db } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
-import { OrderActions, selector } from '@/redux';
+import { OrderActions, RowsActions, selector } from '@/redux';
 import { Main } from '@/templates/Main';
-import type { DrinkTableRow, Order } from '@/types';
+import type { Order } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
-  // test redux
   const { order } = useSelector(selector.order);
-  const dispatch = useDispatch();
 
-  const [rows, setRows] = useState<DrinkTableRow[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     _fetchOrder();
@@ -57,7 +55,7 @@ const OrderPage = ({ query }: { query: any }) => {
       const updatedRows = snapshot.docs.map((document: any) => {
         return { ...document.data(), id: document.id };
       });
-      setRows(updatedRows);
+      dispatch(RowsActions.setRows(updatedRows));
     });
   };
 
@@ -73,10 +71,10 @@ const OrderPage = ({ query }: { query: any }) => {
             <SharedLink />
           </div>
           <div className="mb-5">
-            <Table rows={rows} />
+            <Table />
           </div>
           <div className="mb-10">
-            <CalculateTotal rows={rows} />
+            <CalculateTotal />
           </div>
         </div>
 

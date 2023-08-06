@@ -8,11 +8,12 @@ import { selector } from '@/redux';
 import type { DrinkTableRow, Order } from '@/types';
 import { numberArraySum } from '@/utils/base';
 
-export const CalculateTotal = ({ rows }: { rows: DrinkTableRow[] }) => {
+export const CalculateTotal = () => {
   const [total, setTotal] = useState('');
   const [shopOwnerPay, setShopOwnerPay] = useState('');
 
   const { order } = useSelector(selector.order);
+  const { rows } = useSelector(selector.rows);
 
   // use memo
   const prices = rows.map((row: DrinkTableRow) => Number(row.price));

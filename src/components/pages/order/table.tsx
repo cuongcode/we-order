@@ -8,8 +8,9 @@ import { TableAddRowButton } from './table-add-row-button';
 import { TableHeader } from './table-header';
 import { TableRow } from './table-row';
 
-export const Table = ({ rows }: { rows: DrinkTableRow[] }) => {
+export const Table = () => {
   const { order } = useSelector(selector.order);
+  const { rows } = useSelector(selector.rows);
 
   const quanity = rows.length;
   const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
@@ -38,7 +39,6 @@ export const Table = ({ rows }: { rows: DrinkTableRow[] }) => {
           <TableRow
             key={row.id}
             row={row}
-            rows={rows}
             rowIndex={numberArray[index]}
             transfer={transferList[index]}
           />
