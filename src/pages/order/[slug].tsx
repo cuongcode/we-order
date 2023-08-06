@@ -17,6 +17,7 @@ import {
   TranferInfo,
 } from '@/components/pages/order';
 import { db } from '@/firebase';
+import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
 import { Main } from '@/templates/Main';
@@ -62,7 +63,14 @@ const OrderPage = ({ query }: { query: any }) => {
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
-        <div className="flex flex-col lg:grow">
+        <div className="flex flex-col lg:w-1/2">
+          <div className="mb-10 w-full">
+            <img
+              className="m-auto w-1/2"
+              src={LogoImages.title_logo.src}
+              alt="title-logo"
+            />
+          </div>
           <div className="mb-10 flex w-full gap-4 text-sm">
             <ShopOwner />
             <TranferInfo />
@@ -78,7 +86,7 @@ const OrderPage = ({ query }: { query: any }) => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:w-2/5">
+        <div className="flex flex-col gap-3 lg:w-1/2">
           <MenusDropdown />
           <iframe
             title="menu-frame"

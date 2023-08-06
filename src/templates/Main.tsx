@@ -17,8 +17,11 @@ const Main = (props: IMainProps) => (
         <Link className="h-full rounded-full bg-white p-2" href="/">
           <img className="h-full" src={LogoImages.logo.src} alt="logo" />
         </Link>
-        <Link href="/create-order/" className="rounded-lg bg-white px-2 py-1">
-          Create Order
+        <Link
+          href="/create-order/"
+          className="rounded-lg bg-white px-2 py-1 hover:bg-gray-500"
+        >
+          New Order
         </Link>
       </div>
       <div className="flex gap-4">
@@ -26,12 +29,6 @@ const Main = (props: IMainProps) => (
         <div>Register</div>
       </div>
     </div>
-
-    <img
-      className="m-auto mt-12 w-7/12 "
-      src={LogoImages.title_logo.src}
-      alt="title-logo"
-    />
 
     <main>{props.children}</main>
   </div>
