@@ -9,11 +9,10 @@ import { TableHeader } from './table-header';
 import { TableRow } from './table-row';
 
 export const Table = ({ rows }: { rows: DrinkTableRow[] }) => {
-  const { redux_order } = useSelector(selector.order);
+  const { order } = useSelector(selector.order);
 
   const quanity = rows.length;
-  const bonus =
-    (Number(redux_order.shipFee) - Number(redux_order.discount)) / quanity;
+  const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
   const roundedBonus = Math.ceil(bonus / 100) * 100;
 
   const transferList: number[] = rows.map((row: DrinkTableRow) => {
@@ -39,14 +38,14 @@ export const Table = ({ rows }: { rows: DrinkTableRow[] }) => {
           <TableRow
             key={row.id}
             row={row}
-            order={redux_order}
+            order={order}
             rows={rows}
             rowIndex={numberArray[index]}
             transfer={transferList[index]}
           />
         ))}
       </div>
-      <TableAddRowButton orderId={redux_order.id} />
+      <TableAddRowButton orderId={order.id} />
     </div>
   );
 };

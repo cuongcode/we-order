@@ -15,7 +15,7 @@ import { selector } from '@/redux';
 import type { Menu, Order } from '@/types';
 
 export const MenusDropdown = () => {
-  const { redux_order } = useSelector(selector.order);
+  const { order } = useSelector(selector.order);
 
   const [isDropdown, setIsDropdown] = useState(false);
 
@@ -28,7 +28,7 @@ export const MenusDropdown = () => {
         className="w-fit rounded-lg bg-gray-200 px-3 py-2 drop-shadow-md"
         onClick={() => setIsDropdown(true)}
       >
-        {redux_order.selectedMenuName}
+        {order.selectedMenuName}
       </button>
       {isDropdown ? (
         <div
@@ -36,7 +36,7 @@ export const MenusDropdown = () => {
           className="absolute top-12 flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2"
         >
           <AddMenuForm />
-          <Menus order={redux_order} />
+          <Menus order={order} />
         </div>
       ) : null}
     </div>

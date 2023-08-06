@@ -12,14 +12,14 @@ export const CalculateTotal = ({ rows }: { rows: DrinkTableRow[] }) => {
   const [total, setTotal] = useState('');
   const [shopOwnerPay, setShopOwnerPay] = useState('');
 
-  const { redux_order } = useSelector(selector.order);
+  const { order } = useSelector(selector.order);
 
   // use memo
   const prices = rows.map((row: DrinkTableRow) => Number(row.price));
   // use memo
   const currentTotal = numberArraySum(prices);
   const currentShopOwnerPay =
-    currentTotal + Number(redux_order.shipFee) - Number(redux_order.discount);
+    currentTotal + Number(order.shipFee) - Number(order.discount);
 
   useEffect(() => {
     setTotal(currentTotal.toLocaleString('en-US'));
@@ -35,9 +35,9 @@ export const CalculateTotal = ({ rows }: { rows: DrinkTableRow[] }) => {
         </div>
       </div>
       <PlusIcon className="h-5 w-5" />
-      <ShipFeeInput order={redux_order} />
+      <ShipFeeInput order={order} />
       <MinusIcon className="h-5 w-5" />
-      <DiscountInput order={redux_order} />
+      <DiscountInput order={order} />
       <Bars2Icon className="h-5 w-5" />
       <div className="relative ml-4 w-fit">
         <div className="absolute -top-5 left-1 text-sm">Shop Owner Pay</div>

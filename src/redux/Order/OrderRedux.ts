@@ -19,7 +19,7 @@ interface IActionCreators extends DefaultActionCreators {
 type IActions = OrderAction | AnyAction;
 
 export interface OrderState {
-  redux_order: Order;
+  order: Order;
 }
 
 type ImmutableMyType = Immutable.ImmutableObject<OrderState>;
@@ -33,7 +33,7 @@ export const OrderTypes = Types;
 export default Creators;
 
 const INITIAL_STATE: ImmutableMyType = Immutable.from({
-  redux_order: <Order>{
+  order: <Order>{
     id: '',
     shipFee: 0,
     discount: 0,
@@ -45,7 +45,7 @@ const INITIAL_STATE: ImmutableMyType = Immutable.from({
 });
 
 const setOrder = (state: ImmutableMyType, { newOrder }: { newOrder: Order }) =>
-  state.merge({ redux_order: newOrder });
+  state.merge({ order: newOrder });
 
 export const reducer = createReducer<ImmutableMyType, IActions>(INITIAL_STATE, {
   [Types.SET_ORDER]: setOrder,

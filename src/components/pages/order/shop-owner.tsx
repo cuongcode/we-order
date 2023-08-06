@@ -9,7 +9,7 @@ import { selector } from '@/redux';
 import type { Order } from '@/types';
 
 export const ShopOwner = () => {
-  const { redux_order } = useSelector(selector.order);
+  const { order } = useSelector(selector.order);
   return (
     <div className="flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
@@ -21,7 +21,7 @@ export const ShopOwner = () => {
         />
       </div>
       <div className="mt-1">
-        <ShopOwnerNameInput order={redux_order} />
+        <ShopOwnerNameInput order={order} />
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ import type { DrinkTableRow, Order } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
   // test redux
-  const { redux_order } = useSelector(selector.order);
+  const { order } = useSelector(selector.order);
   const dispatch = useDispatch();
 
   const [rows, setRows] = useState<DrinkTableRow[]>([]);
@@ -84,7 +84,7 @@ const OrderPage = ({ query }: { query: any }) => {
           <MenusDropdown />
           <iframe
             title="menu-frame"
-            src={redux_order.selectedMenuLink}
+            src={order.selectedMenuLink}
             className="h-screen w-full rounded-xl border-2 p-5"
           />
         </div>

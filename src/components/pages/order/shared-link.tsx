@@ -7,11 +7,11 @@ import { selector } from '@/redux';
 export const SharedLink = () => {
   const [isClick, setIsClick] = useState(false);
 
-  const { redux_order } = useSelector(selector.order);
+  const { order } = useSelector(selector.order);
 
   const _copyClipboard = () => {
     navigator.clipboard.writeText(
-      `https://we-order-omega.vercel.app/order/${redux_order.id}`,
+      `https://we-order-omega.vercel.app/order/${order.id}`,
     );
     setIsClick(true);
   };
@@ -20,7 +20,7 @@ export const SharedLink = () => {
     <div className="flex flex-col gap-2">
       <div>Share this link :</div>
       <div className="flex w-fit items-center gap-2 rounded-lg border-2 border-gray-300 px-3 py-1">
-        <div>https://we-order-omega.vercel.app/order/{redux_order.id}</div>
+        <div>https://we-order-omega.vercel.app/order/{order.id}</div>
         {!isClick ? (
           <button type="button" onClick={_copyClipboard}>
             <ClipboardDocumentIcon className="h-5 w-5" />
