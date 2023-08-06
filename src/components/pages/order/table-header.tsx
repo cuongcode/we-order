@@ -8,8 +8,8 @@ export const TableHeader = () => {
       <div className="w-8">Size</div>
       <div className="w-11">Sugar</div>
       <div className="w-11">Ice</div>
-      <div className="w-36">Notes</div>
-      <div className="w-14">Offer by</div>
+      <div className="w-32">Notes</div>
+      <div className="w-16">Offered by</div>
       <div className="w-28">Transfer</div>
     </div>
   );

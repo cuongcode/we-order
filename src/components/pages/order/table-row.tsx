@@ -104,7 +104,7 @@ export const TableRow = ({
           field="ice"
         />
       </div>
-      <div className="w-36 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div className="w-32 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <input
           className="w-full"
           type="text"
@@ -114,7 +114,7 @@ export const TableRow = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="z-10 w-14 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div className="z-10 w-16 rounded-md border-2 bg-white p-1 drop-shadow-md">
         <OfferByDropdown
           rows={rows}
           row={row}
@@ -128,13 +128,21 @@ export const TableRow = ({
           {transfer?.toLocaleString('en-US')}
         </div>
         <Question>
-          <TransferFormula
-            row={row}
-            transfer={transfer}
-            order={order}
-            rows={rows}
-          />
-          <BonusFormula order={order} rows={rows} />
+          {row.offerBy !== '--' ? (
+            <div className="absolute -top-16 right-0 z-10 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
+              <OfferedByFormula row={row} />
+            </div>
+          ) : (
+            <div className="absolute -top-28 right-0 z-10 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
+              <TransferFormula
+                row={row}
+                transfer={transfer}
+                order={order}
+                rows={rows}
+              />
+              <BonusFormula order={order} rows={rows} />
+            </div>
+          )}
         </Question>
         <DeleteRowButton order={order} row={row} />
       </div>
@@ -362,11 +370,7 @@ const Question = ({ children }: { children: ReactNode }) => {
       onBlur={() => setIsHover(false)}
     >
       <QuestionMarkCircleIcon className="h-5 w-5" />
-      {isHover ? (
-        <div className="absolute -top-28 right-0 z-10 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
-          {children}
-        </div>
-      ) : null}
+      {isHover ? children : null}
     </div>
   );
 };
@@ -384,6 +388,7 @@ const TransferFormula = ({
 }) => {
   const quantity = rows.length;
   const bonus = (order.shipFee - order.discount) / quantity;
+  const roundedBonus = Math.ceil(bonus / 100) * 100;
 
   return (
     <div className="flex gap-1">
@@ -405,7 +410,7 @@ const TransferFormula = ({
       </div>
       <div className="text-red-400">
         <div className="font-semibold">bonus</div>
-        <div>({bonus.toLocaleString('en-US')})</div>
+        <div>({roundedBonus.toLocaleString('en-US')})</div>
       </div>
     </div>
   );
@@ -420,12 +425,13 @@ const BonusFormula = ({
 }) => {
   const quantity = rows.length;
   const bonus = (order.shipFee - order.discount) / quantity;
+  const roundedBonus = Math.ceil(bonus / 100) * 100;
 
   return (
     <div className="flex gap-1">
       <div className="text-red-400">
         <div className="font-semibold">bonus</div>
-        <div>{bonus.toLocaleString('en-US')}</div>
+        <div>{roundedBonus.toLocaleString('en-US')}</div>
       </div>
       <div>
         <div>=</div>
@@ -462,6 +468,24 @@ const BonusFormula = ({
     </div>
   );
 };
+
+const OfferedByFormula = ({ row }: { row: DrinkTableRow }) => {
+  return (
+    <div className="flex w-40 flex-col">
+      <div className="flex gap-1">
+        <div>You are offered by</div>
+        <div className="font-semibold">{row.offerBy.toLocaleUpperCase()}</div>
+      </div>
+      <div className="flex gap-1">
+        <div>Give a big</div>
+        <SolidHeart className="h-5 w-5 text-red-400" />
+        <div>to</div>
+        <div className="font-semibold">{row.offerBy.toLocaleUpperCase()}</div>
+      </div>
+    </div>
+  );
+};
+
 // const DrinkInput = ({ order, row }: { order: Order; row: DrinkTableRow }) => {
 //   const [isEdit, setIsEdit] = useState(false);
 //   const [drink, setDrink] = useState('');
