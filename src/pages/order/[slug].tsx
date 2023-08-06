@@ -105,3 +105,18 @@ OrderPage.getInitialProps = async (context: any) => {
   const { query } = context;
   return { query };
 };
+
+// export const getStaticPaths = async () => {
+//   const querySnapshot = await getDocs(collection(db, 'orders'));
+//   const paths: any = [];
+//   querySnapshot.forEach((_doc: any) => paths.push({ params: _doc.id }));
+
+//   return { paths, fallback: false };
+// };
+
+// export const getStaticProps = async ({ params }: { params: any }) => {
+//   // const docRef = doc(db, 'orders', params.slug);
+//   // const docSnap = await getDoc(docRef);
+//   // const doc = await docSnap.json();
+//   return { };
+// };

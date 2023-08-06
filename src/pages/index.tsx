@@ -39,14 +39,14 @@ const LandingPage = () => {
           <div className="flex items-center gap-2">
             <StopIcon className="h-4 w-4" />
             <span>If someone offers you a drink, give them a big</span>
-            <HeartIcon className="h-5 w-5 text-red-500" />
+            <HeartIcon className="h-6 w-6 text-red-500" />
             <span>(cause they may offer more)</span>
           </div>
           <div className="flex items-center gap-2">
             <StopIcon className="h-4 w-4" />
             <span>Set a</span>
             <span className="text-green-500">COUNTDOWN</span>
-            <span>because someone just cannot make up their mind</span>
+            <span>cause someone just cannot make up their mind</span>
           </div>
           <div className="flex items-center gap-2">
             <StopIcon className="h-4 w-4" />
