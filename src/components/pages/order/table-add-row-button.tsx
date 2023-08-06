@@ -1,9 +1,13 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
+import { selector } from '@/redux';
 
-export const TableAddRowButton = ({ orderId }: { orderId: string }) => {
+export const TableAddRowButton = () => {
+  const { order } = useSelector(selector.order);
+
   const _addRow = async () => {
     const newRow = {
       timestamp: serverTimestamp(),
@@ -18,7 +22,7 @@ export const TableAddRowButton = ({ orderId }: { orderId: string }) => {
       offerBy: '--',
       isTick: false,
     };
-    await addDoc(collection(db, 'orders', orderId, 'rows'), newRow);
+    await addDoc(collection(db, 'orders', order.id, 'rows'), newRow);
   };
   return (
     <button

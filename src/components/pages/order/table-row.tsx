@@ -10,24 +10,26 @@ import clsx from 'clsx';
 import { deleteDoc, doc, increment, updateDoc } from 'firebase/firestore';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
+import { selector } from '@/redux';
 import type { DrinkTableRow, Order } from '@/types';
 
 export const TableRow = ({
   rows,
   row,
-  order,
   rowIndex,
   transfer,
 }: {
   rows: DrinkTableRow[];
   row: DrinkTableRow;
-  order: Order;
   rowIndex: any;
   transfer: number | undefined;
 }) => {
+  const { order } = useSelector(selector.order);
+
   const SIZES = ['S', 'M', 'L', 'XL'];
   const PERCENTAGE = ['100%', '80%', '50%', '20%', '0%'];
   const offerByOptions = [
@@ -36,11 +38,6 @@ export const TableRow = ({
       .filter((_row: DrinkTableRow) => _row.offerBy === '--')
       .map((_row: DrinkTableRow) => _row.name),
   ].filter((option: string) => option !== row.name);
-
-  // const prices = rows.map((row: DrinkTableRow) => Number(row.price));
-  // const total = numberArraySum(prices);
-  // const currentShopOwnerPay =
-  // total + Number(order.shipFee) - Number(order.discount);
 
   const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

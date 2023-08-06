@@ -38,14 +38,13 @@ export const Table = ({ rows }: { rows: DrinkTableRow[] }) => {
           <TableRow
             key={row.id}
             row={row}
-            order={order}
             rows={rows}
             rowIndex={numberArray[index]}
             transfer={transferList[index]}
           />
         ))}
       </div>
-      <TableAddRowButton orderId={order.id} />
+      <TableAddRowButton />
     </div>
   );
 };
