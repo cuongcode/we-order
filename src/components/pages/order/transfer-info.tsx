@@ -1,4 +1,4 @@
-import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -69,7 +69,7 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilIcon className="h-3 w-3" />
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}
