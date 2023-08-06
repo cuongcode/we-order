@@ -7,12 +7,15 @@ import createSagaMiddleware from 'redux-saga';
 import immutablePersistenceTransform from './immutable-persistence-transfrom';
 import type { OrderState } from './Order/OrderRedux';
 import OrderActions, { reducer as OrderReducer } from './Order/OrderRedux';
+import type { RowsState } from './Rows/RowsRedux';
+import RowsActions, { reducer as RowsReducer } from './Rows/RowsRedux';
 // import logger from 'redux-logger';
 import Saga from './saga';
 
 /* ------------- Assemble The Reducers ------------- */
 export const reducers = combineReducers({
   order: OrderReducer,
+  rows: RowsReducer,
 });
 
 const persistConfig = {
@@ -53,5 +56,6 @@ const createStore = (rootReducer: any, rootSaga: any) => {
 export type RootState = ReturnType<typeof reducers>;
 export const selector = {
   order: (state: RootState) => state.order as unknown as OrderState,
+  rows: (state: RootState) => state.rows as unknown as RowsState,
 };
-export { OrderActions };
+export { OrderActions, RowsActions };
