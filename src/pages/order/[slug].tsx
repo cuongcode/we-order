@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query as firestoreQuery,
@@ -101,22 +102,27 @@ const OrderPage = ({ query }: { query: any }) => {
 
 export default OrderPage;
 
-OrderPage.getInitialProps = async (context: any) => {
-  const { query } = context;
-  return { query };
+// OrderPage.getInitialProps = async (context: any) => {
+//   const { query } = context;
+//   return { query };
+// };
+
+export const getStaticPaths = async () => {
+  const querySnapshot = await getDocs(collection(db, 'orders'));
+  const paths: any = [];
+  querySnapshot.forEach((_doc: any) =>
+    paths.push({ params: { slug: _doc.id } }),
+  );
+
+  return { paths, fallback: false };
 };
 
-// export const getStaticPaths = async () => {
-//   const querySnapshot = await getDocs(collection(db, 'orders'));
-//   const paths: any = [];
-//   querySnapshot.forEach((_doc: any) => paths.push({ params: _doc.id }));
-
-//   return { paths, fallback: false };
-// };
-
-// export const getStaticProps = async ({ params }: { params: any }) => {
-//   // const docRef = doc(db, 'orders', params.slug);
-//   // const docSnap = await getDoc(docRef);
-//   // const doc = await docSnap.json();
-//   return { };
-// };
+export const getStaticProps = async ({
+  params: { slug },
+}: {
+  params: any;
+  slug: any;
+}) => {
+  const query = { slug };
+  return { props: { query } };
+};
