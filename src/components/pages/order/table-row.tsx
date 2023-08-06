@@ -390,6 +390,10 @@ const TransferFormula = ({
   const bonus = (order.shipFee - order.discount) / quantity;
   const roundedBonus = Math.ceil(bonus / 100) * 100;
 
+  const transferList: number[] = rows.map(
+    (r: DrinkTableRow) => Number(r.price) + roundedBonus,
+  );
+
   return (
     <div className="flex gap-1">
       <div>
@@ -412,6 +416,23 @@ const TransferFormula = ({
         <div className="font-semibold">bonus</div>
         <div>({roundedBonus.toLocaleString('en-US')})</div>
       </div>
+      {rows.map((r: DrinkTableRow, index: number) => {
+        if (r.offerBy === row.name) {
+          return (
+            <>
+              <div>
+                <div>+</div>
+                <div>+</div>
+              </div>
+              <div>
+                <div>{r.name}</div>
+                <div>{transferList[index]?.toLocaleString('en-US')}</div>
+              </div>
+            </>
+          );
+        }
+        return null;
+      })}
     </div>
   );
 };
