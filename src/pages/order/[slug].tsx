@@ -1,11 +1,13 @@
 import {
   collection,
   doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query as firestoreQuery,
 } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   CalculateTotal,
@@ -16,22 +18,16 @@ import {
   TranferInfo,
 } from '@/components/pages/order';
 import { db } from '@/firebase';
+import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
+import { OrderActions, RowsActions, selector } from '@/redux';
 import { Main } from '@/templates/Main';
-import type { DrinkTableRow, Order } from '@/types';
+import type { Order } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
-  const [order, setOrder] = useState<Order | any>({
-    id: '',
-    shipFee: 0,
-    discount: 0,
-    shopOwnerName: '',
-    shopOwnerMomo: '',
-    selectedMenuName: '',
-    selectedMenuLink: '',
-  });
+  const { order } = useSelector(selector.order);
 
-  const [rows, setRows] = useState<DrinkTableRow[]>([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     _fetchOrder();
@@ -41,7 +37,16 @@ const OrderPage = ({ query }: { query: any }) => {
   const _fetchOrder = async () => {
     const docRef = doc(db, 'orders', query.slug);
     onSnapshot(docRef, (document) => {
-      setOrder({ ...document.data(), id: document.id });
+      const newOrder: Order = {
+        id: document.id,
+        shipFee: document.data()?.shipFee,
+        discount: document.data()?.discount,
+        shopOwnerName: document.data()?.shopOwnerName,
+        shopOwnerMomo: document.data()?.shopOwnerMomo,
+        selectedMenuName: document.data()?.selectedMenuName,
+        selectedMenuLink: document.data()?.selectedMenuLink,
+      };
+      dispatch(OrderActions.setOrder(newOrder));
     });
   };
 
@@ -52,31 +57,38 @@ const OrderPage = ({ query }: { query: any }) => {
       const updatedRows = snapshot.docs.map((document: any) => {
         return { ...document.data(), id: document.id };
       });
-      setRows(updatedRows);
+      dispatch(RowsActions.setRows(updatedRows));
     });
   };
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
-        <div className="flex flex-col lg:grow">
+        <div className="flex flex-col lg:w-1/2">
+          <div className="mb-10 w-full">
+            <img
+              className="m-auto w-1/2"
+              src={LogoImages.title_logo.src}
+              alt="title-logo"
+            />
+          </div>
           <div className="mb-10 flex w-full gap-4 text-sm">
-            <ShopOwner order={order} />
-            <TranferInfo order={order} />
+            <ShopOwner />
+            <TranferInfo />
           </div>
           <div className="mb-10">
-            <SharedLink orderId={order.id} />
+            <SharedLink />
           </div>
           <div className="mb-5">
-            <Table rows={rows} order={order} />
+            <Table />
           </div>
           <div className="mb-10">
-            <CalculateTotal order={order} rows={rows} />
+            <CalculateTotal />
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:w-2/5">
-          <MenusDropdown order={order} />
+        <div className="flex flex-col gap-3 lg:w-1/2">
+          <MenusDropdown />
           <iframe
             title="menu-frame"
             src={order.selectedMenuLink}
@@ -90,7 +102,27 @@ const OrderPage = ({ query }: { query: any }) => {
 
 export default OrderPage;
 
-OrderPage.getInitialProps = async (context: any) => {
-  const { query } = context;
-  return { query };
+// OrderPage.getInitialProps = async (context: any) => {
+//   const { query } = context;
+//   return { query };
+// };
+
+export const getStaticPaths = async () => {
+  const querySnapshot = await getDocs(collection(db, 'orders'));
+  const paths: any = [];
+  querySnapshot.forEach((_doc: any) =>
+    paths.push({ params: { slug: _doc.id } }),
+  );
+
+  return { paths, fallback: false };
+};
+
+export const getStaticProps = async ({
+  params: { slug },
+}: {
+  params: any;
+  slug: any;
+}) => {
+  const query = { slug };
+  return { props: { query } };
 };

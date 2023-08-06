@@ -1,18 +1,17 @@
 import { range } from 'lodash';
+import { useSelector } from 'react-redux';
 
-import type { DrinkTableRow, Order } from '@/types';
+import { selector } from '@/redux';
+import type { DrinkTableRow } from '@/types';
 
 import { TableAddRowButton } from './table-add-row-button';
 import { TableHeader } from './table-header';
 import { TableRow } from './table-row';
 
-export const Table = ({
-  rows,
-  order,
-}: {
-  rows: DrinkTableRow[];
-  order: Order;
-}) => {
+export const Table = () => {
+  const { order } = useSelector(selector.order);
+  const { rows } = useSelector(selector.rows);
+
   const quanity = rows.length;
   const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
   const roundedBonus = Math.ceil(bonus / 100) * 100;
@@ -40,14 +39,12 @@ export const Table = ({
           <TableRow
             key={row.id}
             row={row}
-            order={order}
-            rows={rows}
             rowIndex={numberArray[index]}
             transfer={transferList[index]}
           />
         ))}
       </div>
-      <TableAddRowButton orderId={order.id} />
+      <TableAddRowButton />
     </div>
   );
 };

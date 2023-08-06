@@ -1,11 +1,14 @@
-import { CheckIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
+import { selector } from '@/redux';
 import type { Order } from '@/types';
 
-export const TranferInfo = ({ order }: { order: Order }) => {
+export const TranferInfo = () => {
+  const { order } = useSelector(selector.order);
   return (
     <div className="flex h-40 w-56 flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
@@ -66,7 +69,7 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilIcon className="h-3 w-3" />
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}

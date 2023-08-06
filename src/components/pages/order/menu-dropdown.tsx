@@ -7,12 +7,16 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
+import { selector } from '@/redux';
 import type { Menu, Order } from '@/types';
 
-export const MenusDropdown = ({ order }: { order: Order }) => {
+export const MenusDropdown = () => {
+  const { order } = useSelector(selector.order);
+
   const [isDropdown, setIsDropdown] = useState(false);
 
   const menuDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
@@ -46,6 +50,7 @@ const Menus = ({ order }: { order: Order }) => {
     _fetchMenus();
   }, []);
 
+  // will change to fetch user's menus
   const _fetchMenus = async () => {
     onSnapshot(collection(db, 'menus'), (snapshot) => {
       const updatedMenus = snapshot.docs.map((menu: any) => {
