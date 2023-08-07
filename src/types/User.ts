@@ -1,11 +1,12 @@
-import type { Menu } from './Menu';
 // import { BankInfo } from "./BankInfo";
 
 export interface User {
-  id: string;
-  name: string;
-  // avatar: string, //img link
+  uid: string;
+  nickname: string | null;
   momo: string;
-  // banks: BankInfo[],
-  menus: Menu[];
+  bank1Name: string;
+  bank1Number: string;
+  bank2Name: string;
+  bank2Number: string;
+  // avatar: string, //img link
 }
