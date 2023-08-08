@@ -11,41 +11,57 @@ const SignIn = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          onSnapshot(docRef, (_doc) => {
-            const updatedCurrentUser: User = {
-              uid: _doc.data()?.uid,
-              nickname: _doc.data()?.nickname,
-              momo: _doc.data()?.momo,
-              bank1Name: _doc.data()?.bank1Name,
-              bank1Number: _doc.data()?.bank1Number,
-              bank2Name: _doc.data()?.bank2Name,
-              bank2Number: _doc.data()?.bank2Number,
-            };
-            setCurrentUser(updatedCurrentUser);
-          });
-        } else {
-          const newUser: User = {
-            uid: user.uid,
-            nickname: user.displayName,
-            momo: '',
-            bank1Name: '',
-            bank1Number: '',
-            bank2Name: '',
-            bank2Number: '',
-          };
-          await setDoc(docRef, newUser);
-        }
+        _fetchUser(user.uid);
       }
     });
   }, []);
 
+  const _fetchUser = async (uid: string) => {
+    const docRef = doc(db, 'users', uid);
+    onSnapshot(docRef, (_doc) => {
+      const updatedCurrentUser: User = {
+        uid: _doc.data()?.uid,
+        nickname: _doc.data()?.nickname,
+        momo: _doc.data()?.momo,
+        bank1Name: _doc.data()?.bank1Name,
+        bank1Number: _doc.data()?.bank1Number,
+        bank2Name: _doc.data()?.bank2Name,
+        bank2Number: _doc.data()?.bank2Number,
+      };
+      setCurrentUser(updatedCurrentUser);
+    });
+  };
+
   const _onSignIn = async () => {
-    await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    const { user } = result;
+    const docRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const firestoreUser: User = {
+        uid: docSnap.data()?.uid,
+        nickname: docSnap.data()?.nickname,
+        momo: docSnap.data()?.momo,
+        bank1Name: docSnap.data()?.bank1Name,
+        bank1Number: docSnap.data()?.bank1Number,
+        bank2Name: docSnap.data()?.bank2Name,
+        bank2Number: docSnap.data()?.bank2Number,
+      };
+      setCurrentUser(firestoreUser);
+    } else {
+      const newUser: User = {
+        uid: user.uid,
+        nickname: user.displayName,
+        momo: '',
+        bank1Name: '',
+        bank1Number: '',
+        bank2Name: '',
+        bank2Number: '',
+      };
+      await setDoc(docRef, newUser);
+    }
   };
 
   const _onSignOut = async () => {
@@ -72,34 +88,27 @@ const SignIn = () => {
 
 export default SignIn;
 
-const UserName = ({ currentUser }: { currentUser: any }) => {
-  const [username, setUsername] = useState('');
-
-  useEffect(() => {
-    setUsername(currentUser?.nickname);
-  }, []);
+const UserName = ({ currentUser }: { currentUser: User | null }) => {
+  const [nickname, setNickname] = useState('');
 
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setUsername(value);
+    setNickname(value);
   };
 
   const _updateUserName = async () => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        if (currentUser) {
-          const docRef = doc(db, 'users', currentUser?.uid);
-          await updateDoc(docRef, {
-            nickname: username,
-          });
-        }
-      }
-    });
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(docRef, {
+        nickname,
+      });
+    }
   };
+
   return (
     <div>
-      <div>{currentUser ? username : 'No user'}</div>
-      <input type="text" value={username} onChange={_onChange} />
+      <div>{currentUser ? currentUser.nickname : 'No user'}</div>
+      <input type="text" value={nickname} onChange={_onChange} />
       <button onClick={_updateUserName}>Save</button>
     </div>
   );
