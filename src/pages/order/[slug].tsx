@@ -56,7 +56,7 @@ const OrderPage = ({ query }: { query: any }) => {
     }
   };
 
-  const _fetchOrder = async () => {
+  const _fetchOrder = () => {
     const docRef = doc(db, 'orders', query?.slug);
     onSnapshot(docRef, (document) => {
       const newOrder: Order = {
@@ -72,7 +72,7 @@ const OrderPage = ({ query }: { query: any }) => {
     });
   };
 
-  const _fetchRows = async () => {
+  const _fetchRows = () => {
     const rowsRef = collection(db, 'orders', query?.slug, 'rows');
     const q = firestoreQuery(rowsRef, orderBy('timestamp'));
     onSnapshot(q, (snapshot) => {
