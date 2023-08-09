@@ -2,14 +2,17 @@ import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import { db } from '@/firebase';
+import { auth, db } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 import type { Order } from '@/types';
 
 const CreateOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-
+  console.log(
+    '🚀 ~ file: create-order.tsx:13 ~ CreateOrderPage ~ auth.currentUser:',
+    auth.currentUser,
+  );
   useEffect(() => {
     _fetchOrders();
   }, []);
