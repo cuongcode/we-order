@@ -11,11 +11,14 @@ import type { RowsState } from './Rows/RowsRedux';
 import RowsActions, { reducer as RowsReducer } from './Rows/RowsRedux';
 // import logger from 'redux-logger';
 import Saga from './saga';
+import type { UserState } from './User/UserRedux';
+import UserActions, { reducer as UserReducer } from './User/UserRedux';
 
 /* ------------- Assemble The Reducers ------------- */
 export const reducers = combineReducers({
   order: OrderReducer,
   rows: RowsReducer,
+  user: UserReducer,
 });
 
 const persistConfig = {
@@ -57,5 +60,6 @@ export type RootState = ReturnType<typeof reducers>;
 export const selector = {
   order: (state: RootState) => state.order as unknown as OrderState,
   rows: (state: RootState) => state.rows as unknown as RowsState,
+  user: (state: RootState) => state.user as unknown as UserState,
 };
-export { OrderActions, RowsActions };
+export { OrderActions, RowsActions, UserActions };

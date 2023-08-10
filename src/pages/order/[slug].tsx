@@ -32,7 +32,13 @@ const OrderPage = ({ query }: { query: any }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    _isHasOrder();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        _isHasOrder();
+      } else {
+        router.push('/sign-in/');
+      }
+    });
   }, []);
 
   useEffect(() => {

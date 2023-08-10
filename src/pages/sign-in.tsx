@@ -1,14 +1,16 @@
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { auth, db, provider } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
+import { selector, UserActions } from '@/redux';
 import { Main } from '@/templates/Main';
 import type { User } from '@/types';
 
 const SignIn = () => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -30,7 +32,7 @@ const SignIn = () => {
         bank2Name: _doc.data()?.bank2Name,
         bank2Number: _doc.data()?.bank2Number,
       };
-      setCurrentUser(updatedCurrentUser);
+      dispatch(UserActions.setCurrentUser(updatedCurrentUser));
     });
   };
 
@@ -49,7 +51,7 @@ const SignIn = () => {
         bank2Name: docSnap.data()?.bank2Name,
         bank2Number: docSnap.data()?.bank2Number,
       };
-      setCurrentUser(firestoreUser);
+      dispatch(UserActions.setCurrentUser(firestoreUser));
     } else {
       const newUser: User = {
         uid: user.uid,
@@ -64,23 +66,13 @@ const SignIn = () => {
     }
   };
 
-  const _onSignOut = async () => {
-    try {
-      await signOut(auth);
-      setCurrentUser(null);
-    } catch (error) {
-      console.log('sign out error', error);
-    }
-  };
-
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="flex w-full flex-col items-center bg-gray-200">
         <div className="flex gap-5">
           <button onClick={_onSignIn}>Sign In</button>
-          <button onClick={_onSignOut}>Sign Out</button>
         </div>
-        <UserName currentUser={currentUser} />
+        <UserName />
       </div>
     </Main>
   );
@@ -88,8 +80,10 @@ const SignIn = () => {
 
 export default SignIn;
 
-const UserName = ({ currentUser }: { currentUser: User | null }) => {
+const UserName = () => {
   const [nickname, setNickname] = useState('');
+
+  const { currentUser } = useSelector(selector.user);
 
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -107,7 +101,6 @@ const UserName = ({ currentUser }: { currentUser: User | null }) => {
 
   return (
     <div>
-      <div>{currentUser ? currentUser.nickname : 'No user'}</div>
       <input type="text" value={nickname} onChange={_onChange} />
       <button onClick={_updateUserName}>Save</button>
     </div>
