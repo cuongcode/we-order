@@ -75,6 +75,7 @@ const OrderPage = ({ query }: { query: any }) => {
         shopOwnerMomo: document.data()?.shopOwnerMomo,
         selectedMenuName: document.data()?.selectedMenuName,
         selectedMenuLink: document.data()?.selectedMenuLink,
+        uid: document.data()?.selectedMenuLink,
       };
       dispatch(OrderActions.setOrder(newOrder));
     });
