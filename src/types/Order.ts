@@ -11,4 +11,5 @@ export interface Order {
   shopOwnerMomo: string;
   selectedMenuName: string;
   selectedMenuLink: string;
+  uid: string;
 }
