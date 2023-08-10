@@ -55,7 +55,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="m-auto mt-20 w-fit">
-          <Link href="/create-order/">
+          <Link href="/sign-in/">
             <div className=" w-fit rounded-2xl bg-gray-300 px-6 py-3 text-center text-2xl hover:bg-gray-500">
               Let me order !
             </div>

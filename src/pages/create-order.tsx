@@ -2,17 +2,44 @@ import { addDoc, collection, onSnapshot } from 'firebase/firestore';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 
-import { db } from '@/firebase';
+import { auth, db } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 import type { Order } from '@/types';
 
 const CreateOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
-
+  console.log(
+    '🚀 ~ file: create-order.tsx:13 ~ CreateOrderPage ~ auth.currentUser:',
+    auth.currentUser,
+  );
   useEffect(() => {
     _fetchOrders();
   }, []);
+
+  // useEffect(() => {
+  //   onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       _fetchUser(user.uid);
+  //     }
+  //   });
+  // }, []);
+
+  // const _fetchUser = async (uid: string) => {
+  //   const docRef = doc(db, 'users', uid);
+  //   onSnapshot(docRef, (_doc) => {
+  //     const updatedCurrentUser: User = {
+  //       uid: _doc.data()?.uid,
+  //       nickname: _doc.data()?.nickname,
+  //       momo: _doc.data()?.momo,
+  //       bank1Name: _doc.data()?.bank1Name,
+  //       bank1Number: _doc.data()?.bank1Number,
+  //       bank2Name: _doc.data()?.bank2Name,
+  //       bank2Number: _doc.data()?.bank2Number,
+  //     };
+  //     dispatch(UserActions.setCurrentUser(updatedCurrentUser));
+  //   });
+  // };
 
   const _fetchOrders = async () => {
     const query = collection(db, 'orders');
@@ -68,3 +95,30 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
     </div>
   );
 };
+
+// const UserName = () => {
+//   const [nickname, setNickname] = useState('');
+
+//   const { currentUser } = useSelector(selector.user);
+
+//   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const { value } = e.target;
+//     setNickname(value);
+//   };
+
+//   const _updateUserName = async () => {
+//     if (currentUser) {
+//       const docRef = doc(db, 'users', currentUser?.uid);
+//       await updateDoc(docRef, {
+//         nickname,
+//       });
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <input type="text" value={nickname} onChange={_onChange} />
+//       <button onClick={_updateUserName}>Save</button>
+//     </div>
+//   );
+// };
