@@ -1,3 +1,4 @@
+import google_icon from './icons/google-icon.png';
 import user_icon from './icons/user_icon.png';
 import logo from './logo/logo.png';
 import title_logo from './logo/title_logo.png';
@@ -9,4 +10,5 @@ export const LogoImages = {
 
 export const Icons = {
   user_icon,
+  google_icon,
 };

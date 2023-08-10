@@ -1,40 +1,18 @@
-import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
-import { doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { signInWithPopup } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import router from 'next/router';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 
 import { auth, db, provider } from '@/firebase';
+import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
-import { selector, UserActions } from '@/redux';
+import { UserActions } from '@/redux';
 import { Main } from '@/templates/Main';
 import type { User } from '@/types';
 
 const SignIn = () => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        _fetchUser(user.uid);
-      }
-    });
-  }, []);
-
-  const _fetchUser = async (uid: string) => {
-    const docRef = doc(db, 'users', uid);
-    onSnapshot(docRef, (_doc) => {
-      const updatedCurrentUser: User = {
-        uid: _doc.data()?.uid,
-        nickname: _doc.data()?.nickname,
-        momo: _doc.data()?.momo,
-        bank1Name: _doc.data()?.bank1Name,
-        bank1Number: _doc.data()?.bank1Number,
-        bank2Name: _doc.data()?.bank2Name,
-        bank2Number: _doc.data()?.bank2Number,
-      };
-      dispatch(UserActions.setCurrentUser(updatedCurrentUser));
-    });
-  };
 
   const _onSignIn = async () => {
     const result = await signInWithPopup(auth, provider);
@@ -63,46 +41,45 @@ const SignIn = () => {
         bank2Number: '',
       };
       await setDoc(docRef, newUser);
+      dispatch(UserActions.setCurrentUser(newUser));
     }
+    router.push('/create-order/');
   };
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="flex w-full flex-col items-center bg-gray-200">
-        <div className="flex gap-5">
-          <button onClick={_onSignIn}>Sign In</button>
+      <div className="m-auto max-w-5xl font-semibold">
+        <div className="mb-3 mt-12 w-full">
+          <img
+            className="m-auto w-1/2"
+            src={LogoImages.title_logo.src}
+            alt="title-logo"
+          />
         </div>
-        <UserName />
+        <div className="text-center text-lg">
+          An easy way to order drink and food together
+        </div>
+        <div className="text-center text-lg">Order together is fun !</div>
+        <div className="mt-12 flex items-center justify-center gap-8">
+          <button
+            onClick={_onSignIn}
+            className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400"
+          >
+            <div className="w-10 rounded-full">
+              <img src={Icons.google_icon.src} alt="user-icon" />
+            </div>
+            <div>Sign in with Google</div>
+          </button>
+          <button className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400">
+            <div className="w-10 rounded-full">
+              <img src={Icons.user_icon.src} alt="user-icon" />
+            </div>
+            <div>Sign in as Anonymous</div>
+          </button>
+        </div>
       </div>
     </Main>
   );
 };
 
 export default SignIn;
-
-const UserName = () => {
-  const [nickname, setNickname] = useState('');
-
-  const { currentUser } = useSelector(selector.user);
-
-  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setNickname(value);
-  };
-
-  const _updateUserName = async () => {
-    if (currentUser) {
-      const docRef = doc(db, 'users', currentUser?.uid);
-      await updateDoc(docRef, {
-        nickname,
-      });
-    }
-  };
-
-  return (
-    <div>
-      <input type="text" value={nickname} onChange={_onChange} />
-      <button onClick={_updateUserName}>Save</button>
-    </div>
-  );
-};
