@@ -43,12 +43,14 @@ const OrderPage = ({ query }: { query: any }) => {
 
   useEffect(() => {
     if (isHasOrder) {
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          _fetchOrder();
-          _fetchRows();
-        }
-      });
+      // onAuthStateChanged(auth, async (user) => {
+      //   if (user) {
+      //     _fetchOrder();
+      //     _fetchRows();
+      //   }
+      // });
+      _fetchOrder();
+      _fetchRows();
     } else {
       router.push('/404');
     }
