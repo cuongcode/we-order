@@ -2,6 +2,8 @@ import {
   CheckIcon,
   PencilSquareIcon,
   PlusIcon,
+  TrashIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -9,7 +11,9 @@ import {
   addDoc,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
@@ -22,6 +26,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { auth, db } from '@/firebase';
+import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { selector, UserActions } from '@/redux';
@@ -181,14 +186,60 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
                 >
                   {order.id}
                 </button>
-                <div className="text-sm font-extralight text-gray-500">
-                  {dayjs
-                    .unix(order.timestamp?.seconds)
-                    .format('hh:mm, ddd-DD-MMM-YYYY')}
+                <div className="flex items-center gap-1">
+                  <div className="text-sm font-extralight text-gray-500">
+                    {dayjs
+                      .unix(order.timestamp?.seconds)
+                      .format('hh:mm, ddd-DD-MMM-YYYY')}
+                  </div>
+                  <DeleteOrderButton order={order} />
                 </div>
               </div>
             ))}
       </div>
+    </div>
+  );
+};
+
+const DeleteOrderButton = ({ order }: { order: Order }) => {
+  const [isDropdown, setIsDropdown] = useState(false);
+
+  const deleteOrderButtonRef = useCheckClickOutside(() => setIsDropdown(false));
+
+  const _deleteOrder = async () => {
+    const q = query(collection(db, 'orders', order.id, 'rows'));
+    const rowDocs = await getDocs(q);
+    if (!rowDocs.empty) {
+      rowDocs.forEach(async (row) => {
+        await deleteDoc(doc(db, 'orders', order.id, 'rows', row.id));
+      });
+      await deleteDoc(doc(db, 'orders', order.id));
+    }
+    await deleteDoc(doc(db, 'orders', order.id));
+  };
+
+  return (
+    <div ref={deleteOrderButtonRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setIsDropdown(true)}
+        className="rounded-md bg-gray-300 p-1 hover:bg-gray-500"
+      >
+        <TrashIcon className="h-3 w-3" />
+      </button>
+      {isDropdown ? (
+        <div className="absolute -left-7 top-6 z-10 flex gap-1 rounded-md bg-white p-1">
+          <button className="rounded-md bg-gray-200 p-1" onClick={_deleteOrder}>
+            <CheckIcon className="h-3 w-3" />
+          </button>
+          <button
+            className="rounded-md bg-gray-200 p-1"
+            onClick={() => setIsDropdown(false)}
+          >
+            <XMarkIcon className="h-3 w-3" />
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };
