@@ -2,12 +2,15 @@
 import { StopIcon } from '@heroicons/react/24/outline';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
 
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
+import { selector } from '@/redux';
 import { Main } from '@/templates/Main';
 
 const LandingPage = () => {
+  const { currentUser } = useSelector(selector.user);
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="m-auto max-w-5xl font-semibold">
@@ -55,7 +58,7 @@ const LandingPage = () => {
           </div>
         </div>
         <div className="m-auto mt-20 w-fit">
-          <Link href="/sign-in/">
+          <Link href={currentUser ? '/create-order/' : '/sign-in/'}>
             <div className=" w-fit rounded-2xl bg-gray-300 px-6 py-3 text-center text-2xl hover:bg-gray-500">
               Let me order !
             </div>
