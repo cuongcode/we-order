@@ -3,6 +3,7 @@ import {
   PencilSquareIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline';
+import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
   addDoc,
@@ -10,6 +11,7 @@ import {
   collection,
   doc,
   onSnapshot,
+  orderBy,
   query,
   serverTimestamp,
   updateDoc,
@@ -71,6 +73,7 @@ const CreateOrderPage = () => {
       const q = query(
         collection(db, 'orders'),
         where('uid', '==', currentUser.uid),
+        orderBy('timestamp', 'desc'),
       );
       onSnapshot(q, (snapshot) => {
         const updatedOrders = snapshot.docs.map((_doc: any) => {
@@ -155,14 +158,20 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
         {orders.length === 0
           ? 'You have no order. Create one!'
           : orders.map((order: Order) => (
-              <button
-                type="button"
-                key={order.id}
-                onClick={() => _openOrder(order.id)}
-                className="w-fit"
-              >
-                {order.id}
-              </button>
+              <div key={order.id} className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => _openOrder(order.id)}
+                  className="w-fit"
+                >
+                  {order.id}
+                </button>
+                <div className="text-sm font-extralight text-gray-500">
+                  {dayjs
+                    .unix(order.timestamp?.seconds)
+                    .format('hh:mm, ddd-DD-MMM-YYYY')}
+                </div>
+              </div>
             ))}
       </div>
     </div>

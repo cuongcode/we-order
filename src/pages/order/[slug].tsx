@@ -76,6 +76,7 @@ const OrderPage = ({ query }: { query: any }) => {
         selectedMenuName: document.data()?.selectedMenuName,
         selectedMenuLink: document.data()?.selectedMenuLink,
         uid: document.data()?.selectedMenuLink,
+        timestamp: document.data()?.timestamp,
       };
       dispatch(OrderActions.setOrder(newOrder));
     });

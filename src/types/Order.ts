@@ -12,4 +12,10 @@ export interface Order {
   selectedMenuName: string;
   selectedMenuLink: string;
   uid: string;
+  timestamp: firestoreTimestamp;
+}
+
+interface firestoreTimestamp {
+  seconds: number;
+  nanoseconds: number;
 }
