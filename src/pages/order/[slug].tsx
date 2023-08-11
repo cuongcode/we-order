@@ -36,7 +36,7 @@ const OrderPage = ({ query }: { query: any }) => {
       if (user) {
         _isHasOrder();
       } else {
-        router.push('/sign-in/');
+        router.push(`/sign-in?from=/order/${query.slug}`);
       }
     });
   }, []);
