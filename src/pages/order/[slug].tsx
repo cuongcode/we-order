@@ -1,14 +1,12 @@
-import { onAuthStateChanged } from 'firebase/auth';
 import {
   collection,
   doc,
-  getDoc,
+  getDocs,
   onSnapshot,
   orderBy,
   query as firestoreQuery,
 } from 'firebase/firestore';
-import router from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -19,7 +17,7 @@ import {
   Table,
   TranferInfo,
 } from '@/components/pages/order';
-import { auth, db } from '@/firebase';
+import { db } from '@/firebase';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
@@ -27,42 +25,13 @@ import { Main } from '@/templates/Main';
 import type { Order } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
-  const [isHasOrder, setIsHasOrder] = useState(true);
   const { order } = useSelector(selector.order);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        _isHasOrder();
-      } else {
-        router.push(`/sign-in?from=/order/${query.slug}`);
-      }
-    });
+    _fetchOrder();
+    _fetchRows();
   }, []);
-
-  useEffect(() => {
-    if (isHasOrder) {
-      // onAuthStateChanged(auth, async (user) => {
-      //   if (user) {
-      //     _fetchOrder();
-      //     _fetchRows();
-      //   }
-      // });
-      _fetchOrder();
-      _fetchRows();
-    } else {
-      router.push('/404');
-    }
-  }, [isHasOrder]);
-
-  const _isHasOrder = async () => {
-    const docRef = doc(db, 'orders', query?.slug);
-    const docSnap = await getDoc(docRef);
-    if (!docSnap.exists()) {
-      setIsHasOrder(false);
-    }
-  };
 
   const _fetchOrder = () => {
     const docRef = doc(db, 'orders', query?.slug);
@@ -134,118 +103,32 @@ const OrderPage = ({ query }: { query: any }) => {
 
 export default OrderPage;
 
-OrderPage.getInitialProps = async (context: any) => {
-  const { query } = context;
-  return { query };
+// OrderPage.getInitialProps = async (context: any) => {
+//   const { query } = context;
+//   return { query };
+// };
+
+export const getStaticPaths = async () => {
+  const paths: any = [];
+
+  const querySnapshot = await getDocs(collection(db, 'orders'));
+  querySnapshot.forEach((_doc: any) =>
+    paths.push({
+      params: { slug: _doc.id },
+    }),
+  );
+  return {
+    paths,
+    fallback: false,
+  };
 };
 
-// export const getStaticPaths = async () => {
-//   const paths: any = [];
-//   onAuthStateChanged(auth, async (user) => {
-//     if (user) {
-//       const querySnapshot = await getDocs(collection(db, 'orders'));
-//       querySnapshot.forEach((_doc: any) =>
-//         paths.push({ params: { slug: _doc.id } }),
-//       );
-//     }
-//   });
-
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// };
-
-// origin
-// export const getStaticPaths = async () => {
-//   const paths: any = [];
-//   onAuthStateChanged(auth, async (user) => {
-//     console.log('🚀 ~ file: [slug].tsx:145 ~ onAuthStateChanged ~ user:', user);
-//     if (user) {
-//       const querySnapshot = await getDocs(collection(db, 'orders'));
-//       querySnapshot.forEach((_doc: any) =>
-//         paths.push({
-//           path: `/order/${_doc.id}`,
-//           params: { slug: _doc.id },
-//         }),
-//       );
-//     }
-//   });
-
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// };
-
-// export const getStaticPaths = async () => {
-//   const paths: any = [];
-//   const params: any = { slug: '', newOrder: {}, updatedRows: {} };
-//   onAuthStateChanged(auth, async (user) => {
-//     console.log('🚀 ~ file: [slug].tsx:145 ~ onAuthStateChanged ~ user:', user);
-//     if (user) {
-//       const querySnapshot = await getDocs(collection(db, 'orders'));
-//       querySnapshot.forEach((_doc: any) => {
-//         params.slug = _doc.id;
-
-//         const docRef = doc(db, 'orders', _doc.id);
-//         onSnapshot(docRef, (document) => {
-//           const newOrder: Order = {
-//             id: document.id,
-//             shipFee: document.data()?.shipFee,
-//             discount: document.data()?.discount,
-//             shopOwnerName: document.data()?.shopOwnerName,
-//             shopOwnerMomo: document.data()?.shopOwnerMomo,
-//             selectedMenuName: document.data()?.selectedMenuName,
-//             selectedMenuLink: document.data()?.selectedMenuLink,
-//           };
-//           params.newOrder = newOrder;
-//         });
-
-//         const rowsRef = collection(db, 'orders', _doc.id, 'rows');
-//         const q = firestoreQuery(rowsRef, orderBy('timestamp'));
-//         onSnapshot(q, (snapshot) => {
-//           const updatedRows = snapshot.docs.map((document: any) => {
-//             return { ...document.data(), id: document.id };
-//           });
-//           params.updatedRows = updatedRows;
-//         });
-
-//         paths.push({
-//           path: `/order/${_doc.id}`,
-//           params,
-//         });
-//       });
-//     }
-//   });
-
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// };
-
-// export const getStaticProps = async ({
-//   params: { slug, newOrder, updatedRows },
-// }: {
-//   params: any;
-//   slug: any;
-//   newOrder: Order;
-//   updatedRows: any;
-// }) => {
-//   const order = JSON.stringify(newOrder);
-//   const rows = JSON.stringify(updatedRows);
-//   const query = { slug, order, rows };
-//   return { props: { query } };
-// };
-
-// export const getStaticProps = async ({
-//   params: { slug },
-// }: {
-//   params: any;
-//   slug: any;
-// }) => {
-//   const query = { slug };
-
-//   return { props: { query } };
-// };
+export const getStaticProps = async ({
+  params: { slug },
+}: {
+  params: any;
+  slug: any;
+}) => {
+  const query = { slug };
+  return { props: { query } };
+};

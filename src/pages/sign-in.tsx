@@ -45,11 +45,7 @@ const SignIn = () => {
       await setDoc(docRef, newUser);
       dispatch(UserActions.setCurrentUser(newUser));
     }
-    if (router.query.from) {
-      router.push(decodeURIComponent(router.query.from.toString()));
-    } else {
-      router.push('/create-order/');
-    }
+    router.push('/create-order/');
   };
 
   return (
