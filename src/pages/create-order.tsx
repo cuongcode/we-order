@@ -317,12 +317,12 @@ const UserNicknameInput = () => {
             {currentUser?.nickname}
           </div>
           <button
-            className="absolute -right-5 top-2"
+            className="absolute -right-5 top-1"
             onClick={() => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilSquareIcon className="h-3 w-3" />
+            <PencilSquareIcon className="h-4 w-4" />
           </button>
         </>
       )}
@@ -334,7 +334,7 @@ const TranferInfo = () => {
   return (
     <div className="flex h-40 grow flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
-      <div className="flex w-full flex-col items-start gap-2">
+      <div className="flex w-full flex-col items-start text-sm">
         <div className="flex h-6 w-full items-center">
           <div className="w-11">Momo</div>
           <div className="mx-2">:</div>
@@ -345,6 +345,10 @@ const TranferInfo = () => {
         <div className="flex w-full">
           <div className="w-11">Bank</div>
           <div className="ml-2">:</div>
+        </div>
+        <div>
+          <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
+          <ShopOwnerBankInput field1="bank2Name" field2="bank2Number" />
         </div>
       </div>
     </div>
@@ -401,7 +405,88 @@ const ShopOwnerMomoInput = () => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilSquareIcon className="h-3 w-3" />
+            <PencilSquareIcon className="h-4 w-4" />
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
+const ShopOwnerBankInput = ({
+  field1,
+  field2,
+}: {
+  field1: keyof User;
+  field2: keyof User;
+}) => {
+  const [bankName, setBankName] = useState<any>('');
+  const [bankNumber, setBankNumber] = useState<any>('');
+  const [isEdit, setIsEdit] = useState(false);
+  const { currentUser } = useSelector(selector.user);
+
+  useEffect(() => {
+    if (currentUser) {
+      setBankName(currentUser[field1]);
+      setBankNumber(currentUser[field2]);
+    }
+  }, []);
+
+  const _onBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setBankName(value);
+  };
+  const _onBankNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setBankNumber(value);
+  };
+
+  const _updateUserMomo = async () => {
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(docRef, {
+        [field1]: bankName,
+        [field2]: bankNumber,
+      });
+      setIsEdit(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between">
+      {isEdit ? (
+        <>
+          <input
+            className="w-12 rounded-md border-2 px-1 hover:border-gray-600"
+            type="text"
+            value={bankName}
+            onChange={_onBankNameChange}
+          />
+          <input
+            className="w-36 rounded-md border-2 px-1 hover:border-gray-600"
+            type="text"
+            value={bankNumber}
+            onChange={_onBankNumberChange}
+          />
+          <button className="ml-9" onClick={_updateUserMomo}>
+            <CheckIcon className="h-4 w-4" />
+          </button>
+        </>
+      ) : (
+        <>
+          <div className="w-12 rounded-md border-2 border-white px-1">
+            {currentUser ? currentUser[field1]?.toString() : ''}
+          </div>
+          <div className="w-36 rounded-md border-2 border-white px-1">
+            {currentUser ? currentUser[field2]?.toString() : ''}
+          </div>
+          <button
+            className="ml-9"
+            onClick={() => {
+              setIsEdit(!isEdit);
+            }}
+          >
+            <PencilSquareIcon className="h-4 w-4" />
           </button>
         </>
       )}
