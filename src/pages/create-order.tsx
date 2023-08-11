@@ -11,6 +11,7 @@ import {
   doc,
   onSnapshot,
   query,
+  serverTimestamp,
   updateDoc,
   where,
 } from 'firebase/firestore';
@@ -119,6 +120,7 @@ const NewOrderButton = ({ selectedMenu }: { selectedMenu: Menu }) => {
   const _createOrder = async () => {
     if (selectedMenu.link !== '' && currentUser) {
       const newOrder = {
+        timestamp: serverTimestamp(),
         shipFee: 0,
         discount: 0,
         shopOwnerName: currentUser?.nickname,
