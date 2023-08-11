@@ -109,7 +109,7 @@ const CreateOrderPage = () => {
               selectedMenu={selectedMenu}
               setSelectedMenu={setSelectedMenu}
             />
-            <NewOrderButton selectedMenu={selectedMenu} />
+            <NewOrderButton orders={orders} selectedMenu={selectedMenu} />
           </div>
           <div className="flex w-1/2 flex-col gap-4 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
             <OrderList orders={orders} />
@@ -122,18 +122,24 @@ const CreateOrderPage = () => {
 
 export default CreateOrderPage;
 
-const NewOrderButton = ({ selectedMenu }: { selectedMenu: Menu }) => {
-  const [error, setError] = useState<any>({});
+const NewOrderButton = ({
+  orders,
+  selectedMenu,
+}: {
+  orders: Order[];
+  selectedMenu: Menu;
+}) => {
+  const [error, setError] = useState<string>('');
   const { currentUser } = useSelector(selector.user);
 
   const _createOrder = async () => {
     if (currentUser) {
       if (selectedMenu.link === '') {
-        const newError = {
-          ...error,
-          missingMenuLink: 'Please select a menu',
-        };
-        setError(newError);
+        setError('Please select a menu');
+        return;
+      }
+      if (orders.length === 10) {
+        setError('You have got your maximum number of orders');
         return;
       }
       const newOrder = {
@@ -147,7 +153,7 @@ const NewOrderButton = ({ selectedMenu }: { selectedMenu: Menu }) => {
         uid: currentUser?.uid,
       };
       await addDoc(collection(db, 'orders'), newOrder);
-      setError({});
+      setError('');
     }
   };
 
@@ -160,8 +166,8 @@ const NewOrderButton = ({ selectedMenu }: { selectedMenu: Menu }) => {
       >
         New Order
       </button>
-      {selectedMenu.link === '' ? (
-        <div className="absolute text-red-500">{error.missingMenuLink}</div>
+      {error !== '' ? (
+        <div className="absolute text-red-500">{error}</div>
       ) : null}
     </div>
   );
