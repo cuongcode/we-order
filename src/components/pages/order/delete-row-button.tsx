@@ -1,5 +1,12 @@
 import { CheckIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { deleteDoc, doc } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+} from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -16,6 +23,15 @@ export const DeleteRowButton = ({ row }: { row: DrinkTableRow }) => {
   const deleteRowButtonRef = useCheckClickOutside(() => setIsDropdown(false));
 
   const _deleteRow = async () => {
+    const q = query(collection(db, 'orders', order.id, 'rows'));
+    const queryrRows = await getDocs(q);
+    queryrRows.forEach(async (_row) => {
+      if (_row.data().offerBy === row.name) {
+        await updateDoc(doc(db, 'orders', order.id, 'rows', _row.id), {
+          offerBy: '--',
+        });
+      }
+    });
     const docRef = doc(db, 'orders', order.id, 'rows', row.id);
     await deleteDoc(docRef);
   };
