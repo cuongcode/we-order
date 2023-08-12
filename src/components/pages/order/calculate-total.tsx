@@ -51,11 +51,12 @@ export const CalculateTotal = () => {
 };
 
 const ShipFeeInput = ({ order }: { order: Order }) => {
-  const _updateOrder = async (field: string, newValue: any) => {
+  const { currentUser } = useSelector(selector.user);
+  const _updateOrder = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     const docRef = doc(db, 'orders', order.id);
-    // ux loading
     await updateDoc(docRef, {
-      [field]: newValue,
+      [name]: value,
     });
   };
   return (
@@ -66,18 +67,21 @@ const ShipFeeInput = ({ order }: { order: Order }) => {
         type="number"
         value={order.shipFee}
         name="shipFee"
-        // {name, value} = e.target
-        onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+        disabled={!currentUser || currentUser?.uid !== order.uid}
+        onChange={_updateOrder}
       />
     </div>
   );
 };
 
 const DiscountInput = ({ order }: { order: Order }) => {
-  const _updateOrder = async (field: string, newValue: any) => {
+  const { currentUser } = useSelector(selector.user);
+
+  const _updateOrder = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     const docRef = doc(db, 'orders', order.id);
     await updateDoc(docRef, {
-      [field]: newValue,
+      [name]: value,
     });
   };
   return (
@@ -88,7 +92,8 @@ const DiscountInput = ({ order }: { order: Order }) => {
         type="number"
         value={order.discount}
         name="discount"
-        onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+        disabled={!currentUser || currentUser?.uid !== order.uid}
+        onChange={_updateOrder}
       />
     </div>
   );

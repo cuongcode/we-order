@@ -42,6 +42,8 @@ export const TranferInfo = () => {
 };
 
 const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
+  const { currentUser } = useSelector(selector.user);
+
   const [momo, setMomo] = useState('');
   const [isEdit, setIsEdit] = useState(false);
 
@@ -81,14 +83,16 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
           <div className="w-28 rounded-md border-2 border-white px-1">
             {order.shopOwnerMomo}
           </div>
-          <button
-            className=""
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
+          {currentUser && currentUser?.uid === order.uid ? (
+            <button
+              className=""
+              onClick={() => {
+                setIsEdit(!isEdit);
+              }}
+            >
+              <PencilSquareIcon className="h-3 w-3" />
+            </button>
+          ) : null}
         </>
       )}
     </div>
@@ -104,6 +108,7 @@ const ShopOwnerBankInput = ({
   field2: keyof Order;
   order: Order;
 }) => {
+  const { currentUser } = useSelector(selector.user);
   const [bankName, setBankName] = useState<any>('');
   const [bankNumber, setBankNumber] = useState<any>('');
   const [isEdit, setIsEdit] = useState(false);
@@ -157,20 +162,22 @@ const ShopOwnerBankInput = ({
         <>
           <div className="flex items-center">
             <div className="w-12 rounded-md border-2 border-white px-1">
-              {order[field1].toString()}
+              {order[field1]?.toString()}
             </div>
             <div className="w-32 rounded-md border-2 border-white px-1">
               {order[field2]?.toString()}
             </div>
           </div>
-          <button
-            className=""
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
+          {currentUser && currentUser?.uid === order.uid ? (
+            <button
+              className=""
+              onClick={() => {
+                setIsEdit(!isEdit);
+              }}
+            >
+              <PencilSquareIcon className="h-3 w-3" />
+            </button>
+          ) : null}
         </>
       )}
     </div>

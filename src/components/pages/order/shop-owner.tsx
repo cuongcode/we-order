@@ -28,6 +28,7 @@ export const ShopOwner = () => {
 };
 
 const ShopOwnerNameInput = ({ order }: { order: Order }) => {
+  const { currentUser } = useSelector(selector.user);
   const [shopOwnerName, setShopOwnerName] = useState('');
   const [isEdit, setIsEdit] = useState(false);
 
@@ -70,14 +71,16 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
           <div className="h-6 w-20 rounded-md border-2 border-white text-center">
             {order.shopOwnerName}
           </div>
-          <button
-            className="absolute -right-5 top-2"
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
+          {currentUser && currentUser?.uid === order.uid ? (
+            <button
+              className="absolute -right-5 top-2"
+              onClick={() => {
+                setIsEdit(!isEdit);
+              }}
+            >
+              <PencilSquareIcon className="h-3 w-3" />
+            </button>
+          ) : null}
         </>
       )}
     </div>
