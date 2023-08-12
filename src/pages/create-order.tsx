@@ -560,7 +560,7 @@ const Menus = ({
 
   return (
     <div className="flex flex-wrap gap-2">
-      {menus.length === 0
+      {menus?.length === 0 || menus === undefined
         ? 'You have no menu. Add one!'
         : menus.map((menu: Menu) => (
             <button
