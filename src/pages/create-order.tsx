@@ -3,12 +3,14 @@ import {
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
+  XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
   addDoc,
+  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
@@ -509,15 +511,17 @@ const MenusDropdown = ({
       </div>
       <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
         <AddMenuForm />
-        <Menus setSelectedMenu={setSelectedMenu} />
+        <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
       </div>
     </div>
   );
 };
 
 const Menus = ({
+  selectedMenu,
   setSelectedMenu,
 }: {
+  selectedMenu: Menu;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
   const [menus, setMenus] = useState<Menu[]>([]);
@@ -538,12 +542,20 @@ const Menus = ({
     }
   };
 
-  const _selectMenu = async (
-    menuId: string,
-    menuName: string,
-    menuLink: string,
-  ) => {
-    setSelectedMenu({ id: menuId, name: menuName, link: menuLink });
+  const _selectMenu = async (menu: Menu) => {
+    setSelectedMenu({ id: menu.id, name: menu.name, link: menu.link });
+  };
+
+  const _deleteMenu = async (menu: Menu) => {
+    if (menu.name === selectedMenu.name && menu.link === selectedMenu.link) {
+      setSelectedMenu({ id: '', name: '', link: '' });
+    }
+    if (currentUser) {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+        menus: arrayRemove({ name: menu.name, link: menu.link }),
+      });
+    }
   };
 
   return (
@@ -551,14 +563,21 @@ const Menus = ({
       {menus?.length === 0 || menus === undefined
         ? 'You have no menu. Add one!'
         : menus.map((menu: Menu) => (
-            <button
-              className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
-              type="button"
-              key={menu.name}
-              onClick={() => _selectMenu(menu.id, menu.name, menu.link)}
-            >
-              {menu.name}
-            </button>
+            <div key={menu.name} className="relative">
+              <button
+                className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
+                type="button"
+                onClick={() => _selectMenu(menu)}
+              >
+                {menu.name}
+              </button>
+              <button
+                className="absolute -left-1 -top-1"
+                onClick={() => _deleteMenu(menu)}
+              >
+                <XCircleIcon className="h-3 w-3 rounded-full bg-red-200" />
+              </button>
+            </div>
           ))}
     </div>
   );
