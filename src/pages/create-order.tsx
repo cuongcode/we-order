@@ -277,13 +277,14 @@ const UserNicknameInput = () => {
   const [nickname, setNickname] = useState<string>('');
   const { currentUser } = useSelector(selector.user);
 
-  useEffect(() => {
-    setNickname(currentUser?.nickname || '');
-  }, []);
-
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setNickname(value);
+  };
+
+  const _onEdit = () => {
+    setNickname(currentUser?.nickname || '');
+    setIsEdit(true);
   };
 
   const _updateUserNickname = async () => {
@@ -318,14 +319,9 @@ const UserNicknameInput = () => {
       ) : (
         <>
           <div className="flex h-6 w-20 items-center justify-center rounded-md border-2 border-white">
-            {currentUser?.nickname}
+            {currentUser?.nickname || '--'}
           </div>
-          <button
-            className="absolute -right-5 top-2"
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
+          <button className="absolute -right-5 top-2" onClick={_onEdit}>
             <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
@@ -364,13 +360,14 @@ const ShopOwnerMomoInput = () => {
   const { currentUser } = useSelector(selector.user);
   const [isEdit, setIsEdit] = useState(false);
 
-  useEffect(() => {
-    setMomo(currentUser?.momo || '');
-  }, []);
-
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setMomo(value);
+  };
+
+  const _onEdit = () => {
+    setMomo(currentUser?.momo || '');
+    setIsEdit(true);
   };
 
   const _updateUserMomo = async () => {
@@ -401,14 +398,9 @@ const ShopOwnerMomoInput = () => {
       ) : (
         <>
           <div className="w-28 rounded-md border-2 border-white px-1">
-            {currentUser?.momo}
+            {currentUser?.momo || '--'}
           </div>
-          <button
-            className=""
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
+          <button className="" onClick={_onEdit}>
             <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
@@ -429,12 +421,13 @@ const ShopOwnerBankInput = ({
   const [isEdit, setIsEdit] = useState(false);
   const { currentUser } = useSelector(selector.user);
 
-  useEffect(() => {
+  const _onEdit = () => {
     if (currentUser) {
       setBankName(currentUser[field1]);
       setBankNumber(currentUser[field2]);
     }
-  }, []);
+    setIsEdit(true);
+  };
 
   const _onBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -482,18 +475,13 @@ const ShopOwnerBankInput = ({
         <>
           <div className="flex items-center">
             <div className="w-12 rounded-md border-2 border-white px-1">
-              {currentUser ? currentUser[field1]?.toString() : ''}
+              {currentUser ? currentUser[field1]?.toString() || '--' : ''}
             </div>
             <div className="w-32 rounded-md border-2 border-white px-1">
               {currentUser ? currentUser[field2]?.toString() : ''}
             </div>
           </div>
-          <button
-            className=""
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
+          <button className="" onClick={_onEdit}>
             <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>

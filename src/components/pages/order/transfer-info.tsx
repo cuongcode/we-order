@@ -1,6 +1,6 @@
 import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
@@ -47,9 +47,10 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
   const [momo, setMomo] = useState('');
   const [isEdit, setIsEdit] = useState(false);
 
-  useEffect(() => {
+  const _onEdit = () => {
     setMomo(order.shopOwnerMomo);
-  }, []);
+    setIsEdit(true);
+  };
 
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -81,15 +82,10 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
       ) : (
         <>
           <div className="w-28 rounded-md border-2 border-white px-1">
-            {order.shopOwnerMomo}
+            {order.shopOwnerMomo || '--'}
           </div>
           {currentUser && currentUser?.uid === order.uid ? (
-            <button
-              className=""
-              onClick={() => {
-                setIsEdit(!isEdit);
-              }}
-            >
+            <button className="" onClick={_onEdit}>
               <PencilSquareIcon className="h-3 w-3" />
             </button>
           ) : null}
@@ -113,10 +109,11 @@ const ShopOwnerBankInput = ({
   const [bankNumber, setBankNumber] = useState<any>('');
   const [isEdit, setIsEdit] = useState(false);
 
-  useEffect(() => {
+  const _onEdit = () => {
     setBankName(order[field1]);
     setBankNumber(order[field2]);
-  }, []);
+    setIsEdit(true);
+  };
 
   const _onBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -162,19 +159,14 @@ const ShopOwnerBankInput = ({
         <>
           <div className="flex items-center">
             <div className="w-12 rounded-md border-2 border-white px-1">
-              {order[field1]?.toString()}
+              {order[field1]?.toString() || '--'}
             </div>
             <div className="w-32 rounded-md border-2 border-white px-1">
               {order[field2]?.toString()}
             </div>
           </div>
           {currentUser && currentUser?.uid === order.uid ? (
-            <button
-              className=""
-              onClick={() => {
-                setIsEdit(!isEdit);
-              }}
-            >
+            <button className="" onClick={_onEdit}>
               <PencilSquareIcon className="h-3 w-3" />
             </button>
           ) : null}

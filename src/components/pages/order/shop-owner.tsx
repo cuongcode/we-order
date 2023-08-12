@@ -1,6 +1,6 @@
 import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
@@ -32,9 +32,10 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
   const [shopOwnerName, setShopOwnerName] = useState('');
   const [isEdit, setIsEdit] = useState(false);
 
-  useEffect(() => {
+  const _onEdit = () => {
     setShopOwnerName(order.shopOwnerName);
-  }, []);
+    setIsEdit(true);
+  };
 
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -72,12 +73,7 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
             {order.shopOwnerName}
           </div>
           {currentUser && currentUser?.uid === order.uid ? (
-            <button
-              className="absolute -right-5 top-2"
-              onClick={() => {
-                setIsEdit(!isEdit);
-              }}
-            >
+            <button className="absolute -right-5 top-2" onClick={_onEdit}>
               <PencilSquareIcon className="h-3 w-3" />
             </button>
           ) : null}
