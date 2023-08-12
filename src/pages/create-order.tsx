@@ -309,10 +309,10 @@ const UserNicknameInput = () => {
             />
           </div>
           <button
-            className="absolute -right-5 top-1"
+            className="absolute -right-5 top-2"
             onClick={_updateUserNickname}
           >
-            <CheckIcon className="h-4 w-4" />
+            <CheckIcon className="h-3 w-3" />
           </button>
         </>
       ) : (
@@ -321,12 +321,12 @@ const UserNicknameInput = () => {
             {currentUser?.nickname}
           </div>
           <button
-            className="absolute -right-5 top-1"
+            className="absolute -right-5 top-2"
             onClick={() => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilSquareIcon className="h-4 w-4" />
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}
