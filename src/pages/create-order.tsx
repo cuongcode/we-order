@@ -350,7 +350,7 @@ const TranferInfo = () => {
           <div className="w-11">Bank</div>
           <div className="mx-2">:</div>
         </div>
-        <div>
+        <div className="flex w-full flex-col">
           <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
           <ShopOwnerBankInput field1="bank2Name" field2="bank2Number" />
         </div>
@@ -457,40 +457,44 @@ const ShopOwnerBankInput = ({
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex w-full items-center justify-between">
       {isEdit ? (
         <>
-          <input
-            className="w-12 rounded-md border-2 px-1 hover:border-gray-600"
-            type="text"
-            value={bankName}
-            onChange={_onBankNameChange}
-          />
-          <input
-            className="w-36 rounded-md border-2 px-1 hover:border-gray-600"
-            type="text"
-            value={bankNumber}
-            onChange={_onBankNumberChange}
-          />
-          <button className="ml-9" onClick={_updateUserMomo}>
-            <CheckIcon className="h-4 w-4" />
+          <div className="flex items-center">
+            <input
+              className="w-12 rounded-md border-2 px-1 hover:border-gray-600"
+              type="text"
+              value={bankName}
+              onChange={_onBankNameChange}
+            />
+            <input
+              className="w-32 rounded-md border-2 px-1 hover:border-gray-600"
+              type="text"
+              value={bankNumber}
+              onChange={_onBankNumberChange}
+            />
+          </div>
+          <button className="" onClick={_updateUserMomo}>
+            <CheckIcon className="h-3 w-3" />
           </button>
         </>
       ) : (
         <>
-          <div className="w-12 rounded-md border-2 border-white px-1">
-            {currentUser ? currentUser[field1]?.toString() : ''}
-          </div>
-          <div className="w-36 rounded-md border-2 border-white px-1">
-            {currentUser ? currentUser[field2]?.toString() : ''}
+          <div className="flex items-center">
+            <div className="w-12 rounded-md border-2 border-white px-1">
+              {currentUser ? currentUser[field1]?.toString() : ''}
+            </div>
+            <div className="w-32 rounded-md border-2 border-white px-1">
+              {currentUser ? currentUser[field2]?.toString() : ''}
+            </div>
           </div>
           <button
-            className="ml-9"
+            className=""
             onClick={() => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilSquareIcon className="h-4 w-4" />
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}
@@ -536,7 +540,6 @@ const Menus = ({
     _fetchMenus();
   }, []);
 
-  // will change to fetch user's menus
   const _fetchMenus = async () => {
     if (currentUser) {
       const docRef = doc(db, 'users', currentUser?.uid);
