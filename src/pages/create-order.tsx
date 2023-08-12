@@ -183,7 +183,7 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
   };
   return (
     <div>
-      <div className="mb-3 font-semibold">MY ORDERS</div>
+      <div className="mb-3 text-center font-semibold">MY ORDERS</div>
       <div className="flex flex-col gap-1">
         {orders.length === 0
           ? 'You have no order. Create one!'
@@ -194,7 +194,7 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
                   onClick={() => _openOrder(order.id)}
                   className="w-fit"
                 >
-                  {order.id}
+                  {order.selectedMenuName}
                 </button>
                 <div className="flex items-center gap-1">
                   <div className="text-sm font-extralight text-gray-500">
