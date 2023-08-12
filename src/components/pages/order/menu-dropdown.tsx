@@ -1,11 +1,5 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
-import {
-  addDoc,
-  collection,
-  doc,
-  onSnapshot,
-  updateDoc,
-} from 'firebase/firestore';
+import { arrayUnion, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -16,6 +10,7 @@ import type { Menu, Order } from '@/types';
 
 export const MenusDropdown = () => {
   const { order } = useSelector(selector.order);
+  const { currentUser } = useSelector(selector.user);
 
   const [isDropdown, setIsDropdown] = useState(false);
 
@@ -26,6 +21,7 @@ export const MenusDropdown = () => {
       <button
         type="button"
         className="w-fit rounded-lg bg-gray-200 px-3 py-2 drop-shadow-md"
+        disabled={!currentUser || currentUser.uid !== order.uid}
         onClick={() => setIsDropdown(true)}
       >
         {order.selectedMenuName}
@@ -45,19 +41,19 @@ export const MenusDropdown = () => {
 
 const Menus = ({ order }: { order: Order }) => {
   const [menus, setMenus] = useState<Menu[]>([]);
-
+  const { currentUser } = useSelector(selector.user);
   useEffect(() => {
     _fetchMenus();
   }, []);
 
-  // will change to fetch user's menus
   const _fetchMenus = async () => {
-    onSnapshot(collection(db, 'menus'), (snapshot) => {
-      const updatedMenus = snapshot.docs.map((menu: any) => {
-        return { ...menu.data(), id: menu.id };
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      onSnapshot(docRef, (_doc) => {
+        const updatedMenus: Menu[] = _doc.data()?.menus;
+        setMenus(updatedMenus);
       });
-      setMenus(updatedMenus);
-    });
+    }
   };
 
   const _selectMenu = async (menuName: string, menuLink: string) => {
@@ -70,7 +66,7 @@ const Menus = ({ order }: { order: Order }) => {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {menus.map((menu: Menu) => (
+      {menus?.map((menu: Menu) => (
         <button
           className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
           type="button"
@@ -87,10 +83,14 @@ const Menus = ({ order }: { order: Order }) => {
 const AddMenuForm = () => {
   const [name, setName] = useState('');
   const [link, setLink] = useState('');
+  const { currentUser } = useSelector(selector.user);
 
   const _addMenu = async () => {
-    if (name !== '' && link !== '') {
-      await addDoc(collection(db, 'menus'), { name, link });
+    if (name !== '' && link !== '' && currentUser) {
+      const userRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(userRef, {
+        menus: arrayUnion({ name, link }),
+      });
       setName('');
       setLink('');
     }

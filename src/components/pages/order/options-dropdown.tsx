@@ -58,7 +58,7 @@ export const OptionsDropdown = ({
       >
         {row[field]}
       </button>
-      {isDropdown ? (
+      {isDropdown && showOptions.length !== 0 ? (
         <div
           className={clsx({
             'absolute flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg':

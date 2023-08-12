@@ -44,8 +44,12 @@ const OrderPage = ({ query }: { query: any }) => {
         shopOwnerMomo: document.data()?.shopOwnerMomo,
         selectedMenuName: document.data()?.selectedMenuName,
         selectedMenuLink: document.data()?.selectedMenuLink,
-        uid: document.data()?.selectedMenuLink,
+        uid: document.data()?.uid,
         timestamp: document.data()?.timestamp,
+        bank1Name: document.data()?.bank1Name,
+        bank1Number: document.data()?.bank1Number,
+        bank2Name: document.data()?.bank2Name,
+        bank2Number: document.data()?.bank2Number,
       };
       dispatch(OrderActions.setOrder(newOrder));
     });

@@ -28,13 +28,28 @@ export const ShopOwner = () => {
 };
 
 const ShopOwnerNameInput = ({ order }: { order: Order }) => {
+  const { currentUser } = useSelector(selector.user);
+  const [shopOwnerName, setShopOwnerName] = useState('');
   const [isEdit, setIsEdit] = useState(false);
-  const _updateOrder = async (field: string, newValue: any) => {
+
+  const _onEdit = () => {
+    setShopOwnerName(order.shopOwnerName);
+    setIsEdit(true);
+  };
+
+  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setShopOwnerName(value);
+  };
+
+  const _updateOrder = async () => {
     const docRef = doc(db, 'orders', order.id);
     await updateDoc(docRef, {
-      [field]: newValue,
+      shopOwnerName,
     });
+    setIsEdit(false);
   };
+
   return (
     <div className="relative">
       {isEdit ? (
@@ -43,17 +58,12 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
             <input
               className="h-5 w-full rounded-md text-center"
               type="text"
-              value={order.shopOwnerName}
+              value={shopOwnerName}
               name="shopOwnerName"
-              onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+              onChange={_onChange}
             />
           </div>
-          <button
-            className="absolute -right-5 top-1"
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
+          <button className="absolute -right-5 top-1" onClick={_updateOrder}>
             <CheckIcon className="h-4 w-4" />
           </button>
         </>
@@ -62,14 +72,11 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
           <div className="h-6 w-20 rounded-md border-2 border-white text-center">
             {order.shopOwnerName}
           </div>
-          <button
-            className="absolute -right-5 top-2"
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
+          {currentUser && currentUser?.uid === order.uid ? (
+            <button className="absolute -right-5 top-2" onClick={_onEdit}>
+              <PencilSquareIcon className="h-3 w-3" />
+            </button>
+          ) : null}
         </>
       )}
     </div>

@@ -24,7 +24,7 @@ export const BonusFormula = () => {
         <div>(</div>
         <div>(</div>
       </div>
-      <div className="min-w-fit">
+      <div className="min-w-max">
         <div className="font-semibold">ship fee</div>
         <div>{Number(order.shipFee).toLocaleString('en-US')}</div>
       </div>

@@ -3,12 +3,14 @@ import {
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
+  XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
   addDoc,
+  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
@@ -146,11 +148,15 @@ const NewOrderButton = ({
         timestamp: serverTimestamp(),
         shipFee: 0,
         discount: 0,
-        shopOwnerName: currentUser?.nickname,
-        shopOwnerMomo: currentUser?.momo,
+        shopOwnerName: currentUser.nickname,
+        shopOwnerMomo: currentUser.momo,
         selectedMenuName: selectedMenu.name,
         selectedMenuLink: selectedMenu.link,
-        uid: currentUser?.uid,
+        bank1Name: currentUser.bank1Name,
+        bank1Number: currentUser.bank1Number,
+        bank2Name: currentUser.bank2Name,
+        bank2Number: currentUser.bank2Number,
+        uid: currentUser.uid,
       };
       await addDoc(collection(db, 'orders'), newOrder);
       setError('');
@@ -179,7 +185,7 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
   };
   return (
     <div>
-      <div className="mb-3 font-semibold">MY ORDERS</div>
+      <div className="mb-3 text-center font-semibold">MY ORDERS</div>
       <div className="flex flex-col gap-1">
         {orders.length === 0
           ? 'You have no order. Create one!'
@@ -190,7 +196,7 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
                   onClick={() => _openOrder(order.id)}
                   className="w-fit"
                 >
-                  {order.id}
+                  {order.selectedMenuName}
                 </button>
                 <div className="flex items-center gap-1">
                   <div className="text-sm font-extralight text-gray-500">
@@ -273,13 +279,14 @@ const UserNicknameInput = () => {
   const [nickname, setNickname] = useState<string>('');
   const { currentUser } = useSelector(selector.user);
 
-  useEffect(() => {
-    setNickname(currentUser?.nickname || '');
-  }, []);
-
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setNickname(value);
+  };
+
+  const _onEdit = () => {
+    setNickname(currentUser?.nickname || '');
+    setIsEdit(true);
   };
 
   const _updateUserNickname = async () => {
@@ -305,24 +312,19 @@ const UserNicknameInput = () => {
             />
           </div>
           <button
-            className="absolute -right-5 top-1"
+            className="absolute -right-5 top-2"
             onClick={_updateUserNickname}
           >
-            <CheckIcon className="h-4 w-4" />
+            <CheckIcon className="h-3 w-3" />
           </button>
         </>
       ) : (
         <>
           <div className="flex h-6 w-20 items-center justify-center rounded-md border-2 border-white">
-            {currentUser?.nickname}
+            {currentUser?.nickname || '--'}
           </div>
-          <button
-            className="absolute -right-5 top-1"
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
-            <PencilSquareIcon className="h-4 w-4" />
+          <button className="absolute -right-5 top-2" onClick={_onEdit}>
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}
@@ -344,9 +346,9 @@ const TranferInfo = () => {
         </div>
         <div className="flex w-full">
           <div className="w-11">Bank</div>
-          <div className="ml-2">:</div>
+          <div className="mx-2">:</div>
         </div>
-        <div>
+        <div className="flex w-full flex-col">
           <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
           <ShopOwnerBankInput field1="bank2Name" field2="bank2Number" />
         </div>
@@ -360,13 +362,14 @@ const ShopOwnerMomoInput = () => {
   const { currentUser } = useSelector(selector.user);
   const [isEdit, setIsEdit] = useState(false);
 
-  useEffect(() => {
-    setMomo(currentUser?.momo || '');
-  }, []);
-
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setMomo(value);
+  };
+
+  const _onEdit = () => {
+    setMomo(currentUser?.momo || '');
+    setIsEdit(true);
   };
 
   const _updateUserMomo = async () => {
@@ -384,28 +387,23 @@ const ShopOwnerMomoInput = () => {
       {isEdit ? (
         <>
           <input
-            className="w-36 rounded-md border-2 px-1 hover:border-gray-600"
+            className="w-28 rounded-md border-2 px-1 hover:border-gray-600"
             type="text"
             value={momo}
             name="shopOwnerMomo"
             onChange={_onChange}
           />
           <button className="" onClick={_updateUserMomo}>
-            <CheckIcon className="h-4 w-4" />
+            <CheckIcon className="h-3 w-3" />
           </button>
         </>
       ) : (
         <>
-          <div className="w-36 rounded-md border-2 border-white px-1">
-            {currentUser?.momo}
+          <div className="w-28 rounded-md border-2 border-white px-1">
+            {currentUser?.momo || '--'}
           </div>
-          <button
-            className=""
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
-            <PencilSquareIcon className="h-4 w-4" />
+          <button className="" onClick={_onEdit}>
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}
@@ -425,12 +423,13 @@ const ShopOwnerBankInput = ({
   const [isEdit, setIsEdit] = useState(false);
   const { currentUser } = useSelector(selector.user);
 
-  useEffect(() => {
+  const _onEdit = () => {
     if (currentUser) {
       setBankName(currentUser[field1]);
       setBankNumber(currentUser[field2]);
     }
-  }, []);
+    setIsEdit(true);
+  };
 
   const _onBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -453,40 +452,39 @@ const ShopOwnerBankInput = ({
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex w-full items-center justify-between">
       {isEdit ? (
         <>
-          <input
-            className="w-12 rounded-md border-2 px-1 hover:border-gray-600"
-            type="text"
-            value={bankName}
-            onChange={_onBankNameChange}
-          />
-          <input
-            className="w-36 rounded-md border-2 px-1 hover:border-gray-600"
-            type="text"
-            value={bankNumber}
-            onChange={_onBankNumberChange}
-          />
-          <button className="ml-9" onClick={_updateUserMomo}>
-            <CheckIcon className="h-4 w-4" />
+          <div className="flex items-center">
+            <input
+              className="w-12 rounded-md border-2 px-1 hover:border-gray-600"
+              type="text"
+              value={bankName}
+              onChange={_onBankNameChange}
+            />
+            <input
+              className="w-32 rounded-md border-2 px-1 hover:border-gray-600"
+              type="text"
+              value={bankNumber}
+              onChange={_onBankNumberChange}
+            />
+          </div>
+          <button className="" onClick={_updateUserMomo}>
+            <CheckIcon className="h-3 w-3" />
           </button>
         </>
       ) : (
         <>
-          <div className="w-12 rounded-md border-2 border-white px-1">
-            {currentUser ? currentUser[field1]?.toString() : ''}
+          <div className="flex items-center">
+            <div className="w-12 rounded-md border-2 border-white px-1">
+              {currentUser ? currentUser[field1]?.toString() || '--' : ''}
+            </div>
+            <div className="w-32 rounded-md border-2 border-white px-1">
+              {currentUser ? currentUser[field2]?.toString() : ''}
+            </div>
           </div>
-          <div className="w-36 rounded-md border-2 border-white px-1">
-            {currentUser ? currentUser[field2]?.toString() : ''}
-          </div>
-          <button
-            className="ml-9"
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
-            <PencilSquareIcon className="h-4 w-4" />
+          <button className="" onClick={_onEdit}>
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}
@@ -513,15 +511,17 @@ const MenusDropdown = ({
       </div>
       <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
         <AddMenuForm />
-        <Menus setSelectedMenu={setSelectedMenu} />
+        <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
       </div>
     </div>
   );
 };
 
 const Menus = ({
+  selectedMenu,
   setSelectedMenu,
 }: {
+  selectedMenu: Menu;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
   const [menus, setMenus] = useState<Menu[]>([]);
@@ -532,7 +532,6 @@ const Menus = ({
     _fetchMenus();
   }, []);
 
-  // will change to fetch user's menus
   const _fetchMenus = async () => {
     if (currentUser) {
       const docRef = doc(db, 'users', currentUser?.uid);
@@ -543,27 +542,42 @@ const Menus = ({
     }
   };
 
-  const _selectMenu = async (
-    menuId: string,
-    menuName: string,
-    menuLink: string,
-  ) => {
-    setSelectedMenu({ id: menuId, name: menuName, link: menuLink });
+  const _selectMenu = async (menu: Menu) => {
+    setSelectedMenu({ id: menu.id, name: menu.name, link: menu.link });
+  };
+
+  const _deleteMenu = async (menu: Menu) => {
+    if (menu.name === selectedMenu.name && menu.link === selectedMenu.link) {
+      setSelectedMenu({ id: '', name: '', link: '' });
+    }
+    if (currentUser) {
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+        menus: arrayRemove({ name: menu.name, link: menu.link }),
+      });
+    }
   };
 
   return (
     <div className="flex flex-wrap gap-2">
-      {menus.length === 0
+      {menus?.length === 0 || menus === undefined
         ? 'You have no menu. Add one!'
         : menus.map((menu: Menu) => (
-            <button
-              className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
-              type="button"
-              key={menu.name}
-              onClick={() => _selectMenu(menu.id, menu.name, menu.link)}
-            >
-              {menu.name}
-            </button>
+            <div key={menu.name} className="relative">
+              <button
+                className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
+                type="button"
+                onClick={() => _selectMenu(menu)}
+              >
+                {menu.name}
+              </button>
+              <button
+                className="absolute -left-1 -top-1"
+                onClick={() => _deleteMenu(menu)}
+              >
+                <XCircleIcon className="h-3 w-3 rounded-full bg-red-200" />
+              </button>
+            </div>
           ))}
     </div>
   );
