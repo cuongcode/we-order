@@ -13,6 +13,10 @@ export interface Order {
   selectedMenuLink: string;
   uid: string;
   timestamp: firestoreTimestamp;
+  bank1Name: string;
+  bank1Number: string;
+  bank2Name: string;
+  bank2Number: string;
 }
 
 interface firestoreTimestamp {
