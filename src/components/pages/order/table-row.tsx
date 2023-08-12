@@ -34,7 +34,7 @@ export const TableRow = ({
     ...rows
       .filter((_row: DrinkTableRow) => _row.offerBy === '--')
       .map((_row: DrinkTableRow) => _row.name),
-  ].filter((option: string) => option !== row.name);
+  ].filter((option: string) => option !== row.name && option !== '');
 
   const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
