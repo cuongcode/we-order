@@ -1,6 +1,6 @@
 import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
@@ -28,13 +28,26 @@ export const ShopOwner = () => {
 };
 
 const ShopOwnerNameInput = ({ order }: { order: Order }) => {
+  const [shopOwnerName, setShopOwnerName] = useState('');
   const [isEdit, setIsEdit] = useState(false);
-  const _updateOrder = async (field: string, newValue: any) => {
+
+  useEffect(() => {
+    setShopOwnerName(order.shopOwnerName);
+  }, []);
+
+  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setShopOwnerName(value);
+  };
+
+  const _updateOrder = async () => {
     const docRef = doc(db, 'orders', order.id);
     await updateDoc(docRef, {
-      [field]: newValue,
+      shopOwnerName,
     });
+    setIsEdit(false);
   };
+
   return (
     <div className="relative">
       {isEdit ? (
@@ -43,17 +56,12 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
             <input
               className="h-5 w-full rounded-md text-center"
               type="text"
-              value={order.shopOwnerName}
+              value={shopOwnerName}
               name="shopOwnerName"
-              onChange={(e) => _updateOrder(e.target.name, e.target.value)}
+              onChange={_onChange}
             />
           </div>
-          <button
-            className="absolute -right-5 top-1"
-            onClick={() => {
-              setIsEdit(!isEdit);
-            }}
-          >
+          <button className="absolute -right-5 top-1" onClick={_updateOrder}>
             <CheckIcon className="h-4 w-4" />
           </button>
         </>
