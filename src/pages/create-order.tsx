@@ -146,11 +146,15 @@ const NewOrderButton = ({
         timestamp: serverTimestamp(),
         shipFee: 0,
         discount: 0,
-        shopOwnerName: currentUser?.nickname,
-        shopOwnerMomo: currentUser?.momo,
+        shopOwnerName: currentUser.nickname,
+        shopOwnerMomo: currentUser.momo,
         selectedMenuName: selectedMenu.name,
         selectedMenuLink: selectedMenu.link,
-        uid: currentUser?.uid,
+        bank1Name: currentUser.bank1Name,
+        bank1Number: currentUser.bank1Number,
+        bank2Name: currentUser.bank2Name,
+        bank2Number: currentUser.bank2Number,
+        uid: currentUser.uid,
       };
       await addDoc(collection(db, 'orders'), newOrder);
       setError('');
@@ -344,7 +348,7 @@ const TranferInfo = () => {
         </div>
         <div className="flex w-full">
           <div className="w-11">Bank</div>
-          <div className="ml-2">:</div>
+          <div className="mx-2">:</div>
         </div>
         <div>
           <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
@@ -384,19 +388,19 @@ const ShopOwnerMomoInput = () => {
       {isEdit ? (
         <>
           <input
-            className="w-36 rounded-md border-2 px-1 hover:border-gray-600"
+            className="w-28 rounded-md border-2 px-1 hover:border-gray-600"
             type="text"
             value={momo}
             name="shopOwnerMomo"
             onChange={_onChange}
           />
           <button className="" onClick={_updateUserMomo}>
-            <CheckIcon className="h-4 w-4" />
+            <CheckIcon className="h-3 w-3" />
           </button>
         </>
       ) : (
         <>
-          <div className="w-36 rounded-md border-2 border-white px-1">
+          <div className="w-28 rounded-md border-2 border-white px-1">
             {currentUser?.momo}
           </div>
           <button
@@ -405,7 +409,7 @@ const ShopOwnerMomoInput = () => {
               setIsEdit(!isEdit);
             }}
           >
-            <PencilSquareIcon className="h-4 w-4" />
+            <PencilSquareIcon className="h-3 w-3" />
           </button>
         </>
       )}
