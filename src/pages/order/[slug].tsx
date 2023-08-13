@@ -1,3 +1,6 @@
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+
 import {
   collection,
   doc,
@@ -18,7 +21,7 @@ import {
   TranferInfo,
 } from '@/components/pages/order';
 import { db } from '@/firebase';
-import { Icons, LogoImages } from '@/images';
+import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
 import { Main } from '@/templates/Main';
@@ -78,12 +81,15 @@ const OrderPage = ({ query }: { query: any }) => {
               alt="title-logo"
             />
           </div>
+
           <div className="mb-10 flex w-full gap-4 text-sm">
             <ShopOwner />
             <TranferInfo />
-            <div className="grow">
+            {/* <div className="m-auto h-40 w-96 bg-green-200">
+              <SimpleSlider />
+
               <WantedBoard />
-            </div>
+            </div> */}
           </div>
           <div className="mb-10">
             <SharedLink />
@@ -111,27 +117,83 @@ const OrderPage = ({ query }: { query: any }) => {
 
 export default OrderPage;
 
-const WantedBoard = () => {
-  return (
-    <div className="m-auto flex h-40 w-60 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-      <div className="font-bold">WANTED</div>
-      <div className="mt-1 flex w-full gap-2">
-        <img
-          className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
-          src={Icons.user_icon.src}
-          alt="user-icon"
-        />
+// const SimpleSlider = () => {
+//   const settings = {
+//     dots: true,
+//     infinite: true,
+//     speed: 500,
+//     slidesToShow: 1,
+//     slidesToScroll: 1,
+//     autoplay: false,
+//     // autoplaySpeed: 8000,
+//     pauseOnHover: true,
+//   };
+//   return (
+//     <Slider {...settings}>
+//       <div className="flex gap-2 bg-green-200">
+//         <img
+//           className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
+//           src={Icons.user_icon.src}
+//           alt="user-icon"
+//         />
+//         <div className="h-24 w-28 leading-4 tracking-tight">
+//           <div>
+//             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+//             Pellentesque
+//           </div>
+//         </div>
+//       </div>
+//       <div>
+//         <h3>2</h3>
+//       </div>
+//       <div>
+//         <h3>3</h3>
+//       </div>
+//       <div>
+//         <h3>4</h3>
+//       </div>
+//       <div>
+//         <h3>5</h3>
+//       </div>
+//       <div>
+//         <h3>6</h3>
+//       </div>
+//     </Slider>
+//   );
+// };
 
-        <div className="h-24 w-28 leading-4 tracking-tight">
-          <div>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Pellentesque
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+// const WantedBoard = () => {
+//   const settings = {
+//     dots: false,
+//     infinite: true,
+//     speed: 600,
+//     slidesToShow: 1,
+//     slidesToScroll: 1,
+//     autoplay: false,
+//     autoplaySpeed: 8000,
+//     pauseOnHover: true,
+//   };
+//   return (
+//     <div className="m-auto flex h-96 w-96 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+//       <div className="font-bold">WANTED</div>
+//       <Slider {...settings}>
+//         <div className="mt-1 flex w-full gap-2">
+//           <img
+//             className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
+//             src={Icons.user_icon.src}
+//             alt="user-icon"
+//           />
+//           <div className="h-24 w-28 leading-4 tracking-tight">
+//             <div>
+//               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+//               Pellentesque
+//             </div>
+//           </div>
+//         </div>
+//       </Slider>
+//     </div>
+//   );
+// };
 
 // OrderPage.getInitialProps = async (context: any) => {
 //   const { query } = context;
