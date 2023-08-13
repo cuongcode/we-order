@@ -14,9 +14,9 @@ export const ShopOwner = () => {
   return (
     <div className="flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
-      <div className="mt-2 w-20 rounded-full bg-gray-200 p-1">
+      <div className="rounded-full bg-gray-500 p-1">
         <img
-          className="rounded-full bg-gray-200"
+          className="h-20 w-20 rounded-full bg-gray-200 object-cover"
           src={
             order.shopOwnerAvatar && order.shopOwnerAvatar !== ''
               ? order.shopOwnerAvatar

@@ -328,9 +328,9 @@ const UserImage = () => {
   };
 
   return (
-    <div className="relative mt-1 w-20 rounded-full bg-gray-200 p-1">
+    <div className="relative rounded-full bg-gray-500 p-1">
       <img
-        className="rounded-full bg-gray-200"
+        className="h-20 w-20 rounded-full bg-gray-200 object-cover"
         src={
           currentUser?.avatar && currentUser?.avatar !== ''
             ? currentUser.avatar
