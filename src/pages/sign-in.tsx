@@ -72,12 +72,12 @@ const SignIn = () => {
             </div>
             <div>Sign in with Google</div>
           </button>
-          <button className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400">
+          {/* <button className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400">
             <div className="w-10 rounded-full">
               <img src={Icons.user_icon.src} alt="user-icon" />
             </div>
             <div>Sign in as Anonymous</div>
-          </button>
+          </button> */}
         </div>
       </div>
     </Main>
