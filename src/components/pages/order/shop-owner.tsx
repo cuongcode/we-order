@@ -18,7 +18,7 @@ export const ShopOwner = () => {
         <img
           className="rounded-full bg-gray-200"
           src={
-            order.shopOwnerAvatar !== ''
+            order.shopOwnerAvatar && order.shopOwnerAvatar !== ''
               ? order.shopOwnerAvatar
               : Icons.user_icon.src
           }
@@ -77,7 +77,7 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
           <div
             className={clsx({
               'h-6 w-20 rounded-md border-2 border-white text-center': true,
-              'text-xs': order.shopOwnerName.length > 9,
+              'text-xs': order.shopOwnerName?.length > 9,
             })}
           >
             {order.shopOwnerName}
