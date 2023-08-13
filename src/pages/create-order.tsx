@@ -325,7 +325,7 @@ const UserNicknameInput = () => {
         <>
           <div
             className={clsx({
-              'flex h-6 w-20 items-center justify-center rounded-md border-2 border-white':
+              'flex h-6 w-20 items-center justify-center rounded-md border-2 border-white text-center':
                 true,
               'text-xs': Number(currentUser?.nickname?.length) > 9,
             })}
