@@ -1,4 +1,5 @@
 import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -69,7 +70,12 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
         </>
       ) : (
         <>
-          <div className="h-6 w-20 rounded-md border-2 border-white text-center">
+          <div
+            className={clsx({
+              'h-6 w-20 rounded-md border-2 border-white text-center': true,
+              'text-xs': order.shopOwnerName.length > 9,
+            })}
+          >
             {order.shopOwnerName}
           </div>
           {currentUser && currentUser?.uid === order.uid ? (

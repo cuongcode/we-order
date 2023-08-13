@@ -6,6 +6,7 @@ import {
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
@@ -322,7 +323,13 @@ const UserNicknameInput = () => {
         </>
       ) : (
         <>
-          <div className="flex h-6 w-20 items-center justify-center rounded-md border-2 border-white">
+          <div
+            className={clsx({
+              'flex h-6 w-20 items-center justify-center rounded-md border-2 border-white':
+                true,
+              'text-xs': Number(currentUser?.nickname?.length) > 9,
+            })}
+          >
             {currentUser?.nickname || '--'}
           </div>
           <button className="absolute -right-5 top-2" onClick={_onEdit}>
