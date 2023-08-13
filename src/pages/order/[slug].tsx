@@ -18,7 +18,7 @@ import {
   TranferInfo,
 } from '@/components/pages/order';
 import { db } from '@/firebase';
-import { LogoImages } from '@/images';
+import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
 import { Main } from '@/templates/Main';
@@ -81,6 +81,9 @@ const OrderPage = ({ query }: { query: any }) => {
           <div className="mb-10 flex w-full gap-4 text-sm">
             <ShopOwner />
             <TranferInfo />
+            <div className="grow">
+              <WantedBoard />
+            </div>
           </div>
           <div className="mb-10">
             <SharedLink />
@@ -107,6 +110,28 @@ const OrderPage = ({ query }: { query: any }) => {
 };
 
 export default OrderPage;
+
+const WantedBoard = () => {
+  return (
+    <div className="m-auto flex h-40 w-60 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+      <div className="font-bold">WANTED</div>
+      <div className="mt-1 flex w-full gap-2">
+        <img
+          className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
+          src={Icons.user_icon.src}
+          alt="user-icon"
+        />
+
+        <div className="h-24 w-28 leading-4 tracking-tight">
+          <div>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Pellentesque
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // OrderPage.getInitialProps = async (context: any) => {
 //   const { query } = context;
