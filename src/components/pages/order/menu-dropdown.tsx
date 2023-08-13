@@ -8,6 +8,8 @@ import { useCheckClickOutside } from '@/hooks';
 import { selector } from '@/redux';
 import type { Menu, Order } from '@/types';
 
+const { v4: uuidv4 } = require('uuid');
+
 export const MenusDropdown = () => {
   const { order } = useSelector(selector.order);
   const { currentUser } = useSelector(selector.user);
@@ -89,7 +91,7 @@ const AddMenuForm = () => {
     if (name !== '' && link !== '' && currentUser) {
       const userRef = doc(db, 'users', currentUser?.uid);
       await updateDoc(userRef, {
-        menus: arrayUnion({ name, link }),
+        menus: arrayUnion({ id: uuidv4(), name, link }),
       });
       setName('');
       setLink('');

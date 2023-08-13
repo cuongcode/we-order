@@ -35,6 +35,8 @@ import { selector, UserActions } from '@/redux';
 import { Main } from '@/templates/Main';
 import type { Menu, Order, User } from '@/types';
 
+const { v4: uuidv4 } = require('uuid');
+
 const CreateOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedMenu, setSelectedMenu] = useState<Menu>({
@@ -547,13 +549,13 @@ const Menus = ({
   };
 
   const _deleteMenu = async (menu: Menu) => {
-    if (menu.name === selectedMenu.name && menu.link === selectedMenu.link) {
+    if (menu.id === selectedMenu.id) {
       setSelectedMenu({ id: '', name: '', link: '' });
     }
     if (currentUser) {
       const userRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userRef, {
-        menus: arrayRemove({ name: menu.name, link: menu.link }),
+        menus: arrayRemove({ id: menu.id, name: menu.name, link: menu.link }),
       });
     }
   };
@@ -563,7 +565,7 @@ const Menus = ({
       {menus?.length === 0 || menus === undefined
         ? 'You have no menu. Add one!'
         : menus.map((menu: Menu) => (
-            <div key={menu.name} className="relative">
+            <div key={menu.id} className="relative">
               <button
                 className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
                 type="button"
@@ -593,7 +595,7 @@ const AddMenuForm = () => {
     if (name !== '' && link !== '' && currentUser) {
       const userRef = doc(db, 'users', currentUser?.uid);
       await updateDoc(userRef, {
-        menus: arrayUnion({ name, link }),
+        menus: arrayUnion({ id: uuidv4(), name, link }),
       });
       setName('');
       setLink('');
