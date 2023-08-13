@@ -11,5 +11,5 @@ export interface User {
   bank2Name: string;
   bank2Number: string;
   menus: Menu[];
-  // avatar: string, //img link
+  avatar: string;
 }

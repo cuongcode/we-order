@@ -1,4 +1,5 @@
 import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -13,10 +14,14 @@ export const ShopOwner = () => {
   return (
     <div className="flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
-      <div className="mt-2 w-20 rounded-full bg-gray-200 p-1">
+      <div className="rounded-full bg-gray-500 p-1">
         <img
-          className="rounded-full bg-gray-200"
-          src={Icons.user_icon.src}
+          className="h-20 w-20 rounded-full bg-gray-200 object-cover"
+          src={
+            order.shopOwnerAvatar && order.shopOwnerAvatar !== ''
+              ? order.shopOwnerAvatar
+              : Icons.user_icon.src
+          }
           alt="user-icon"
         />
       </div>
@@ -69,7 +74,12 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
         </>
       ) : (
         <>
-          <div className="h-6 w-20 rounded-md border-2 border-white text-center">
+          <div
+            className={clsx({
+              'h-6 w-20 rounded-md border-2 border-white text-center': true,
+              'text-xs': order.shopOwnerName?.length > 9,
+            })}
+          >
             {order.shopOwnerName}
           </div>
           {currentUser && currentUser?.uid === order.uid ? (

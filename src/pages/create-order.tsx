@@ -1,11 +1,15 @@
 import {
+  CameraIcon,
   CheckIcon,
+  CloudArrowUpIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { CameraIcon as SolidCameraIcon } from '@heroicons/react/24/solid';
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
@@ -23,17 +27,20 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import Router from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { auth, db } from '@/firebase';
+import { auth, db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { selector, UserActions } from '@/redux';
 import { Main } from '@/templates/Main';
 import type { Menu, Order, User } from '@/types';
+
+const { v4: uuidv4 } = require('uuid');
 
 const CreateOrderPage = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -70,6 +77,7 @@ const CreateOrderPage = () => {
         bank2Name: _doc.data()?.bank2Name,
         bank2Number: _doc.data()?.bank2Number,
         menus: _doc.data()?.menus,
+        avatar: _doc.data()?.avatar,
       };
       dispatch(UserActions.setCurrentUser(updatedCurrentUser));
     });
@@ -157,6 +165,7 @@ const NewOrderButton = ({
         bank2Name: currentUser.bank2Name,
         bank2Number: currentUser.bank2Number,
         uid: currentUser.uid,
+        shopOwnerAvatar: currentUser.avatar,
       };
       await addDoc(collection(db, 'orders'), newOrder);
       setError('');
@@ -260,16 +269,96 @@ const UserProfile = () => {
   return (
     <div className="flex h-40 w-1/3 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">PROFILE</div>
-      <div className="mt-1 w-20 rounded-full bg-gray-200 p-1">
-        <img
-          className="rounded-full bg-gray-200"
-          src={Icons.user_icon.src}
-          alt="user-icon"
-        />
-      </div>
+      <UserImage />
       <div className="mt-1">
         <UserNicknameInput />
       </div>
+    </div>
+  );
+};
+
+const UserImage = () => {
+  const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
+  const { currentUser } = useSelector(selector.user);
+  console.log(
+    '🚀 ~ file: create-order.tsx:284 ~ UserImage ~ currentUser?.avatar:',
+    currentUser?.avatar,
+  );
+  const inputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const _onClick = () => {
+    inputRef.current?.click();
+  };
+
+  const _onUpload = () => {
+    if (selectedFile) {
+      const storageRef = ref(
+        storage,
+        `users/${currentUser?.uid}/${selectedFile.name}`,
+      );
+      const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+      uploadTask.on(
+        'state_changed',
+        () => {
+          //
+        },
+        () => {
+          //
+        },
+        async () => {
+          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          if (currentUser) {
+            const docRef = doc(db, 'users', currentUser?.uid);
+            await updateDoc(docRef, {
+              avatar: downloadUrl,
+            });
+          }
+        },
+      );
+    }
+    setSelectedFile(undefined);
+    formRef.current?.reset();
+  };
+
+  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length !== 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  return (
+    <div className="relative rounded-full bg-gray-500 p-1">
+      <img
+        className="h-20 w-20 rounded-full bg-gray-200 object-cover"
+        src={
+          currentUser?.avatar && currentUser?.avatar !== ''
+            ? currentUser.avatar
+            : Icons.user_icon.src
+        }
+        alt="user-icon"
+      />
+      <button className="absolute right-0 top-0" onClick={_onClick}>
+        {selectedFile ? (
+          <SolidCameraIcon className="h-4 w-4" />
+        ) : (
+          <CameraIcon className="h-4 w-4" />
+        )}
+      </button>
+      {selectedFile ? (
+        <button className="absolute -right-5 top-0" onClick={_onUpload}>
+          <CloudArrowUpIcon className="h-4 w-4" />
+        </button>
+      ) : null}
+      <form ref={formRef} action="">
+        <input
+          type="file"
+          ref={inputRef}
+          accept="/image/*"
+          className="hidden"
+          onChange={_onChange}
+        />
+      </form>
     </div>
   );
 };
@@ -320,7 +409,13 @@ const UserNicknameInput = () => {
         </>
       ) : (
         <>
-          <div className="flex h-6 w-20 items-center justify-center rounded-md border-2 border-white">
+          <div
+            className={clsx({
+              'flex h-6 w-20 items-center justify-center rounded-md border-2 border-white text-center':
+                true,
+              'text-xs': Number(currentUser?.nickname?.length) > 9,
+            })}
+          >
             {currentUser?.nickname || '--'}
           </div>
           <button className="absolute -right-5 top-2" onClick={_onEdit}>
@@ -547,13 +642,13 @@ const Menus = ({
   };
 
   const _deleteMenu = async (menu: Menu) => {
-    if (menu.name === selectedMenu.name && menu.link === selectedMenu.link) {
+    if (menu.id === selectedMenu.id) {
       setSelectedMenu({ id: '', name: '', link: '' });
     }
     if (currentUser) {
       const userRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userRef, {
-        menus: arrayRemove({ name: menu.name, link: menu.link }),
+        menus: arrayRemove({ id: menu.id, name: menu.name, link: menu.link }),
       });
     }
   };
@@ -563,7 +658,7 @@ const Menus = ({
       {menus?.length === 0 || menus === undefined
         ? 'You have no menu. Add one!'
         : menus.map((menu: Menu) => (
-            <div key={menu.name} className="relative">
+            <div key={menu.id} className="relative">
               <button
                 className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
                 type="button"
@@ -593,7 +688,7 @@ const AddMenuForm = () => {
     if (name !== '' && link !== '' && currentUser) {
       const userRef = doc(db, 'users', currentUser?.uid);
       await updateDoc(userRef, {
-        menus: arrayUnion({ name, link }),
+        menus: arrayUnion({ id: uuidv4(), name, link }),
       });
       setName('');
       setLink('');
