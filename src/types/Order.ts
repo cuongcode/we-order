@@ -17,6 +17,7 @@ export interface Order {
   bank1Number: string;
   bank2Name: string;
   bank2Number: string;
+  shopOwnerAvatar: string;
 }
 
 interface firestoreTimestamp {
