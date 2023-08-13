@@ -50,6 +50,7 @@ const OrderPage = ({ query }: { query: any }) => {
         bank1Number: document.data()?.bank1Number,
         bank2Name: document.data()?.bank2Name,
         bank2Number: document.data()?.bank2Number,
+        shopOwnerAvatar: document.data()?.shopOwnerAvatar,
       };
       dispatch(OrderActions.setOrder(newOrder));
     });

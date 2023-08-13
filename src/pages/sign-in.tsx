@@ -29,6 +29,7 @@ const SignIn = () => {
         bank2Name: docSnap.data()?.bank2Name,
         bank2Number: docSnap.data()?.bank2Number,
         menus: docSnap.data()?.menus,
+        avatar: docSnap.data()?.avatar,
       };
       dispatch(UserActions.setCurrentUser(firestoreUser));
     } else {
@@ -41,6 +42,7 @@ const SignIn = () => {
         bank2Name: '',
         bank2Number: '',
         menus: [],
+        avatar: '',
       };
       await setDoc(docRef, newUser);
       dispatch(UserActions.setCurrentUser(newUser));

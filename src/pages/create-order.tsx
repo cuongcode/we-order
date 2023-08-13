@@ -1,11 +1,14 @@
 import {
+  CameraIcon,
   CheckIcon,
+  CloudArrowUpIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { CameraIcon as SolidCameraIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -24,11 +27,12 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import Router from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { auth, db } from '@/firebase';
+import { auth, db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
@@ -73,6 +77,7 @@ const CreateOrderPage = () => {
         bank2Name: _doc.data()?.bank2Name,
         bank2Number: _doc.data()?.bank2Number,
         menus: _doc.data()?.menus,
+        avatar: _doc.data()?.avatar,
       };
       dispatch(UserActions.setCurrentUser(updatedCurrentUser));
     });
@@ -160,6 +165,7 @@ const NewOrderButton = ({
         bank2Name: currentUser.bank2Name,
         bank2Number: currentUser.bank2Number,
         uid: currentUser.uid,
+        shopOwnerAvatar: currentUser.avatar,
       };
       await addDoc(collection(db, 'orders'), newOrder);
       setError('');
@@ -263,16 +269,90 @@ const UserProfile = () => {
   return (
     <div className="flex h-40 w-1/3 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">PROFILE</div>
-      <div className="mt-1 w-20 rounded-full bg-gray-200 p-1">
-        <img
-          className="rounded-full bg-gray-200"
-          src={Icons.user_icon.src}
-          alt="user-icon"
-        />
-      </div>
+      <UserImage />
       <div className="mt-1">
         <UserNicknameInput />
       </div>
+    </div>
+  );
+};
+
+const UserImage = () => {
+  const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
+  const { currentUser } = useSelector(selector.user);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const _onClick = () => {
+    inputRef.current?.click();
+  };
+
+  const _onUpload = () => {
+    if (selectedFile) {
+      const storageRef = ref(
+        storage,
+        `users/${currentUser?.uid}/${selectedFile.name}`,
+      );
+      const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+      uploadTask.on(
+        'state_changed',
+        () => {
+          //
+        },
+        () => {
+          //
+        },
+        async () => {
+          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          if (currentUser) {
+            const docRef = doc(db, 'users', currentUser?.uid);
+            await updateDoc(docRef, {
+              avatar: downloadUrl,
+            });
+          }
+        },
+      );
+    }
+    setSelectedFile(undefined);
+    formRef.current?.reset();
+  };
+
+  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length !== 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  return (
+    <div className="relative mt-1 w-20 rounded-full bg-gray-200 p-1">
+      <img
+        className="rounded-full bg-gray-200"
+        src={
+          currentUser?.avatar !== '' ? currentUser?.avatar : Icons.user_icon.src
+        }
+        alt="user-icon"
+      />
+      <button className="absolute right-0 top-0" onClick={_onClick}>
+        {selectedFile ? (
+          <SolidCameraIcon className="h-4 w-4" />
+        ) : (
+          <CameraIcon className="h-4 w-4" />
+        )}
+      </button>
+      {selectedFile ? (
+        <button className="absolute -right-5 top-0" onClick={_onUpload}>
+          <CloudArrowUpIcon className="h-4 w-4" />
+        </button>
+      ) : null}
+      <form ref={formRef} action="">
+        <input
+          type="file"
+          ref={inputRef}
+          accept="/image/*"
+          className="hidden"
+          onChange={_onChange}
+        />
+      </form>
     </div>
   );
 };

@@ -17,7 +17,11 @@ export const ShopOwner = () => {
       <div className="mt-2 w-20 rounded-full bg-gray-200 p-1">
         <img
           className="rounded-full bg-gray-200"
-          src={Icons.user_icon.src}
+          src={
+            order.shopOwnerAvatar !== ''
+              ? order.shopOwnerAvatar
+              : Icons.user_icon.src
+          }
           alt="user-icon"
         />
       </div>
