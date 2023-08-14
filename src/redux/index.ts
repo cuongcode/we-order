@@ -13,18 +13,20 @@ import RowsActions, { reducer as RowsReducer } from './Rows/RowsRedux';
 import Saga from './saga';
 import type { UserState } from './User/UserRedux';
 import UserActions, { reducer as UserReducer } from './User/UserRedux';
-
+import type { WantedState } from './Wanted/WantedRedux';
+import WantedActions, { reducer as WantedReducer } from './Wanted/WantedRedux';
 /* ------------- Assemble The Reducers ------------- */
 export const reducers = combineReducers({
   order: OrderReducer,
   rows: RowsReducer,
   user: UserReducer,
+  wanted: WantedReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['user', 'order', 'rows'],
+  whitelist: ['user', 'order', 'rows', 'wanted'],
   transforms: [immutablePersistenceTransform],
 };
 
@@ -61,5 +63,6 @@ export const selector = {
   order: (state: RootState) => state.order as unknown as OrderState,
   rows: (state: RootState) => state.rows as unknown as RowsState,
   user: (state: RootState) => state.user as unknown as UserState,
+  wanted: (state: RootState) => state.wanted as unknown as WantedState,
 };
-export { OrderActions, RowsActions, UserActions };
+export { OrderActions, RowsActions, UserActions, WantedActions };

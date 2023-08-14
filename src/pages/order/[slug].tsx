@@ -27,9 +27,9 @@ import { db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
-import { OrderActions, RowsActions, selector } from '@/redux';
+import { OrderActions, RowsActions, selector, WantedActions } from '@/redux';
 import { Main } from '@/templates/Main';
-import type { Order } from '@/types';
+import type { Order, WantedInfo } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
   const { order } = useSelector(selector.order);
@@ -39,6 +39,7 @@ const OrderPage = ({ query }: { query: any }) => {
     if (query) {
       _fetchOrder();
       _fetchRows();
+      _fetchWanteds();
     }
   }, []);
 
@@ -73,6 +74,17 @@ const OrderPage = ({ query }: { query: any }) => {
         return { ...document.data(), id: document.id };
       });
       dispatch(RowsActions.setRows(updatedRows));
+    });
+  };
+
+  const _fetchWanteds = () => {
+    const wantedsRef = collection(db, 'orders', query?.slug, 'wanteds');
+    const q = firestoreQuery(wantedsRef);
+    onSnapshot(q, (snapshot) => {
+      const updatedWanteds = snapshot.docs.map((document: any) => {
+        return { ...document.data(), id: document.id };
+      });
+      dispatch(WantedActions.setWanteds(updatedWanteds));
     });
   };
 
@@ -143,6 +155,7 @@ const SLIDER_SETTINGS = {
 };
 
 const SimpleSlider = () => {
+  const { wanteds } = useSelector(selector.wanted);
   const { order } = useSelector(selector.order);
   const [error, setError] = useState('');
   const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
@@ -196,6 +209,7 @@ const SimpleSlider = () => {
     formRef.current?.reset();
     setMessage('');
     setError('');
+    setIsShow(false);
   };
 
   const _onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,26 +230,12 @@ const SimpleSlider = () => {
   return (
     <div className="relative">
       <Slider {...SLIDER_SETTINGS}>
-        <div className="flex gap-2">
-          <img
-            className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
-            src={Icons.user_icon.src}
-            alt="user-icon"
-          />
-          <div className="h-24 w-28 leading-4 tracking-tight">
-            <div>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Pellentesque
-            </div>
-          </div>
-        </div>
-        <div>
-          <h3>2</h3>
-        </div>
+        {wanteds.length === 0 ? <WantedSample /> : Wanteds(wanteds)}
       </Slider>
       <button className="absolute -bottom-10 -right-11" onClick={_onShow}>
         <CloudArrowUpIcon className="h-5 w-5" />
       </button>
+      <div className="absolute -top-9 left-16 font-bold">WANTED</div>
       {isShow ? (
         <div
           ref={uploadFormRef}
@@ -266,38 +266,35 @@ const SimpleSlider = () => {
   );
 };
 
-// const WantedBoard = () => {
-//   const settings = {
-//     dots: false,
-//     infinite: true,
-//     speed: 600,
-//     slidesToShow: 1,
-//     slidesToScroll: 1,
-//     autoplay: false,
-//     autoplaySpeed: 8000,
-//     pauseOnHover: true,
-//   };
-//   return (
-//     <div className="m-auto flex h-96 w-96 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-//       <div className="font-bold">WANTED</div>
-//       <Slider {...settings}>
-//         <div className="mt-1 flex w-full gap-2">
-//           <img
-//             className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
-//             src={Icons.user_icon.src}
-//             alt="user-icon"
-//           />
-//           <div className="h-24 w-28 leading-4 tracking-tight">
-//             <div>
-//               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-//               Pellentesque
-//             </div>
-//           </div>
-//         </div>
-//       </Slider>
-//     </div>
-//   );
-// };
+const Wanteds = (listItem: WantedInfo[]) => {
+  return listItem.map((w: WantedInfo) => (
+    <div key={w.id} className="flex gap-2">
+      <img
+        className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
+        src={w.avatar}
+        alt="user-icon"
+      />
+      <div className="h-24 w-28 leading-4 tracking-tight">
+        <div>{w.message}</div>
+      </div>
+    </div>
+  ));
+};
+
+const WantedSample = () => {
+  return (
+    <div className="flex gap-2">
+      <img
+        className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
+        src={Icons.user_icon.src}
+        alt="user-icon"
+      />
+      <div className="h-24 w-28 leading-4 tracking-tight">
+        <div>Write a message to someone if he/she still owe you money.</div>
+      </div>
+    </div>
+  );
+};
 
 OrderPage.getInitialProps = async (context: any) => {
   const { query } = context;

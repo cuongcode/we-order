@@ -5,3 +5,4 @@ export * from './Menu';
 export * from './Order';
 export * from './TransferInfo';
 export * from './User';
+export * from './WantedInfo';
