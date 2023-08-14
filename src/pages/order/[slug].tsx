@@ -73,45 +73,49 @@ const OrderPage = ({ query }: { query: any }) => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
-        <div className="flex flex-col lg:w-1/2">
-          <div className="mb-10 w-full">
-            <img
-              className="m-auto w-1/2"
-              src={LogoImages.title_logo.src}
-              alt="title-logo"
-            />
-          </div>
+      {!order.uid ? (
+        <div>Page not found</div>
+      ) : (
+        <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
+          <div className="flex flex-col lg:w-1/2">
+            <div className="mb-10 w-full">
+              <img
+                className="m-auto w-1/2"
+                src={LogoImages.title_logo.src}
+                alt="title-logo"
+              />
+            </div>
 
-          <div className="mb-10 flex w-full gap-4 text-sm">
-            <ShopOwner />
-            <TranferInfo />
-            {/* <div className="m-auto h-40 w-96 bg-green-200">
+            <div className="mb-10 flex w-full gap-4 text-sm">
+              <ShopOwner />
+              <TranferInfo />
+              {/* <div className="m-auto h-40 w-96 bg-green-200">
               <SimpleSlider />
 
               <WantedBoard />
             </div> */}
+            </div>
+            <div className="mb-10">
+              <SharedLink />
+            </div>
+            <div className="mb-5">
+              <Table />
+            </div>
+            <div className="mb-10">
+              <CalculateTotal />
+            </div>
           </div>
-          <div className="mb-10">
-            <SharedLink />
-          </div>
-          <div className="mb-5">
-            <Table />
-          </div>
-          <div className="mb-10">
-            <CalculateTotal />
-          </div>
-        </div>
 
-        <div className="flex flex-col gap-3 lg:w-1/2">
-          <MenusDropdown />
-          <iframe
-            title="menu-frame"
-            src={order.selectedMenuLink}
-            className="h-screen w-full rounded-xl border-2 p-5"
-          />
+          <div className="flex flex-col gap-3 lg:w-1/2">
+            <MenusDropdown />
+            <iframe
+              title="menu-frame"
+              src={order.selectedMenuLink}
+              className="h-screen w-full rounded-xl border-2 p-5"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </Main>
   );
 };
@@ -213,7 +217,7 @@ OrderPage.getInitialProps = async (context: any) => {
 //   const paths = await getOrders();
 //   return {
 //     paths,
-//     fallback: false,
+//     fallback: 'blocking',
 //   };
 // };
 
