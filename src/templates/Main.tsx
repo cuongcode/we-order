@@ -68,15 +68,11 @@ const SignOutDropdown = () => {
   };
 
   const _onSignOut = async () => {
-    try {
-      await signOut(auth);
-      dispatch(UserActions.setCurrentUser(null));
-      setIsDropdown(false);
+    await signOut(auth);
+    dispatch(UserActions.setCurrentUser(null));
+    setIsDropdown(false);
 
-      router.push('/');
-    } catch (error) {
-      console.log('sign out error', error);
-    }
+    router.push('/');
   };
 
   return (

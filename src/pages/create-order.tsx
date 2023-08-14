@@ -280,10 +280,7 @@ const UserProfile = () => {
 const UserImage = () => {
   const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
   const { currentUser } = useSelector(selector.user);
-  console.log(
-    '🚀 ~ file: create-order.tsx:284 ~ UserImage ~ currentUser?.avatar:',
-    currentUser?.avatar,
-  );
+
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
