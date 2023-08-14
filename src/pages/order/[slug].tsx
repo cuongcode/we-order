@@ -19,7 +19,7 @@ import {
   Table,
   TranferInfo,
 } from '@/components/pages/order';
-import { db, getOrders } from '@/firebase';
+import { db } from '@/firebase';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
@@ -31,8 +31,10 @@ const OrderPage = ({ query }: { query: any }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    _fetchOrder();
-    _fetchRows();
+    if (query) {
+      _fetchOrder();
+      _fetchRows();
+    }
   }, []);
 
   const _fetchOrder = () => {
@@ -194,33 +196,33 @@ export default OrderPage;
 //   );
 // };
 
-// OrderPage.getInitialProps = async (context: any) => {
-//   const { query } = context;
-//   return { query };
+OrderPage.getInitialProps = async (context: any) => {
+  const { query } = context;
+  return { query };
+};
+
+// export const getStaticPaths = async () => {
+//   // const paths: any = [];
+
+//   // const querySnapshot = await getDocs(collection(db, 'orders'));
+//   // querySnapshot.forEach((_doc: any) =>
+//   //   paths.push({
+//   //     params: { slug: _doc.id },
+//   //   }),
+//   // );
+//   const paths = await getOrders();
+//   return {
+//     paths,
+//     fallback: false,
+//   };
 // };
 
-export const getStaticPaths = async () => {
-  // const paths: any = [];
-
-  // const querySnapshot = await getDocs(collection(db, 'orders'));
-  // querySnapshot.forEach((_doc: any) =>
-  //   paths.push({
-  //     params: { slug: _doc.id },
-  //   }),
-  // );
-  const paths = await getOrders();
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-export const getStaticProps = async ({
-  params: { slug },
-}: {
-  params: any;
-  slug: any;
-}) => {
-  const query = { slug };
-  return { props: { query } };
-};
+// export const getStaticProps = async ({
+//   params: { slug },
+// }: {
+//   params: any;
+//   slug: any;
+// }) => {
+//   const query = { slug };
+//   return { props: { query } };
+// };
