@@ -4,24 +4,8 @@
 
 @tailwind utilities;
 
-.slick-slide > div {
-height: 100%;
-width: 50%;
-background-color: red;
-margin: auto;
-}
-
-.slick-list > div {
-
-}
-
-.slick-track > div {
-  background-color: yellow;
-  height: 100%;
-}
-
-.slick-slider, > div {
-  background-color: red;
+.slick-slide div {
+display: flex !important;
 }
 
 .content p {
