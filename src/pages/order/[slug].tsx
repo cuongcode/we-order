@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import {
   collection,
   doc,
-  getDocs,
   onSnapshot,
   orderBy,
   query as firestoreQuery,
@@ -20,7 +19,7 @@ import {
   Table,
   TranferInfo,
 } from '@/components/pages/order';
-import { db } from '@/firebase';
+import { db, getOrders } from '@/firebase';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
@@ -201,14 +200,15 @@ export default OrderPage;
 // };
 
 export const getStaticPaths = async () => {
-  const paths: any = [];
+  // const paths: any = [];
 
-  const querySnapshot = await getDocs(collection(db, 'orders'));
-  querySnapshot.forEach((_doc: any) =>
-    paths.push({
-      params: { slug: _doc.id },
-    }),
-  );
+  // const querySnapshot = await getDocs(collection(db, 'orders'));
+  // querySnapshot.forEach((_doc: any) =>
+  //   paths.push({
+  //     params: { slug: _doc.id },
+  //   }),
+  // );
+  const paths = await getOrders();
   return {
     paths,
     fallback: false,

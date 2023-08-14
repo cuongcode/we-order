@@ -2,7 +2,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 // import { getAnalytics } from 'firebase/analytics';
-import { getFirestore } from 'firebase/firestore';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -28,3 +28,14 @@ export const auth = getAuth(app);
 export const provider = new GoogleAuthProvider();
 // Get a reference to the storage service, which is used to create references in your storage bucket
 export const storage = getStorage();
+
+export const getOrders = async () => {
+  const paths: any = [];
+  const querySnapshot = await getDocs(collection(db, 'orders'));
+  querySnapshot.forEach((_doc: any) =>
+    paths.push({
+      params: { slug: _doc.id },
+    }),
+  );
+  return paths;
+};
