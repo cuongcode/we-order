@@ -49,7 +49,7 @@ export const TableRow = ({
       <div className="w-4">{rowIndex}</div>
       <div className="relative w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
         <input
-          className="w-full"
+          className="w-full font-semibold"
           type="text"
           value={row.name}
           name="name"

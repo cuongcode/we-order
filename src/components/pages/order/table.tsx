@@ -14,7 +14,7 @@ export const Table = () => {
 
   const quanity = rows.length;
   const bonus = (Number(order.shipFee) - Number(order.discount)) / quanity;
-  const roundedBonus = Math.ceil(bonus / 100) * 100;
+  const roundedBonus = Math.ceil(bonus / 500) * 500;
 
   const transferList: number[] = rows.map((row: DrinkTableRow) => {
     if (row.offerBy !== '--') {
