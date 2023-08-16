@@ -28,7 +28,7 @@ export const TableRow = ({
   transfer: number | undefined;
 }) => {
   const { currentUser } = useSelector(selector.user);
-  const isCloseOrder = true;
+  const isCloseOrder = false;
   const { order } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
 
@@ -79,9 +79,19 @@ export const TableRow = ({
           <GiveHeart row={row} />
         </div>
       </div>
-      <div className="grow rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div
+        className={clsx({
+          'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <input
-          className="w-full"
+          className={clsx({
+            'w-full': true,
+            'bg-gray-400': row.isTick,
+          })}
           type="text"
           placeholder="Type Here"
           value={row.drink.toUpperCase()}
@@ -89,27 +99,65 @@ export const TableRow = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div
+        className={clsx({
+          'w-14 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <input
-          className="w-full"
+          className={clsx({
+            'w-full': true,
+            'bg-gray-400': row.isTick,
+          })}
           type="number"
           value={row.price !== 0 ? row.price : ''}
           name="price"
           onChange={_updateRow}
         />
       </div>
-      <div className="z-30 w-8 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-30 w-8 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={SIZE_OPTIONS} field="size" />
       </div>
-      <div className="z-20 w-11 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-20 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={PERCENTAGE_OPTIONS} field="sugar" />
       </div>
-      <div className="z-10 w-11 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-10 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={PERCENTAGE_OPTIONS} field="ice" />
       </div>
-      <div className="w-32 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div
+        className={clsx({
+          'w-32 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <input
-          className="w-full"
+          className={clsx({
+            'w-full': true,
+            'bg-gray-400': row.isTick,
+          })}
           type="text"
           placeholder="No topping"
           value={row.topping}
@@ -117,7 +165,13 @@ export const TableRow = ({
           onChange={_updateRow}
         />
       </div>
-      <div className="z-10 w-16 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-10 w-16 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={offerByOptions} field="offerBy" />
       </div>
       <div className="flex w-28 items-center gap-1">

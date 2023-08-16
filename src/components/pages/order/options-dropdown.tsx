@@ -50,7 +50,10 @@ export const OptionsDropdown = ({
   };
 
   return (
-    <div ref={optionDropdownRef} className="relative">
+    <div
+      ref={optionDropdownRef}
+      className={clsx({ relative: true, 'bg-gray-400': row.isTick })}
+    >
       <button
         type="button"
         className="w-full"
