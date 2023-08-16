@@ -61,6 +61,7 @@ const OrderPage = ({ query }: { query: any }) => {
         bank2Name: document.data()?.bank2Name,
         bank2Number: document.data()?.bank2Number,
         shopOwnerAvatar: document.data()?.shopOwnerAvatar,
+        isClosed: document.data()?.isClosed,
       };
       dispatch(OrderActions.setOrder(newOrder));
     });
@@ -117,7 +118,12 @@ const OrderPage = ({ query }: { query: any }) => {
             <div className="mb-10">
               <SharedLink />
             </div>
-            <div className="mb-5">
+            <div className="relative mb-5">
+              {order.isClosed ? (
+                <div className="absolute -top-7 right-1/2 text-xl font-bold text-gray-600">
+                  CLOSED
+                </div>
+              ) : null}
               <Table />
             </div>
             <div className="mb-10">

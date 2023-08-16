@@ -1,4 +1,9 @@
-import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import {
+  CheckIcon,
+  LockClosedIcon,
+  LockOpenIcon,
+  PencilSquareIcon,
+} from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
@@ -10,9 +15,10 @@ import { selector } from '@/redux';
 import type { Order } from '@/types';
 
 export const ShopOwner = () => {
+  const { currentUser } = useSelector(selector.user);
   const { order } = useSelector(selector.order);
   return (
-    <div className="flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+    <div className="relative flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
       <div className="rounded-full bg-gray-500 p-1">
         <img
@@ -28,6 +34,9 @@ export const ShopOwner = () => {
       <div className="mt-1">
         <ShopOwnerNameInput order={order} />
       </div>
+      {currentUser && currentUser.uid === order.uid ? (
+        <CloseOrderButton />
+      ) : null}
     </div>
   );
 };
@@ -90,5 +99,35 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
         </>
       )}
     </div>
+  );
+};
+
+const CloseOrderButton = () => {
+  const { order } = useSelector(selector.order);
+
+  const _updateOrder = async () => {
+    const docRef = doc(db, 'orders', order.id);
+    await updateDoc(docRef, {
+      isClosed: !order.isClosed,
+    });
+  };
+
+  return (
+    <button
+      className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
+      onClick={_updateOrder}
+    >
+      {order.isClosed ? (
+        <>
+          <LockClosedIcon className="h-4 w-4" />
+          <div className="min-w-max">Order is closed</div>
+        </>
+      ) : (
+        <>
+          <LockOpenIcon className="h-4 w-4" />
+          <div className="min-w-max">Order is open</div>
+        </>
+      )}
+    </button>
   );
 };

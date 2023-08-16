@@ -28,7 +28,6 @@ export const TableRow = ({
   transfer: number | undefined;
 }) => {
   const { currentUser } = useSelector(selector.user);
-  const isCloseOrder = false;
   const { order } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
 
@@ -73,6 +72,7 @@ export const TableRow = ({
           type="text"
           value={row.name}
           name="name"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
         <div className="absolute -right-2 top-4 ">
@@ -96,6 +96,7 @@ export const TableRow = ({
           placeholder="Type Here"
           value={row.drink.toUpperCase()}
           name="drink"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
       </div>
@@ -115,6 +116,7 @@ export const TableRow = ({
           type="number"
           value={row.price !== 0 ? row.price : ''}
           name="price"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
       </div>
@@ -162,6 +164,7 @@ export const TableRow = ({
           placeholder="No topping"
           value={row.topping}
           name="topping"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
       </div>
@@ -193,10 +196,10 @@ export const TableRow = ({
         {currentUser &&
         currentUser.uid === order.uid &&
         true &&
-        isCloseOrder ? (
+        order.isClosed ? (
           <TranferTickBox row={row} />
         ) : null}
-        {!isCloseOrder ? <DeleteRowButton row={row} /> : null}
+        {!order.isClosed ? <DeleteRowButton row={row} /> : null}
       </div>
     </div>
   );

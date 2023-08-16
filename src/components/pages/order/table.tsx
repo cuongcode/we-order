@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { range } from 'lodash';
 import { useSelector } from 'react-redux';
 
@@ -32,7 +33,13 @@ export const Table = () => {
   const numberArray = range(1, rows.length + 1, 1);
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border-2 bg-gray-200 p-3">
+    <div
+      className={clsx({
+        'flex flex-col gap-3 rounded-xl border-2 p-3': true,
+        'bg-gray-200': !order.isClosed,
+        'bg-gray-400': order.isClosed,
+      })}
+    >
       <TableHeader />
       <div className="flex w-full flex-col gap-2">
         {rows.map((row: DrinkTableRow, index: number) => (

@@ -1,4 +1,5 @@
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { NoSymbolIcon, PlusIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 
@@ -9,6 +10,9 @@ export const TableAddRowButton = () => {
   const { order } = useSelector(selector.order);
 
   const _addRow = async () => {
+    if (order.isClosed) {
+      return;
+    }
     const newRow = {
       timestamp: serverTimestamp(),
       name: '',
@@ -26,11 +30,19 @@ export const TableAddRowButton = () => {
   };
   return (
     <button
-      className="w-full rounded-lg bg-white px-2 py-1 drop-shadow-sm hover:drop-shadow-md "
+      className={clsx({
+        'w-full rounded-lg px-2 py-1 drop-shadow-sm hover:drop-shadow-md': true,
+        'bg-white': !order.isClosed,
+        'bg-gray-400': order.isClosed,
+      })}
       type="button"
       onClick={_addRow}
     >
-      <PlusIcon className="m-auto h-5 w-5" />
+      {order.isClosed ? (
+        <NoSymbolIcon className="m-auto h-5 w-5" />
+      ) : (
+        <PlusIcon className="m-auto h-5 w-5" />
+      )}
     </button>
   );
 };

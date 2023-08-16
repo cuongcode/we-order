@@ -166,6 +166,7 @@ const NewOrderButton = ({
         bank2Number: currentUser.bank2Number,
         uid: currentUser.uid,
         shopOwnerAvatar: currentUser.avatar,
+        isClosed: false,
       };
       await addDoc(collection(db, 'orders'), newOrder);
       setError('');
