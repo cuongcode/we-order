@@ -37,6 +37,7 @@ export const ShopOwner = () => {
       {currentUser && currentUser.uid === order.uid ? (
         <CloseOrderButton />
       ) : null}
+      {/* <GiveHeart /> */}
     </div>
   );
 };

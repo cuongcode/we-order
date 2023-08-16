@@ -9,7 +9,6 @@ import type { DrinkTableRow } from '@/types';
 
 import { BonusFormula } from './bonus-formula';
 import { DeleteRowButton } from './delete-row-button';
-import { GiveHeart } from './give-heart';
 import { OfferedByFormula } from './offered-by-formula';
 import { OptionsDropdown } from './options-dropdown';
 import { ShowFormula } from './show-formula';
@@ -76,7 +75,7 @@ export const TableRow = ({
           onChange={_updateRow}
         />
         <div className="absolute -right-2 top-4 ">
-          <GiveHeart row={row} />
+          {/* <GiveHeart row={row} /> */}
         </div>
       </div>
       <div
