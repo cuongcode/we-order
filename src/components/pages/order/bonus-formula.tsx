@@ -8,7 +8,7 @@ export const BonusFormula = () => {
 
   const quantity = rows.length;
   const bonus = (order.shipFee - order.discount) / quantity;
-  const roundedBonus = Math.ceil(bonus / 100) * 100;
+  const roundedBonus = Math.ceil(bonus / 500) * 500;
 
   return (
     <div className="flex gap-1">

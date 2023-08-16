@@ -1,3 +1,5 @@
+import { CheckIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 
@@ -7,14 +9,13 @@ import type { DrinkTableRow } from '@/types';
 
 import { BonusFormula } from './bonus-formula';
 import { DeleteRowButton } from './delete-row-button';
-import { GiveHeart } from './give-heart';
 import { OfferedByFormula } from './offered-by-formula';
 import { OptionsDropdown } from './options-dropdown';
 import { ShowFormula } from './show-formula';
 import { TransferFormula } from './transfer-formula';
 
 const SIZE_OPTIONS = ['S', 'M', 'L', 'XL'];
-const PERCENTAGE_OPTIONS = ['100%', '80%', '50%', '20%', '0%'];
+const PERCENTAGE_OPTIONS = ['100%', '70%', '50%', '30%', '0%'];
 
 export const TableRow = ({
   row,
@@ -25,6 +26,7 @@ export const TableRow = ({
   rowIndex: any;
   transfer: number | undefined;
 }) => {
+  const { currentUser } = useSelector(selector.user);
   const { order } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
 
@@ -45,64 +47,138 @@ export const TableRow = ({
   };
 
   return (
-    <div key={row.id} className="flex w-full items-center gap-2 text-xs">
+    <div
+      key={row.id}
+      className={clsx({
+        'flex w-full items-center gap-2 rounded-md text-xs': true,
+        'bg-gray-400': row.isTick,
+      })}
+    >
       <div className="w-4">{rowIndex}</div>
-      <div className="relative w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div
+        className={clsx({
+          'relative w-14 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <input
-          className="w-full"
+          className={clsx({
+            'w-full font-semibold': true,
+            'bg-gray-400': row.isTick,
+          })}
           type="text"
           value={row.name}
           name="name"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
         <div className="absolute -right-2 top-4 ">
-          <GiveHeart row={row} />
+          {/* <GiveHeart row={row} /> */}
         </div>
       </div>
-      <div className="grow rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div
+        className={clsx({
+          'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <input
-          className="w-full"
+          className={clsx({
+            'w-full': true,
+            'bg-gray-400': row.isTick,
+          })}
           type="text"
           placeholder="Type Here"
           value={row.drink.toUpperCase()}
           name="drink"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
       </div>
-      <div className="w-14 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div
+        className={clsx({
+          'w-14 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <input
-          className="w-full"
+          className={clsx({
+            'w-full': true,
+            'bg-gray-400': row.isTick,
+          })}
           type="number"
           value={row.price !== 0 ? row.price : ''}
           name="price"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
       </div>
-      <div className="z-30 w-8 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-30 w-8 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={SIZE_OPTIONS} field="size" />
       </div>
-      <div className="z-20 w-11 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-20 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={PERCENTAGE_OPTIONS} field="sugar" />
       </div>
-      <div className="z-10 w-11 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-10 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={PERCENTAGE_OPTIONS} field="ice" />
       </div>
-      <div className="w-32 rounded-md border-2 bg-white p-1 drop-shadow-md hover:border-gray-600">
+      <div
+        className={clsx({
+          'w-32 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <input
-          className="w-full"
+          className={clsx({
+            'w-full': true,
+            'bg-gray-400': row.isTick,
+          })}
           type="text"
           placeholder="No topping"
           value={row.topping}
           name="topping"
+          disabled={order.isClosed}
           onChange={_updateRow}
         />
       </div>
-      <div className="z-10 w-16 rounded-md border-2 bg-white p-1 drop-shadow-md">
+      <div
+        className={clsx({
+          'z-10 w-16 rounded-md border-2 p-1 drop-shadow-md': true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
         <OptionsDropdown row={row} options={offerByOptions} field="offerBy" />
       </div>
       <div className="flex w-28 items-center gap-1">
-        <div className="w-16 rounded-md bg-gray-400 p-1 drop-shadow-md">
-          {transfer?.toLocaleString('en-US')}
+        <div className="w-16 rounded-sm bg-gray-400 p-1 drop-shadow-md">
+          <div>{transfer?.toLocaleString('en-US')}</div>
         </div>
         <ShowFormula>
           {row.offerBy !== '--' ? (
@@ -116,8 +192,36 @@ export const TableRow = ({
             </div>
           )}
         </ShowFormula>
-        <DeleteRowButton row={row} />
+        {currentUser &&
+        currentUser.uid === order.uid &&
+        true &&
+        order.isClosed ? (
+          <TranferTickBox row={row} />
+        ) : null}
+        {!order.isClosed ? <DeleteRowButton row={row} /> : null}
       </div>
     </div>
+  );
+};
+
+const TranferTickBox = ({ row }: { row: DrinkTableRow }) => {
+  const { currentUser } = useSelector(selector.user);
+  const { order } = useSelector(selector.order);
+
+  const _onTick = async () => {
+    if (currentUser && currentUser.uid === order.uid) {
+      const docRef = doc(db, 'orders', order.id, 'rows', row.id);
+      await updateDoc(docRef, {
+        isTick: !row.isTick,
+      });
+    }
+  };
+
+  return (
+    <button className="h-5 w-5 rounded-md bg-white" onClick={_onTick}>
+      {row.isTick ? (
+        <CheckIcon className="m-auto h-4 w-4 text-green-600" />
+      ) : null}
+    </button>
   );
 };

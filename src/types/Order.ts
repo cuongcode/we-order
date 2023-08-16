@@ -2,7 +2,7 @@
 
 export interface Order {
   id: string;
-  // isCloseOrder: boolean,
+  isClosed: boolean;
   shipFee: number;
   discount: number;
   // time: number,

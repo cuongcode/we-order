@@ -15,7 +15,7 @@ export const TransferFormula = ({
 
   const quantity = rows.length;
   const bonus = (order.shipFee - order.discount) / quantity;
-  const roundedBonus = Math.ceil(bonus / 100) * 100;
+  const roundedBonus = Math.ceil(bonus / 500) * 500;
 
   const transferList: number[] = rows.map(
     (r: DrinkTableRow) => Number(r.price) + roundedBonus,

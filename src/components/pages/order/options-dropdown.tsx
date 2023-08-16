@@ -26,6 +26,12 @@ export const OptionsDropdown = ({
 
   const optionDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
 
+  const _onDropdown = () => {
+    if (!order.isClosed) {
+      setIsDropdown(true);
+    }
+  };
+
   const _updateManyRows = async (newValue: string) => {
     const updatedRows = rows.filter(
       (r: DrinkTableRow) => r.offerBy === row.name,
@@ -50,12 +56,11 @@ export const OptionsDropdown = ({
   };
 
   return (
-    <div ref={optionDropdownRef} className="relative">
-      <button
-        type="button"
-        className="w-full"
-        onClick={() => setIsDropdown(true)}
-      >
+    <div
+      ref={optionDropdownRef}
+      className={clsx({ relative: true, 'bg-gray-400': row.isTick })}
+    >
+      <button type="button" className="w-full" onClick={_onDropdown}>
         {row[field]}
       </button>
       {isDropdown && showOptions.length !== 0 ? (
