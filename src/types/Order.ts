@@ -7,17 +7,17 @@ export interface Order {
   discount: number;
   // time: number,
   // wanted: WantedInfo,
-  shopOwnerName: string;
-  shopOwnerMomo: string;
+  // shopOwnerName: string;
+  // shopOwnerMomo: string;
   selectedMenuName: string;
   selectedMenuLink: string;
   uid: string;
   timestamp: firestoreTimestamp;
-  bank1Name: string;
-  bank1Number: string;
-  bank2Name: string;
-  bank2Number: string;
-  shopOwnerAvatar: string;
+  // bank1Name: string;
+  // bank1Number: string;
+  // bank2Name: string;
+  // bank2Number: string;
+  // shopOwnerAvatar: string;
 }
 
 interface firestoreTimestamp {

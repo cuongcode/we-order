@@ -10,6 +10,6 @@ export interface User {
   bank1Number: string;
   bank2Name: string;
   bank2Number: string;
-  menus: Menu[];
+  menus?: Menu[];
   avatar: string;
 }

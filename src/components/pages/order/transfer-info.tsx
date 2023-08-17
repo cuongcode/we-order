@@ -5,10 +5,9 @@ import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { selector } from '@/redux';
-import type { Order } from '@/types';
+import type { User } from '@/types';
 
 export const TranferInfo = () => {
-  const { order } = useSelector(selector.order);
   return (
     <div className="flex h-40 w-56 flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
@@ -17,7 +16,7 @@ export const TranferInfo = () => {
           <div className="w-11">Momo</div>
           <div className="mx-2">:</div>
           <div className="grow">
-            <ShopOwnerMomoInput order={order} />
+            <ShopOwnerMomoInput />
           </div>
         </div>
         <div className="flex w-full">
@@ -25,30 +24,23 @@ export const TranferInfo = () => {
           <div className="mx-2">:</div>
         </div>
         <div className="flex w-full flex-col">
-          <ShopOwnerBankInput
-            field1="bank1Name"
-            field2="bank1Number"
-            order={order}
-          />
-          <ShopOwnerBankInput
-            field1="bank2Name"
-            field2="bank2Number"
-            order={order}
-          />
+          <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
+          <ShopOwnerBankInput field1="bank2Name" field2="bank2Number" />
         </div>
       </div>
     </div>
   );
 };
 
-const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
-  const { currentUser } = useSelector(selector.user);
-
+const ShopOwnerMomoInput = () => {
+  const { currentUser, shopOwner } = useSelector(selector.user);
   const [momo, setMomo] = useState('');
   const [isEdit, setIsEdit] = useState(false);
 
   const _onEdit = () => {
-    setMomo(order.shopOwnerMomo);
+    if (shopOwner) {
+      setMomo(shopOwner.momo);
+    }
     setIsEdit(true);
   };
 
@@ -57,13 +49,16 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
     setMomo(value);
   };
 
-  const _updateOrder = async () => {
-    const docRef = doc(db, 'orders', order.id);
-    await updateDoc(docRef, {
-      shopOwnerMomo: momo,
-    });
-    setIsEdit(false);
+  const _updateUserMomo = async () => {
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(docRef, {
+        momo,
+      });
+      setIsEdit(false);
+    }
   };
+
   return (
     <div className="flex items-center justify-between">
       {isEdit ? (
@@ -75,16 +70,16 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
             name="shopOwnerMomo"
             onChange={_onChange}
           />
-          <button className="" onClick={_updateOrder}>
+          <button className="" onClick={_updateUserMomo}>
             <CheckIcon className="h-3 w-3" />
           </button>
         </>
       ) : (
         <>
           <div className="w-28 rounded-md border-2 border-white px-1">
-            {order.shopOwnerMomo || '--'}
+            {shopOwner?.momo || '--'}
           </div>
-          {currentUser && currentUser?.uid === order.uid ? (
+          {currentUser && currentUser?.uid === shopOwner?.uid ? (
             <button className="" onClick={_onEdit}>
               <PencilSquareIcon className="h-3 w-3" />
             </button>
@@ -98,21 +93,21 @@ const ShopOwnerMomoInput = ({ order }: { order: Order }) => {
 const ShopOwnerBankInput = ({
   field1,
   field2,
-  order,
 }: {
-  field1: keyof Order;
-  field2: keyof Order;
-  order: Order;
+  field1: keyof User;
+  field2: keyof User;
 }) => {
-  const { currentUser } = useSelector(selector.user);
+  const { currentUser, shopOwner } = useSelector(selector.user);
   const [bankName, setBankName] = useState<any>('');
   const [bankNumber, setBankNumber] = useState<any>('');
   const [isEdit, setIsEdit] = useState(false);
 
   const _onEdit = () => {
-    setBankName(order[field1]);
-    setBankNumber(order[field2]);
-    setIsEdit(true);
+    if (shopOwner) {
+      setBankName(shopOwner[field1]);
+      setBankNumber(shopOwner[field2]);
+      setIsEdit(true);
+    }
   };
 
   const _onBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,13 +119,15 @@ const ShopOwnerBankInput = ({
     setBankNumber(value);
   };
 
-  const _updateOrder = async () => {
-    const docRef = doc(db, 'orders', order.id);
-    await updateDoc(docRef, {
-      [field1]: bankName,
-      [field2]: bankNumber,
-    });
-    setIsEdit(false);
+  const _updateUserBank = async () => {
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(docRef, {
+        [field1]: bankName,
+        [field2]: bankNumber,
+      });
+      setIsEdit(false);
+    }
   };
 
   return (
@@ -151,7 +148,7 @@ const ShopOwnerBankInput = ({
               onChange={_onBankNumberChange}
             />
           </div>
-          <button className="" onClick={_updateOrder}>
+          <button className="" onClick={_updateUserBank}>
             <CheckIcon className="h-3 w-3" />
           </button>
         </>
@@ -159,13 +156,13 @@ const ShopOwnerBankInput = ({
         <>
           <div className="flex items-center">
             <div className="w-12 rounded-md border-2 border-white px-1">
-              {order[field1]?.toString() || '--'}
+              {shopOwner ? shopOwner[field1]?.toString() : '--'}
             </div>
             <div className="w-32 rounded-md border-2 border-white px-1">
-              {order[field2]?.toString()}
+              {shopOwner ? shopOwner[field2]?.toString() : '--'}
             </div>
           </div>
-          {currentUser && currentUser?.uid === order.uid ? (
+          {currentUser && currentUser?.uid === shopOwner?.uid ? (
             <button className="" onClick={_onEdit}>
               <PencilSquareIcon className="h-3 w-3" />
             </button>

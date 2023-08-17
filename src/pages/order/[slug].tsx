@@ -27,9 +27,15 @@ import { db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
-import { OrderActions, RowsActions, selector, WantedActions } from '@/redux';
+import {
+  OrderActions,
+  RowsActions,
+  selector,
+  UserActions,
+  WantedActions,
+} from '@/redux';
 import { Main } from '@/templates/Main';
-import type { Order, WantedInfo } from '@/types';
+import type { Order, User, WantedInfo } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
   const { order } = useSelector(selector.order);
@@ -43,6 +49,12 @@ const OrderPage = ({ query }: { query: any }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (order.uid) {
+      _fetchShopOwner(order.uid);
+    }
+  }, [order.uid]);
+
   const _fetchOrder = () => {
     const docRef = doc(db, 'orders', query?.slug);
     onSnapshot(docRef, (document) => {
@@ -50,17 +62,17 @@ const OrderPage = ({ query }: { query: any }) => {
         id: document.id,
         shipFee: document.data()?.shipFee,
         discount: document.data()?.discount,
-        shopOwnerName: document.data()?.shopOwnerName,
-        shopOwnerMomo: document.data()?.shopOwnerMomo,
+        // shopOwnerName: document.data()?.shopOwnerName,
+        // shopOwnerMomo: document.data()?.shopOwnerMomo,
         selectedMenuName: document.data()?.selectedMenuName,
         selectedMenuLink: document.data()?.selectedMenuLink,
         uid: document.data()?.uid,
         timestamp: document.data()?.timestamp,
-        bank1Name: document.data()?.bank1Name,
-        bank1Number: document.data()?.bank1Number,
-        bank2Name: document.data()?.bank2Name,
-        bank2Number: document.data()?.bank2Number,
-        shopOwnerAvatar: document.data()?.shopOwnerAvatar,
+        // bank1Name: document.data()?.bank1Name,
+        // bank1Number: document.data()?.bank1Number,
+        // bank2Name: document.data()?.bank2Name,
+        // bank2Number: document.data()?.bank2Number,
+        // shopOwnerAvatar: document.data()?.shopOwnerAvatar,
         isClosed: document.data()?.isClosed,
       };
       dispatch(OrderActions.setOrder(newOrder));
@@ -86,6 +98,23 @@ const OrderPage = ({ query }: { query: any }) => {
         return { ...document.data(), id: document.id };
       });
       dispatch(WantedActions.setWanteds(updatedWanteds));
+    });
+  };
+
+  const _fetchShopOwner = async (uid: string) => {
+    const docRef = doc(db, 'users', uid);
+    onSnapshot(docRef, (_doc) => {
+      const updatedShopOwner: User = {
+        uid,
+        nickname: _doc.data()?.nickname,
+        momo: _doc.data()?.momo,
+        bank1Name: _doc.data()?.bank1Name,
+        bank1Number: _doc.data()?.bank1Number,
+        bank2Name: _doc.data()?.bank2Name,
+        bank2Number: _doc.data()?.bank2Number,
+        avatar: _doc.data()?.avatar,
+      };
+      dispatch(UserActions.setShopOwner(updatedShopOwner));
     });
   };
 
