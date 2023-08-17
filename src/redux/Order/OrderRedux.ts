@@ -35,12 +35,13 @@ export default Creators;
 const INITIAL_STATE: ImmutableMyType = Immutable.from({
   order: <Order>{
     id: '',
+    isClosed: false,
     shipFee: 0,
     discount: 0,
-    shopOwnerName: '',
-    shopOwnerMomo: '',
     selectedMenuName: '',
     selectedMenuLink: '',
+    uid: '',
+    timestamp: { seconds: 0, nanoseconds: 0 },
   },
 });
 
