@@ -9,10 +9,9 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { ShopOwnerImage } from '@/components/common';
 import { db } from '@/firebase';
-import { Icons } from '@/images';
 import { selector } from '@/redux';
-import type { Order } from '@/types';
 
 export const ShopOwner = () => {
   const { currentUser } = useSelector(selector.user);
@@ -20,19 +19,9 @@ export const ShopOwner = () => {
   return (
     <div className="relative flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
-      <div className="rounded-full bg-gray-500 p-1">
-        <img
-          className="h-20 w-20 rounded-full bg-gray-200 object-cover"
-          src={
-            order.shopOwnerAvatar && order.shopOwnerAvatar !== ''
-              ? order.shopOwnerAvatar
-              : Icons.user_icon.src
-          }
-          alt="user-icon"
-        />
-      </div>
+      <ShopOwnerImage />
       <div className="mt-1">
-        <ShopOwnerNameInput order={order} />
+        <ShopOwnerNameInput />
       </div>
       {currentUser && currentUser.uid === order.uid ? (
         <CloseOrderButton />
@@ -42,13 +31,15 @@ export const ShopOwner = () => {
   );
 };
 
-const ShopOwnerNameInput = ({ order }: { order: Order }) => {
-  const { currentUser } = useSelector(selector.user);
+const ShopOwnerNameInput = () => {
+  const { currentUser, shopOwner } = useSelector(selector.user);
   const [shopOwnerName, setShopOwnerName] = useState('');
   const [isEdit, setIsEdit] = useState(false);
 
   const _onEdit = () => {
-    setShopOwnerName(order.shopOwnerName);
+    if (shopOwner?.nickname) {
+      setShopOwnerName(shopOwner.nickname);
+    }
     setIsEdit(true);
   };
 
@@ -57,12 +48,14 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
     setShopOwnerName(value);
   };
 
-  const _updateOrder = async () => {
-    const docRef = doc(db, 'orders', order.id);
-    await updateDoc(docRef, {
-      shopOwnerName,
-    });
-    setIsEdit(false);
+  const _updateUserNickname = async () => {
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(docRef, {
+        nickname: shopOwnerName,
+      });
+      setIsEdit(false);
+    }
   };
 
   return (
@@ -78,7 +71,10 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
               onChange={_onChange}
             />
           </div>
-          <button className="absolute -right-5 top-1" onClick={_updateOrder}>
+          <button
+            className="absolute -right-5 top-1"
+            onClick={_updateUserNickname}
+          >
             <CheckIcon className="h-4 w-4" />
           </button>
         </>
@@ -87,12 +83,14 @@ const ShopOwnerNameInput = ({ order }: { order: Order }) => {
           <div
             className={clsx({
               'h-6 w-20 rounded-md border-2 border-white text-center': true,
-              'text-xs': order.shopOwnerName?.length > 9,
+              'text-xs': shopOwner?.nickname
+                ? shopOwner.nickname.length > 9
+                : false,
             })}
           >
-            {order.shopOwnerName}
+            {shopOwner?.nickname}
           </div>
-          {currentUser && currentUser?.uid === order.uid ? (
+          {currentUser && currentUser?.uid === shopOwner?.uid ? (
             <button className="absolute -right-5 top-2" onClick={_onEdit}>
               <PencilSquareIcon className="h-3 w-3" />
             </button>

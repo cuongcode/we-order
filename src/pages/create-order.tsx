@@ -1,14 +1,11 @@
 import {
-  CameraIcon,
   CheckIcon,
-  CloudArrowUpIcon,
   PencilSquareIcon,
   PlusIcon,
   TrashIcon,
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { CameraIcon as SolidCameraIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -27,14 +24,14 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import Router from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { auth, db, storage } from '@/firebase';
+import { UserImage } from '@/components/common';
+import { auth, db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
-import { Icons, LogoImages } from '@/images';
+import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { selector, UserActions } from '@/redux';
 import { Main } from '@/templates/Main';
@@ -156,16 +153,16 @@ const NewOrderButton = ({
         timestamp: serverTimestamp(),
         shipFee: 0,
         discount: 0,
-        shopOwnerName: currentUser.nickname,
-        shopOwnerMomo: currentUser.momo,
+        // shopOwnerName: currentUser.nickname,
+        // shopOwnerMomo: currentUser.momo,
         selectedMenuName: selectedMenu.name,
         selectedMenuLink: selectedMenu.link,
-        bank1Name: currentUser.bank1Name,
-        bank1Number: currentUser.bank1Number,
-        bank2Name: currentUser.bank2Name,
-        bank2Number: currentUser.bank2Number,
+        // bank1Name: currentUser.bank1Name,
+        // bank1Number: currentUser.bank1Number,
+        // bank2Name: currentUser.bank2Name,
+        // bank2Number: currentUser.bank2Number,
         uid: currentUser.uid,
-        shopOwnerAvatar: currentUser.avatar,
+        // shopOwnerAvatar: currentUser.avatar,
         isClosed: false,
       };
       await addDoc(collection(db, 'orders'), newOrder);
@@ -274,89 +271,6 @@ const UserProfile = () => {
       <div className="mt-1">
         <UserNicknameInput />
       </div>
-    </div>
-  );
-};
-
-const UserImage = () => {
-  const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
-  const { currentUser } = useSelector(selector.user);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const _onClick = () => {
-    inputRef.current?.click();
-  };
-
-  const _onUpload = () => {
-    if (selectedFile) {
-      const storageRef = ref(
-        storage,
-        `users/${currentUser?.uid}/${selectedFile.name}`,
-      );
-      const uploadTask = uploadBytesResumable(storageRef, selectedFile);
-      uploadTask.on(
-        'state_changed',
-        () => {
-          //
-        },
-        () => {
-          //
-        },
-        async () => {
-          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-          if (currentUser) {
-            const docRef = doc(db, 'users', currentUser?.uid);
-            await updateDoc(docRef, {
-              avatar: downloadUrl,
-            });
-          }
-        },
-      );
-    }
-    setSelectedFile(undefined);
-    formRef.current?.reset();
-  };
-
-  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length !== 0) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  return (
-    <div className="relative rounded-full bg-gray-500 p-1">
-      <img
-        className="h-20 w-20 rounded-full bg-gray-200 object-cover"
-        src={
-          currentUser?.avatar && currentUser?.avatar !== ''
-            ? currentUser.avatar
-            : Icons.user_icon.src
-        }
-        alt="user-icon"
-      />
-      <button className="absolute right-0 top-0" onClick={_onClick}>
-        {selectedFile ? (
-          <SolidCameraIcon className="h-4 w-4" />
-        ) : (
-          <CameraIcon className="h-4 w-4" />
-        )}
-      </button>
-      {selectedFile ? (
-        <button className="absolute -right-5 top-0" onClick={_onUpload}>
-          <CloudArrowUpIcon className="h-4 w-4" />
-        </button>
-      ) : null}
-      <form ref={formRef} action="">
-        <input
-          type="file"
-          ref={inputRef}
-          accept="/image/*"
-          className="hidden"
-          onChange={_onChange}
-        />
-      </form>
     </div>
   );
 };
@@ -533,7 +447,7 @@ const ShopOwnerBankInput = ({
     setBankNumber(value);
   };
 
-  const _updateUserMomo = async () => {
+  const _updateUserBank = async () => {
     if (currentUser) {
       const docRef = doc(db, 'users', currentUser?.uid);
       await updateDoc(docRef, {
@@ -562,7 +476,7 @@ const ShopOwnerBankInput = ({
               onChange={_onBankNumberChange}
             />
           </div>
-          <button className="" onClick={_updateUserMomo}>
+          <button className="" onClick={_updateUserBank}>
             <CheckIcon className="h-3 w-3" />
           </button>
         </>
