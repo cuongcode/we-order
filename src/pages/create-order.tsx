@@ -24,12 +24,13 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
+import { deleteObject, listAll, ref } from 'firebase/storage';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UserImage } from '@/components/common';
-import { auth, db } from '@/firebase';
+import { auth, db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
@@ -190,6 +191,7 @@ const OrderList = ({ orders }: { orders: Order[] }) => {
   const _openOrder = (id: string | null) => {
     Router.push(`/order/${id}`);
   };
+
   return (
     <div>
       <div className="mb-3 text-center font-semibold">MY ORDERS</div>
@@ -226,15 +228,35 @@ const DeleteOrderButton = ({ order }: { order: Order }) => {
   const deleteOrderButtonRef = useCheckClickOutside(() => setIsDropdown(false));
 
   const _deleteOrder = async () => {
+    await _deleteWantedFiles();
+    await _deleteRows();
+    await _deleteWanteds();
+    await deleteDoc(doc(db, 'orders', order.id));
+  };
+
+  const _deleteRows = async () => {
     const q = query(collection(db, 'orders', order.id, 'rows'));
     const rowDocs = await getDocs(q);
     if (!rowDocs.empty) {
       rowDocs.forEach(async (row) => {
         await deleteDoc(doc(db, 'orders', order.id, 'rows', row.id));
       });
-      await deleteDoc(doc(db, 'orders', order.id));
     }
-    await deleteDoc(doc(db, 'orders', order.id));
+  };
+  const _deleteWanteds = async () => {
+    const q = query(collection(db, 'orders', order.id, 'wanteds'));
+    const wantedsDocs = await getDocs(q);
+    if (!wantedsDocs.empty) {
+      wantedsDocs.forEach(async (wanted) => {
+        await deleteDoc(doc(db, 'orders', order.id, 'wanteds', wanted.id));
+      });
+    }
+  };
+
+  const _deleteWantedFiles = async () => {
+    const storageRef = ref(storage, `wanted/${order?.id}`);
+    const files = await listAll(storageRef);
+    files.items.forEach(async (itemRef) => deleteObject(itemRef));
   };
 
   return (
