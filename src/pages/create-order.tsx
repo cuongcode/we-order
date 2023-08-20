@@ -22,7 +22,13 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { deleteObject, listAll, ref } from 'firebase/storage';
+import {
+  deleteObject,
+  getDownloadURL,
+  listAll,
+  ref,
+  uploadBytesResumable,
+} from 'firebase/storage';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -113,7 +119,7 @@ const CreateOrderPage = () => {
               <UserProfile />
               <UserTranferInfo />
             </div>
-            <MenusDropdown
+            <MenusByEmbedLink
               selectedMenu={selectedMenu}
               setSelectedMenu={setSelectedMenu}
             />
@@ -279,7 +285,7 @@ const DeleteOrderButton = ({ order }: { order: Order }) => {
   );
 };
 
-const MenusDropdown = ({
+const MenusByEmbedLink = ({
   selectedMenu,
   setSelectedMenu,
 }: {
@@ -297,9 +303,119 @@ const MenusDropdown = ({
         </div>
       </div>
       <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
+        <div>Menus by embed link</div>
         <AddMenuForm />
         <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
       </div>
+      <MenusByImage />
+    </div>
+  );
+};
+
+const MenusByImage = () => {
+  const { currentUser } = useSelector(selector.user);
+  const [name, setName] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState<any>(undefined);
+  const [downloadUrls, setDownloadUrls] = useState<string[]>([]);
+
+  const uploadFormRef = useCheckClickOutside(() => {
+    setSelectedFiles(undefined);
+    uploadFormRef.current?.reset();
+  });
+
+  const _onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    if (files && files.length !== 0) {
+      const currentSelectedFiles: any = [];
+      for (let i = 0; i < files.length; i += 1) {
+        currentSelectedFiles.push(files.item(i));
+      }
+      setSelectedFiles(currentSelectedFiles);
+    }
+  };
+
+  const _onUpload = () => {
+    if (selectedFiles === undefined || name === '') {
+      return;
+    }
+    selectedFiles.forEach((file: File) => {
+      const storageRef = ref(
+        storage,
+        `users/${currentUser?.uid}/menus/${name}/${file.name}`,
+      );
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        'state_changed',
+        () => {
+          //
+        },
+        () => {
+          //
+        },
+        async () => {
+          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+          const updatedDownloadUrls = [...downloadUrls, downloadUrl];
+          setDownloadUrls(updatedDownloadUrls);
+        },
+      );
+    });
+    // if (currentUser) {
+    //   const userRef = doc(db, 'users', currentUser?.uid);
+    //   await updateDoc(userRef, {
+    //     menusByImage: arrayUnion({ id: uuidv4(), name, downloadUrl }),
+    //   });
+    // }
+    console.log(
+      '🚀 ~ file: create-order.tsx:365 ~ MenusByImage ~ selectedFiles: ',
+      selectedFiles,
+    );
+    setSelectedFiles(undefined);
+    uploadFormRef.current?.reset();
+  };
+
+  // const _addUserMenu = async () => {
+  // if (name !== '' && link !== '' && currentUser) {
+  //   const userRef = doc(db, 'users', currentUser?.uid);
+  //   await updateDoc(userRef, {
+  //     menus: arrayUnion({ id: uuidv4(), name, link }),
+  //   });
+  //   setName('');
+  //   setLink('');
+  // }
+  // };
+
+  return (
+    <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
+      <div>Menus by uploaded images</div>
+      <form ref={uploadFormRef} className="flex items-center gap-2">
+        <div className="flex w-5/12 items-center gap-1">
+          <div>Name:</div>
+          <input
+            className="w-full rounded-md border-2 px-1 hover:border-gray-600"
+            type="text"
+            placeholder="menu name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="flex w-7/12 items-center gap-1">
+          <input
+            className="w-full rounded-md border-2 px-1 text-xs"
+            type="file"
+            accept="/image/*"
+            onChange={_onFileChange}
+            multiple
+          />
+          <button
+            type="button"
+            className="rounded-md bg-white p-1 hover:bg-gray-400"
+            onClick={_onUpload}
+          >
+            <PlusIcon className="h-4 w-4" />
+          </button>
+        </div>
+      </form>
+      {/* <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} /> */}
     </div>
   );
 };
@@ -404,7 +520,7 @@ const AddMenuForm = () => {
         <input
           className="w-full rounded-md border-2 px-1 hover:border-gray-600"
           type="text"
-          placeholder="paste link here"
+          placeholder="paste a link here"
           value={link}
           onChange={(e) => setLink(e.target.value)}
         />
