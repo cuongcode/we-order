@@ -1,22 +1,22 @@
 import { CheckIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { doc, updateDoc } from 'firebase/firestore';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { selector } from '@/redux';
 import type { User } from '@/types';
 
-export const TranferInfo = () => {
+export const UserTranferInfo = () => {
   return (
-    <div className="flex h-40 w-56 flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+    <div className="flex h-40 grow flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
-      <div className="flex w-full flex-col items-start">
+      <div className="flex w-full flex-col items-start text-sm">
         <div className="flex h-6 w-full items-center">
           <div className="w-11">Momo</div>
           <div className="mx-2">:</div>
           <div className="grow">
-            <ShopOwnerMomoInput />
+            <UserMomoInput />
           </div>
         </div>
         <div className="flex w-full">
@@ -24,29 +24,27 @@ export const TranferInfo = () => {
           <div className="mx-2">:</div>
         </div>
         <div className="flex w-full flex-col">
-          <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
-          <ShopOwnerBankInput field1="bank2Name" field2="bank2Number" />
+          <UserBankInput field1="bank1Name" field2="bank1Number" />
+          <UserBankInput field1="bank2Name" field2="bank2Number" />
         </div>
       </div>
     </div>
   );
 };
 
-const ShopOwnerMomoInput = () => {
-  const { currentUser, shopOwner } = useSelector(selector.user);
+const UserMomoInput = () => {
   const [momo, setMomo] = useState('');
+  const { currentUser } = useSelector(selector.user);
   const [isEdit, setIsEdit] = useState(false);
-
-  const _onEdit = () => {
-    if (shopOwner) {
-      setMomo(shopOwner.momo);
-    }
-    setIsEdit(true);
-  };
 
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setMomo(value);
+  };
+
+  const _onEdit = () => {
+    setMomo(currentUser?.momo || '');
+    setIsEdit(true);
   };
 
   const _updateUserMomo = async () => {
@@ -77,35 +75,33 @@ const ShopOwnerMomoInput = () => {
       ) : (
         <>
           <div className="w-28 rounded-md border-2 border-white px-1">
-            {shopOwner?.momo || '--'}
+            {currentUser?.momo || '--'}
           </div>
-          {currentUser && currentUser?.uid === shopOwner?.uid ? (
-            <button className="" onClick={_onEdit}>
-              <PencilSquareIcon className="h-3 w-3" />
-            </button>
-          ) : null}
+          <button className="" onClick={_onEdit}>
+            <PencilSquareIcon className="h-3 w-3" />
+          </button>
         </>
       )}
     </div>
   );
 };
 
-const ShopOwnerBankInput = ({
+const UserBankInput = ({
   field1,
   field2,
 }: {
   field1: keyof User;
   field2: keyof User;
 }) => {
-  const { currentUser, shopOwner } = useSelector(selector.user);
+  const { currentUser } = useSelector(selector.user);
   const [bankName, setBankName] = useState<any>('');
   const [bankNumber, setBankNumber] = useState<any>('');
   const [isEdit, setIsEdit] = useState(false);
 
   const _onEdit = () => {
-    if (shopOwner) {
-      setBankName(shopOwner[field1]);
-      setBankNumber(shopOwner[field2]);
+    if (currentUser) {
+      setBankName(currentUser[field1]);
+      setBankNumber(currentUser[field2]);
       setIsEdit(true);
     }
   };
@@ -156,17 +152,15 @@ const ShopOwnerBankInput = ({
         <>
           <div className="flex items-center">
             <div className="w-12 rounded-md border-2 border-white px-1">
-              {shopOwner ? shopOwner[field1]?.toString() : '--'}
+              {currentUser ? currentUser[field1]?.toString() || '--' : ''}
             </div>
             <div className="w-32 rounded-md border-2 border-white px-1">
-              {shopOwner ? shopOwner[field2]?.toString() : '--'}
+              {currentUser ? currentUser[field2]?.toString() : ''}
             </div>
           </div>
-          {currentUser && currentUser?.uid === shopOwner?.uid ? (
-            <button className="" onClick={_onEdit}>
-              <PencilSquareIcon className="h-3 w-3" />
-            </button>
-          ) : null}
+          <button className="" onClick={_onEdit}>
+            <PencilSquareIcon className="h-3 w-3" />
+          </button>
         </>
       )}
     </div>

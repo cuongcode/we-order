@@ -1,31 +1,25 @@
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-
-import { CloudArrowUpIcon } from '@heroicons/react/24/outline';
 import {
-  addDoc,
   collection,
   doc,
   onSnapshot,
   orderBy,
   query as firestoreQuery,
 } from 'firebase/firestore';
-import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Slider from 'react-slick';
 
+import { ImageGallery } from '@/components/common';
 import {
   CalculateTotal,
   MenusDropdown,
   SharedLink,
-  ShopOwner,
+  ShopOwnerProfile,
+  ShopOwnerTranferInfo,
   Table,
-  TranferInfo,
+  WantedBoard,
 } from '@/components/pages/order';
-import { db, storage } from '@/firebase';
-import { useCheckClickOutside } from '@/hooks';
-import { Icons, LogoImages } from '@/images';
+import { db } from '@/firebase';
+import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import {
   OrderActions,
@@ -35,7 +29,7 @@ import {
   WantedActions,
 } from '@/redux';
 import { Main } from '@/templates/Main';
-import type { Order, User, WantedInfo } from '@/types';
+import type { Order, User } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
   const { order } = useSelector(selector.order);
@@ -62,18 +56,12 @@ const OrderPage = ({ query }: { query: any }) => {
         id: document.id,
         shipFee: document.data()?.shipFee,
         discount: document.data()?.discount,
-        // shopOwnerName: document.data()?.shopOwnerName,
-        // shopOwnerMomo: document.data()?.shopOwnerMomo,
         selectedMenuName: document.data()?.selectedMenuName,
         selectedMenuLink: document.data()?.selectedMenuLink,
         uid: document.data()?.uid,
         timestamp: document.data()?.timestamp,
-        // bank1Name: document.data()?.bank1Name,
-        // bank1Number: document.data()?.bank1Number,
-        // bank2Name: document.data()?.bank2Name,
-        // bank2Number: document.data()?.bank2Number,
-        // shopOwnerAvatar: document.data()?.shopOwnerAvatar,
         isClosed: document.data()?.isClosed,
+        heart: document.data()?.heart,
       };
       dispatch(OrderActions.setOrder(newOrder));
     });
@@ -113,6 +101,8 @@ const OrderPage = ({ query }: { query: any }) => {
         bank2Name: _doc.data()?.bank2Name,
         bank2Number: _doc.data()?.bank2Number,
         avatar: _doc.data()?.avatar,
+        momoQR: _doc.data()?.momoQR,
+        bankQR: _doc.data()?.bankQR,
       };
       dispatch(UserActions.setShopOwner(updatedShopOwner));
     });
@@ -134,14 +124,13 @@ const OrderPage = ({ query }: { query: any }) => {
             </div>
 
             <div className="mb-10 flex w-full gap-4 text-sm">
-              <ShopOwner />
-              <TranferInfo />
+              <ShopOwnerProfile />
+              <ShopOwnerTranferInfo />
+              <QRBoard />
               <div className="m-auto h-40 w-60 rounded-3xl border-2 bg-white p-5 drop-shadow-md">
-                <div className="mt-1">
-                  <SimpleSlider />
+                <div className="mt-3">
+                  <WantedBoard />
                 </div>
-
-                {/* <WantedBoard /> */}
               </div>
             </div>
             <div className="mb-10">
@@ -176,164 +165,58 @@ const OrderPage = ({ query }: { query: any }) => {
 
 export default OrderPage;
 
-const SLIDER_SETTINGS = {
-  dots: true,
-  infinite: true,
-  speed: 800,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  autoplay: true,
-  autoplaySpeed: 4000,
-  pauseOnHover: true,
-  arrows: false,
-  draggable: true,
-};
-
-const SimpleSlider = () => {
-  const { wanteds } = useSelector(selector.wanted);
-  const { order } = useSelector(selector.order);
-  const [error, setError] = useState('');
-  const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
-  const [message, setMessage] = useState('');
-  const [isShow, setIsShow] = useState(false);
-
-  const formRef = useRef<HTMLFormElement>(null);
-  const uploadFormRef = useCheckClickOutside(() => {
-    setIsShow(false);
-    setSelectedFile(undefined);
-    formRef.current?.reset();
-    setMessage('');
-    setError('');
-  });
-
-  const _onUpload = () => {
-    if (message === '') {
-      setError('Please input a message');
-      return;
-    }
-    if (selectedFile === undefined) {
-      setError('Please select a picture');
-      return;
-    }
-    const storageRef = ref(storage, `wanted/${order?.id}/${selectedFile.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, selectedFile);
-    uploadTask.on(
-      'state_changed',
-      () => {
-        //
-      },
-      () => {
-        //
-      },
-      async () => {
-        const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-        if (order) {
-          const newWanted = {
-            avatar: downloadUrl,
-            message,
-          };
-          await addDoc(
-            collection(db, 'orders', order?.id, 'wanteds'),
-            newWanted,
-          );
-        }
-      },
-    );
-
-    setSelectedFile(undefined);
-    formRef.current?.reset();
-    setMessage('');
-    setError('');
-    setIsShow(false);
-  };
-
-  const _onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length !== 0) {
-      setSelectedFile(e.target.files[0]);
-    }
-  };
-
-  const _onMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setMessage(value);
-  };
-
-  const _onShow = () => {
-    setIsShow(true);
-  };
-
-  return (
-    <div className="relative">
-      <Slider {...SLIDER_SETTINGS}>
-        {wanteds.length === 0 ? <WantedSample /> : Wanteds(wanteds)}
-      </Slider>
-      <button className="absolute -bottom-10 -right-11" onClick={_onShow}>
-        <CloudArrowUpIcon className="h-5 w-5" />
-      </button>
-      <div className="absolute -top-9 left-16 font-bold">WANTED</div>
-      {isShow ? (
-        <div
-          ref={uploadFormRef}
-          className="absolute -right-8 top-36 flex flex-col gap-2 bg-gray-200 p-2"
-        >
-          <form ref={formRef} action="" className="flex flex-col gap-2">
-            <input
-              type="file"
-              accept="/image/*"
-              onChange={_onFileChange}
-              className="text-xs"
-            />
-            <input
-              className="h-6 rounded-md"
-              type="text"
-              value={message}
-              name="message"
-              onChange={_onMessageChange}
-            />
-          </form>
-          <button onClick={_onUpload} className="rounded-md bg-gray-400 py-1">
-            Upload
-          </button>
-          {error !== '' ? <div className="text-red-400">{error}</div> : null}
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-const Wanteds = (listItem: WantedInfo[]) => {
-  return listItem.map((w: WantedInfo) => (
-    <div key={w.id} className="flex gap-2">
-      <img
-        className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
-        src={w.avatar}
-        alt="user-icon"
-      />
-      <div className="h-24 w-28 leading-4 tracking-tight">
-        <div>{w.message}</div>
-      </div>
-    </div>
-  ));
-};
-
-const WantedSample = () => {
-  return (
-    <div className="flex gap-2">
-      <img
-        className="h-24 w-24 rounded-lg bg-gray-200 object-cover"
-        src={Icons.user_icon.src}
-        alt="user-icon"
-      />
-      <div className="h-24 w-28 leading-4 tracking-tight">
-        <div>Write a message to someone if he/she still owe you money.</div>
-      </div>
-    </div>
-  );
-};
-
 OrderPage.getInitialProps = async (context: any) => {
   const { query } = context;
   return { query };
+};
+
+const QRBoard = () => {
+  const { currentUser, shopOwner } = useSelector(selector.user);
+
+  return (
+    <div className="flex h-40 w-20 flex-col justify-between rounded-3xl border-2 bg-white  p-1 drop-shadow-md">
+      <div className="relative">
+        <div className="rounded-2xl border-2">
+          {shopOwner?.momoQR && shopOwner?.momoQR !== '' ? (
+            <img
+              src={shopOwner.momoQR}
+              alt=""
+              className="rounded-2xl bg-blue-200"
+            />
+          ) : (
+            <div className="flex h-16 w-16 flex-col justify-center">
+              <div className="text-center text-xs">Momo QR</div>
+            </div>
+          )}
+          {currentUser && currentUser.uid === shopOwner?.uid ? (
+            <div className="absolute -right-6 top-0">
+              <ImageGallery field="momoQR" />
+            </div>
+          ) : null}
+        </div>
+      </div>
+      <div className="relative">
+        <div className="rounded-2xl border-2">
+          {shopOwner?.bankQR && shopOwner?.bankQR !== '' ? (
+            <img
+              src={shopOwner.bankQR}
+              alt=""
+              className="rounded-2xl bg-blue-200"
+            />
+          ) : (
+            <div className="flex h-16 w-16 flex-col justify-center">
+              <div className="text-center text-xs">Bank QR</div>
+            </div>
+          )}
+          {currentUser && currentUser.uid === shopOwner?.uid ? (
+            <div className="absolute -right-6 top-0">
+              <ImageGallery field="bankQR" />
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // export const getStaticPaths = async () => {

@@ -9,11 +9,13 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { ShopOwnerImage } from '@/components/common';
 import { db } from '@/firebase';
 import { selector } from '@/redux';
 
-export const ShopOwner = () => {
+import { GiveHeartShopOwner } from './give-heart';
+import { ShopOwnerImage } from './shop-owner-image';
+
+export const ShopOwnerProfile = () => {
   const { currentUser } = useSelector(selector.user);
   const { order } = useSelector(selector.order);
   return (
@@ -26,7 +28,9 @@ export const ShopOwner = () => {
       {currentUser && currentUser.uid === order.uid ? (
         <CloseOrderButton />
       ) : null}
-      {/* <GiveHeart /> */}
+      <div className="absolute bottom-2 left-2">
+        <GiveHeartShopOwner />
+      </div>
     </div>
   );
 };

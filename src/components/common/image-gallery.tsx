@@ -18,56 +18,12 @@ import { useSelector } from 'react-redux';
 
 import { db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
-import { Icons } from '@/images';
 import { selector } from '@/redux';
+import type { User } from '@/types';
 
 import { Portal } from './portal';
 
-export const ShopOwnerImage = () => {
-  const { currentUser, shopOwner } = useSelector(selector.user);
-
-  return (
-    <div className="relative rounded-full bg-gray-500 p-1">
-      <img
-        className="h-20 w-20 rounded-full bg-gray-200 object-cover"
-        src={
-          shopOwner?.avatar && shopOwner.avatar !== ''
-            ? shopOwner.avatar
-            : Icons.user_icon.src
-        }
-        alt="user-icon"
-      />
-      {currentUser && currentUser.uid === shopOwner?.uid ? (
-        <div className="absolute -right-4 top-0">
-          <UserImageGallery />
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-export const UserImage = () => {
-  const { currentUser } = useSelector(selector.user);
-
-  return (
-    <div className="relative rounded-full bg-gray-500 p-1">
-      <img
-        className="h-20 w-20 rounded-full bg-gray-200 object-cover"
-        src={
-          currentUser?.avatar && currentUser?.avatar !== ''
-            ? currentUser.avatar
-            : Icons.user_icon.src
-        }
-        alt="user-icon"
-      />
-      <div className="absolute -right-4 top-0">
-        <UserImageGallery />
-      </div>
-    </div>
-  );
-};
-
-export const UserImageGallery = () => {
+export const ImageGallery = ({ field }: { field: keyof User }) => {
   const { currentUser } = useSelector(selector.user);
   const [isOpen, setIsOpen] = useState(false);
   const [avatarList, setAvatarList] = useState<string[]>([]);
@@ -99,7 +55,7 @@ export const UserImageGallery = () => {
     if (currentUser) {
       const docRef = doc(db, 'users', currentUser?.uid);
       await updateDoc(docRef, {
-        avatar: url,
+        [field]: url,
       });
     }
   };
@@ -131,6 +87,7 @@ export const UserImageGallery = () => {
                 <UploadImageButton
                   avatarList={avatarList}
                   setAvatarList={setAvatarList}
+                  field={field}
                 />
               </div>
               <div className="no-scrollbar flex flex-wrap gap-2 overflow-x-auto">
@@ -163,9 +120,11 @@ export const UserImageGallery = () => {
 const UploadImageButton = ({
   avatarList,
   setAvatarList,
+  field,
 }: {
   avatarList: string[];
   setAvatarList: (updatedAvatarList: string[]) => void;
+  field: keyof User;
 }) => {
   const { currentUser } = useSelector(selector.user);
   const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
@@ -207,7 +166,7 @@ const UploadImageButton = ({
           if (currentUser) {
             const docRef = doc(db, 'users', currentUser?.uid);
             await updateDoc(docRef, {
-              avatar: downloadUrl,
+              [field]: downloadUrl,
             });
           }
           const updatedAvatarList = [...avatarList, downloadUrl];

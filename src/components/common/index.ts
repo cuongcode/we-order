@@ -1,2 +1,2 @@
+export * from './image-gallery';
 export * from './portal';
-export * from './user-image';

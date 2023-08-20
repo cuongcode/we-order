@@ -12,4 +12,6 @@ export interface User {
   bank2Number: string;
   menus?: Menu[];
   avatar: string;
+  momoQR: string;
+  bankQR: string;
 }
