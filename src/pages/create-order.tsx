@@ -74,6 +74,8 @@ const CreateOrderPage = () => {
         bank2Number: _doc.data()?.bank2Number,
         menus: _doc.data()?.menus,
         avatar: _doc.data()?.avatar,
+        momoQR: _doc.data()?.momoQR,
+        bankQR: _doc.data()?.bankQR,
       };
       dispatch(UserActions.setCurrentUser(updatedCurrentUser));
     });
