@@ -19,10 +19,11 @@ import { useSelector } from 'react-redux';
 import { db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { selector } from '@/redux';
+import type { User } from '@/types';
 
 import { Portal } from './portal';
 
-export const ImageGallery = () => {
+export const ImageGallery = ({ field }: { field: keyof User }) => {
   const { currentUser } = useSelector(selector.user);
   const [isOpen, setIsOpen] = useState(false);
   const [avatarList, setAvatarList] = useState<string[]>([]);
@@ -54,7 +55,7 @@ export const ImageGallery = () => {
     if (currentUser) {
       const docRef = doc(db, 'users', currentUser?.uid);
       await updateDoc(docRef, {
-        avatar: url,
+        [field]: url,
       });
     }
   };
@@ -86,6 +87,7 @@ export const ImageGallery = () => {
                 <UploadImageButton
                   avatarList={avatarList}
                   setAvatarList={setAvatarList}
+                  field={field}
                 />
               </div>
               <div className="no-scrollbar flex flex-wrap gap-2 overflow-x-auto">
@@ -118,9 +120,11 @@ export const ImageGallery = () => {
 const UploadImageButton = ({
   avatarList,
   setAvatarList,
+  field,
 }: {
   avatarList: string[];
   setAvatarList: (updatedAvatarList: string[]) => void;
+  field: keyof User;
 }) => {
   const { currentUser } = useSelector(selector.user);
   const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
@@ -162,7 +166,7 @@ const UploadImageButton = ({
           if (currentUser) {
             const docRef = doc(db, 'users', currentUser?.uid);
             await updateDoc(docRef, {
-              avatar: downloadUrl,
+              [field]: downloadUrl,
             });
           }
           const updatedAvatarList = [...avatarList, downloadUrl];

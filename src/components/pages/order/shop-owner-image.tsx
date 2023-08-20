@@ -20,7 +20,7 @@ export const ShopOwnerImage = () => {
       />
       {currentUser && currentUser.uid === shopOwner?.uid ? (
         <div className="absolute -right-4 top-0">
-          <ImageGallery />
+          <ImageGallery field="avatar" />
         </div>
       ) : null}
     </div>

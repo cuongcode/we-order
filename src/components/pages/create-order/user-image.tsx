@@ -19,7 +19,7 @@ export const UserImage = () => {
         alt="user-icon"
       />
       <div className="absolute -right-4 top-0">
-        <ImageGallery />
+        <ImageGallery field="avatar" />
       </div>
     </div>
   );

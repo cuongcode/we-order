@@ -15,3 +15,4 @@ export * from './table-add-row-button';
 export * from './table-header';
 export * from './table-row';
 export * from './transfer-formula';
+export * from './wanted-board';
