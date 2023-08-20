@@ -67,6 +67,7 @@ const OrderPage = ({ query }: { query: any }) => {
         uid: document.data()?.uid,
         timestamp: document.data()?.timestamp,
         isClosed: document.data()?.isClosed,
+        heart: document.data()?.heart,
       };
       dispatch(OrderActions.setOrder(newOrder));
     });

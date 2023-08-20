@@ -154,17 +154,11 @@ const NewOrderButton = ({
         timestamp: serverTimestamp(),
         shipFee: 0,
         discount: 0,
-        // shopOwnerName: currentUser.nickname,
-        // shopOwnerMomo: currentUser.momo,
         selectedMenuName: selectedMenu.name,
         selectedMenuLink: selectedMenu.link,
-        // bank1Name: currentUser.bank1Name,
-        // bank1Number: currentUser.bank1Number,
-        // bank2Name: currentUser.bank2Name,
-        // bank2Number: currentUser.bank2Number,
         uid: currentUser.uid,
-        // shopOwnerAvatar: currentUser.avatar,
         isClosed: false,
+        heart: 0,
       };
       await addDoc(collection(db, 'orders'), newOrder);
       setError('');

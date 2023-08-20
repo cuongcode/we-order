@@ -7,7 +7,7 @@ import { db } from '@/firebase';
 import { selector } from '@/redux';
 import type { DrinkTableRow } from '@/types';
 
-export const GiveHeart = ({ row }: { row: DrinkTableRow }) => {
+export const GiveHeartRow = ({ row }: { row: DrinkTableRow }) => {
   const { order } = useSelector(selector.order);
 
   const _updateRow = async () => {
@@ -27,6 +27,30 @@ export const GiveHeart = ({ row }: { row: DrinkTableRow }) => {
         )}
       </button>
       <div>{row.heart}</div>
+    </div>
+  );
+};
+
+export const GiveHeartShopOwner = () => {
+  const { order } = useSelector(selector.order);
+
+  const _updateOrder = async () => {
+    const docRef = doc(db, 'orders', order.id);
+    await updateDoc(docRef, {
+      heart: increment(1),
+    });
+  };
+
+  return (
+    <div className="flex items-center">
+      <button onClick={_updateOrder}>
+        {order.heart === 0 ? (
+          <OutlineHeart className="h-4 w-4 text-red-400" />
+        ) : (
+          <SolidHeart className="h-4 w-4 text-red-400" />
+        )}
+      </button>
+      <div>{order.heart}</div>
     </div>
   );
 };

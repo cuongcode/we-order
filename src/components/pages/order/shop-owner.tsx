@@ -13,6 +13,8 @@ import { ShopOwnerImage } from '@/components/common';
 import { db } from '@/firebase';
 import { selector } from '@/redux';
 
+import { GiveHeartShopOwner } from './give-heart';
+
 export const ShopOwner = () => {
   const { currentUser } = useSelector(selector.user);
   const { order } = useSelector(selector.order);
@@ -26,7 +28,9 @@ export const ShopOwner = () => {
       {currentUser && currentUser.uid === order.uid ? (
         <CloseOrderButton />
       ) : null}
-      {/* <GiveHeart /> */}
+      <div className="absolute bottom-2 left-2">
+        <GiveHeartShopOwner />
+      </div>
     </div>
   );
 };
