@@ -1,12 +1,10 @@
 import {
   CheckIcon,
-  PencilSquareIcon,
   PlusIcon,
   TrashIcon,
   XCircleIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
@@ -29,7 +27,7 @@ import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { UserImage } from '@/components/common';
+import { UserProfile, UserTranferInfo } from '@/components/pages/create-order';
 import { auth, db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { LogoImages } from '@/images';
@@ -111,7 +109,7 @@ const CreateOrderPage = () => {
           <div className="flex w-1/2 flex-col gap-5">
             <div className="flex gap-5">
               <UserProfile />
-              <TranferInfo />
+              <UserTranferInfo />
             </div>
             <MenusDropdown
               selectedMenu={selectedMenu}
@@ -275,242 +273,6 @@ const DeleteOrderButton = ({ order }: { order: Order }) => {
           </button>
         </div>
       ) : null}
-    </div>
-  );
-};
-
-const UserProfile = () => {
-  return (
-    <div className="flex h-40 w-1/3 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-      <div className="font-bold">PROFILE</div>
-      <UserImage />
-      <div className="mt-1">
-        <UserNicknameInput />
-      </div>
-    </div>
-  );
-};
-
-const UserNicknameInput = () => {
-  const [isEdit, setIsEdit] = useState(false);
-  const [nickname, setNickname] = useState<string>('');
-  const { currentUser } = useSelector(selector.user);
-
-  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setNickname(value);
-  };
-
-  const _onEdit = () => {
-    setNickname(currentUser?.nickname || '');
-    setIsEdit(true);
-  };
-
-  const _updateUserNickname = async () => {
-    if (currentUser) {
-      const docRef = doc(db, 'users', currentUser?.uid);
-      await updateDoc(docRef, {
-        nickname,
-      });
-      setIsEdit(false);
-    }
-  };
-  return (
-    <div className="relative">
-      {isEdit ? (
-        <>
-          <div className="flex h-6 w-20 items-center rounded-md border-2 text-center hover:border-gray-600">
-            <input
-              className="h-4 w-full rounded-md text-center"
-              type="text"
-              value={nickname}
-              name="shopOwnerName"
-              onChange={_onChange}
-            />
-          </div>
-          <button
-            className="absolute -right-5 top-2"
-            onClick={_updateUserNickname}
-          >
-            <CheckIcon className="h-3 w-3" />
-          </button>
-        </>
-      ) : (
-        <>
-          <div
-            className={clsx({
-              'flex h-6 w-20 items-center justify-center rounded-md border-2 border-white text-center':
-                true,
-              'text-xs': Number(currentUser?.nickname?.length) > 9,
-            })}
-          >
-            {currentUser?.nickname || '--'}
-          </div>
-          <button className="absolute -right-5 top-2" onClick={_onEdit}>
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
-        </>
-      )}
-    </div>
-  );
-};
-
-const TranferInfo = () => {
-  return (
-    <div className="flex h-40 grow flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-      <div className="font-bold">TRANSFER INFO</div>
-      <div className="flex w-full flex-col items-start text-sm">
-        <div className="flex h-6 w-full items-center">
-          <div className="w-11">Momo</div>
-          <div className="mx-2">:</div>
-          <div className="grow">
-            <ShopOwnerMomoInput />
-          </div>
-        </div>
-        <div className="flex w-full">
-          <div className="w-11">Bank</div>
-          <div className="mx-2">:</div>
-        </div>
-        <div className="flex w-full flex-col">
-          <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
-          <ShopOwnerBankInput field1="bank2Name" field2="bank2Number" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ShopOwnerMomoInput = () => {
-  const [momo, setMomo] = useState('');
-  const { currentUser } = useSelector(selector.user);
-  const [isEdit, setIsEdit] = useState(false);
-
-  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setMomo(value);
-  };
-
-  const _onEdit = () => {
-    setMomo(currentUser?.momo || '');
-    setIsEdit(true);
-  };
-
-  const _updateUserMomo = async () => {
-    if (currentUser) {
-      const docRef = doc(db, 'users', currentUser?.uid);
-      await updateDoc(docRef, {
-        momo,
-      });
-      setIsEdit(false);
-    }
-  };
-
-  return (
-    <div className="flex items-center justify-between">
-      {isEdit ? (
-        <>
-          <input
-            className="w-28 rounded-md border-2 px-1 hover:border-gray-600"
-            type="text"
-            value={momo}
-            name="shopOwnerMomo"
-            onChange={_onChange}
-          />
-          <button className="" onClick={_updateUserMomo}>
-            <CheckIcon className="h-3 w-3" />
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="w-28 rounded-md border-2 border-white px-1">
-            {currentUser?.momo || '--'}
-          </div>
-          <button className="" onClick={_onEdit}>
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
-        </>
-      )}
-    </div>
-  );
-};
-
-const ShopOwnerBankInput = ({
-  field1,
-  field2,
-}: {
-  field1: keyof User;
-  field2: keyof User;
-}) => {
-  const [bankName, setBankName] = useState<any>('');
-  const [bankNumber, setBankNumber] = useState<any>('');
-  const [isEdit, setIsEdit] = useState(false);
-  const { currentUser } = useSelector(selector.user);
-
-  const _onEdit = () => {
-    if (currentUser) {
-      setBankName(currentUser[field1]);
-      setBankNumber(currentUser[field2]);
-    }
-    setIsEdit(true);
-  };
-
-  const _onBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setBankName(value);
-  };
-  const _onBankNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setBankNumber(value);
-  };
-
-  const _updateUserBank = async () => {
-    if (currentUser) {
-      const docRef = doc(db, 'users', currentUser?.uid);
-      await updateDoc(docRef, {
-        [field1]: bankName,
-        [field2]: bankNumber,
-      });
-      setIsEdit(false);
-    }
-  };
-
-  return (
-    <div className="flex w-full items-center justify-between">
-      {isEdit ? (
-        <>
-          <div className="flex items-center">
-            <input
-              className="w-12 rounded-md border-2 px-1 hover:border-gray-600"
-              type="text"
-              value={bankName}
-              onChange={_onBankNameChange}
-            />
-            <input
-              className="w-32 rounded-md border-2 px-1 hover:border-gray-600"
-              type="text"
-              value={bankNumber}
-              onChange={_onBankNumberChange}
-            />
-          </div>
-          <button className="" onClick={_updateUserBank}>
-            <CheckIcon className="h-3 w-3" />
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="flex items-center">
-            <div className="w-12 rounded-md border-2 border-white px-1">
-              {currentUser ? currentUser[field1]?.toString() || '--' : ''}
-            </div>
-            <div className="w-32 rounded-md border-2 border-white px-1">
-              {currentUser ? currentUser[field2]?.toString() : ''}
-            </div>
-          </div>
-          <button className="" onClick={_onEdit}>
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
-        </>
-      )}
     </div>
   );
 };

@@ -9,13 +9,13 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { ShopOwnerImage } from '@/components/common';
 import { db } from '@/firebase';
 import { selector } from '@/redux';
 
 import { GiveHeartShopOwner } from './give-heart';
+import { ShopOwnerImage } from './shop-owner-image';
 
-export const ShopOwner = () => {
+export const ShopOwnerProfile = () => {
   const { currentUser } = useSelector(selector.user);
   const { order } = useSelector(selector.order);
   return (

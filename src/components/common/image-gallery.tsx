@@ -18,56 +18,11 @@ import { useSelector } from 'react-redux';
 
 import { db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
-import { Icons } from '@/images';
 import { selector } from '@/redux';
 
 import { Portal } from './portal';
 
-export const ShopOwnerImage = () => {
-  const { currentUser, shopOwner } = useSelector(selector.user);
-
-  return (
-    <div className="relative rounded-full bg-gray-500 p-1">
-      <img
-        className="h-20 w-20 rounded-full bg-gray-200 object-cover"
-        src={
-          shopOwner?.avatar && shopOwner.avatar !== ''
-            ? shopOwner.avatar
-            : Icons.user_icon.src
-        }
-        alt="user-icon"
-      />
-      {currentUser && currentUser.uid === shopOwner?.uid ? (
-        <div className="absolute -right-4 top-0">
-          <UserImageGallery />
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-export const UserImage = () => {
-  const { currentUser } = useSelector(selector.user);
-
-  return (
-    <div className="relative rounded-full bg-gray-500 p-1">
-      <img
-        className="h-20 w-20 rounded-full bg-gray-200 object-cover"
-        src={
-          currentUser?.avatar && currentUser?.avatar !== ''
-            ? currentUser.avatar
-            : Icons.user_icon.src
-        }
-        alt="user-icon"
-      />
-      <div className="absolute -right-4 top-0">
-        <UserImageGallery />
-      </div>
-    </div>
-  );
-};
-
-export const UserImageGallery = () => {
+export const ImageGallery = () => {
   const { currentUser } = useSelector(selector.user);
   const [isOpen, setIsOpen] = useState(false);
   const [avatarList, setAvatarList] = useState<string[]>([]);

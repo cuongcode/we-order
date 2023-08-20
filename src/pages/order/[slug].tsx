@@ -19,9 +19,9 @@ import {
   CalculateTotal,
   MenusDropdown,
   SharedLink,
-  ShopOwner,
+  ShopOwnerProfile,
+  ShopOwnerTranferInfo,
   Table,
-  TranferInfo,
 } from '@/components/pages/order';
 import { db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
@@ -128,14 +128,12 @@ const OrderPage = ({ query }: { query: any }) => {
             </div>
 
             <div className="mb-10 flex w-full gap-4 text-sm">
-              <ShopOwner />
-              <TranferInfo />
+              <ShopOwnerProfile />
+              <ShopOwnerTranferInfo />
               <div className="m-auto h-40 w-60 rounded-3xl border-2 bg-white p-5 drop-shadow-md">
                 <div className="mt-1">
-                  <SimpleSlider />
+                  <WantedBoard />
                 </div>
-
-                {/* <WantedBoard /> */}
               </div>
             </div>
             <div className="mb-10">
@@ -183,7 +181,7 @@ const SLIDER_SETTINGS = {
   draggable: true,
 };
 
-const SimpleSlider = () => {
+const WantedBoard = () => {
   const { wanteds } = useSelector(selector.wanted);
   const { order } = useSelector(selector.order);
   const [error, setError] = useState('');
