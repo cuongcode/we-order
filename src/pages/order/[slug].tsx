@@ -131,7 +131,7 @@ const OrderPage = ({ query }: { query: any }) => {
               <ShopOwnerProfile />
               <ShopOwnerTranferInfo />
               <div className="m-auto h-40 w-60 rounded-3xl border-2 bg-white p-5 drop-shadow-md">
-                <div className="mt-1">
+                <div className="mt-3">
                   <WantedBoard />
                 </div>
               </div>
@@ -259,10 +259,10 @@ const WantedBoard = () => {
       <Slider {...SLIDER_SETTINGS}>
         {wanteds.length === 0 ? <WantedSample /> : Wanteds(wanteds)}
       </Slider>
-      <button className="absolute -bottom-10 -right-11" onClick={_onShow}>
+      <button className="absolute -bottom-5 -right-1" onClick={_onShow}>
         <CloudArrowUpIcon className="h-5 w-5" />
       </button>
-      <div className="absolute -top-9 left-16 font-bold">WANTED</div>
+      <div className="absolute -top-7 left-16 font-bold">WANTED</div>
       {isShow ? (
         <div
           ref={uploadFormRef}
