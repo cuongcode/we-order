@@ -143,7 +143,7 @@ const NewOrderButton = ({
 
   const _createOrder = async () => {
     if (currentUser) {
-      if (selectedMenu.link === '') {
+      if (selectedMenu.name === '') {
         setError('Please select a menu');
         return;
       }
@@ -302,73 +302,28 @@ const MenusByEmbedLink = ({
         <AddMenuForm />
         <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
       </div>
-      <MenusByImage />
+      <MenusByImage setSelectedMenu={setSelectedMenu} />
     </div>
   );
 };
 
-const MenusByImage = () => {
-  // const { currentUser } = useSelector(selector.user);
+const MenusByImage = ({
+  setSelectedMenu,
+}: {
+  setSelectedMenu: (menu: Menu) => void;
+}) => {
+  const { currentUser } = useSelector(selector.user);
   const [name, setName] = useState('');
 
-  // const _onUpload = () => {
-  //   if (selectedFiles === undefined || name === '') {
-  //     return;
-  //   }
-  //   selectedFiles.forEach((file: File) => {
-  //     const storageRef = ref(
-  //       storage,
-  //       `users/${currentUser?.uid}/menus/${name}/${file.name}`,
-  //     );
-  //     const uploadTask = uploadBytesResumable(storageRef, file);
-  //     uploadTask.on(
-  //       'state_changed',
-  //       () => {
-  //         //
-  //       },
-  //       () => {
-  //         //
-  //       },
-  //       async () => {
-  //         const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-
-  //         if (currentUser) {
-  //           const menuRef = doc(
-  //             db,
-  //             'users',
-  //             currentUser?.uid,
-  //             'menusByImage',
-  //             name,
-  //           );
-  //           const docSnap = await getDoc(menuRef);
-  //           if (docSnap.exists()) {
-  //             await updateDoc(menuRef, {
-  //               images: arrayUnion({ id: uuidv4(), downloadUrl }),
-  //             });
-  //           } else {
-  //             await setDoc(menuRef, {
-  //               images: [{ id: uuidv4(), downloadUrl }],
-  //             });
-  //           }
-  //         }
-  //       },
-  //     );
-  //   });
-  //   setSelectedFiles(undefined);
-  //   setName('');
-  //   uploadFormRef.current?.reset();
-  // };
-
-  // const _addUserMenu = async () => {
-  // if (name !== '' && link !== '' && currentUser) {
-  //   const userRef = doc(db, 'users', currentUser?.uid);
-  //   await updateDoc(userRef, {
-  //     menus: arrayUnion({ id: uuidv4(), name, link }),
-  //   });
-  //   setName('');
-  //   setLink('');
-  // }
-  // };
+  const _addMenuByImage = async () => {
+    if (name !== '' && currentUser) {
+      const userRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(userRef, {
+        menusByImage: arrayUnion({ id: uuidv4(), name, link: '' }),
+      });
+      setName('');
+    }
+  };
 
   return (
     <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
@@ -384,38 +339,18 @@ const MenusByImage = () => {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-1">
-          <MenuImageGallery />
-          {/* {selectedUrls && selectedUrls?.length > 0 ? (
-            <div>{selectedUrls?.length}</div>
-          ) : (
-            <div className="min-w-max text-xs">No image chosen</div>
-          )} */}
+        <div className="text-xs text-gray-600">
+          Create menu then select images
         </div>
         <button
           type="button"
           className="rounded-md bg-white p-1 hover:bg-gray-400"
+          onClick={_addMenuByImage}
         >
           <PlusIcon className="h-4 w-4" />
         </button>
-        {/* <div className="flex w-7/12 items-center gap-1">
-          <input
-            className="w-full rounded-md border-2 px-1 text-xs"
-            type="file"
-            accept="/image/*"
-            onChange={_onFileChange}
-            multiple
-          />
-          <button
-            type="button"
-            className="rounded-md bg-white p-1 hover:bg-gray-400"
-            onClick={_onUpload}
-          >
-            <PlusIcon className="h-4 w-4" />
-          </button>
-        </div> */}
       </div>
-      {/* <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} /> */}
+      <MenusByImageList setSelectedMenu={setSelectedMenu} />
     </div>
   );
 };
@@ -477,6 +412,82 @@ const Menus = ({
               <button
                 className="absolute -left-1 -top-1"
                 onClick={() => _deleteMenu(menu)}
+              >
+                <XCircleIcon className="h-3 w-3 rounded-full bg-red-200" />
+              </button>
+            </div>
+          ))}
+    </div>
+  );
+};
+
+const MenusByImageList = ({
+  setSelectedMenu,
+}: {
+  setSelectedMenu: (menu: Menu) => void;
+}) => {
+  const [menus, setMenus] = useState<Menu[]>([]);
+  const { currentUser } = useSelector(selector.user);
+
+  useEffect(() => {
+    _fetchMenus();
+  }, []);
+
+  const _fetchMenus = async () => {
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      onSnapshot(docRef, (_doc) => {
+        const updatedMenus: Menu[] = _doc.data()?.menusByImage;
+        setMenus(updatedMenus);
+      });
+    }
+  };
+
+  const _selectMenu = async (menu: Menu) => {
+    setSelectedMenu({ id: menu.id, name: menu.name, link: menu.link });
+  };
+
+  const _deleteMenu = async (menu: Menu) => {
+    // if (menu.id === selectedMenu.id) {
+    //   setSelectedMenu({ id: '', name: '', link: '' });
+    // }
+    if (currentUser) {
+      await _deleteImageFiles(menu);
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+        menusByImage: arrayRemove({ id: menu.id, name: menu.name }),
+      });
+    }
+  };
+
+  const _deleteImageFiles = async (menu: Menu) => {
+    const storageRef = ref(
+      storage,
+      `users/${currentUser?.uid}/menus/${menu.name.replace(/\s+/g, '')}`,
+    );
+    const files = await listAll(storageRef);
+    files.items.forEach(async (itemRef) => deleteObject(itemRef));
+  };
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {menus?.length === 0 || menus === undefined
+        ? 'You have no menu. Add one!'
+        : menus.map((menu: Menu) => (
+            <div key={menu.id} className="relative">
+              <button
+                className="flex items-center gap-1 rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
+                type="button"
+                onClick={() => _selectMenu(menu)}
+              >
+                <div>{menu.name}</div>
+                <MenuImageGallery name={menu.name.replace(/\s+/g, '')} />
+              </button>
+              <button
+                className="absolute -left-1 -top-1"
+                onClick={() => {
+                  _deleteMenu(menu);
+                }}
               >
                 <XCircleIcon className="h-3 w-3 rounded-full bg-red-200" />
               </button>

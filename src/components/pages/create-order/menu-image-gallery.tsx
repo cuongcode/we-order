@@ -1,6 +1,5 @@
 import {
   CameraIcon,
-  CheckIcon,
   CloudArrowUpIcon,
   PhotoIcon,
   XMarkIcon,
@@ -21,25 +20,16 @@ import { storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { selector } from '@/redux';
 
-interface MenuImage {
-  isSelected: boolean;
-  url: string;
-}
-
-export const MenuImageGallery = () => {
+export const MenuImageGallery = ({ name }: { name: string }) => {
   const { currentUser } = useSelector(selector.user);
   const [isOpen, setIsOpen] = useState(false);
-  const [menuImageList, setMenuImageList] = useState<MenuImage[]>([]);
+  const [menuImageList, setMenuImageList] = useState<string[]>([]);
 
   useEffect(() => {
-    _fetchGallery();
+    _fetchGallery(name);
   }, []);
 
   const modalRef = useCheckClickOutside(() => {
-    const updatedMenuImageList = menuImageList.map((item: MenuImage) => {
-      return { ...item, isSelected: false };
-    });
-    setMenuImageList(updatedMenuImageList);
     setIsOpen(false);
   });
 
@@ -47,13 +37,16 @@ export const MenuImageGallery = () => {
     setIsOpen(true);
   };
 
-  const _fetchGallery = async () => {
-    const storageRef = ref(storage, `users/${currentUser?.uid}/menus`);
+  const _fetchGallery = async (menuName: string) => {
+    const storageRef = ref(
+      storage,
+      `users/${currentUser?.uid}/menus/${menuName}`,
+    );
     const files = await listAll(storageRef);
-    const updatedMenuImageList: MenuImage[] = [];
+    const updatedMenuImageList: string[] = [];
     files.items.forEach(async (itemRef) => {
       const url = await getDownloadURL(ref(storage, itemRef.fullPath));
-      updatedMenuImageList.push({ isSelected: false, url });
+      updatedMenuImageList.push(url);
     });
     setMenuImageList(updatedMenuImageList);
   };
@@ -68,29 +61,16 @@ export const MenuImageGallery = () => {
   // };
 
   const _deleteAvatar = async (url: string) => {
-    // if (url === currentUser?.avatar) {
-    //   _setAvatar('');
-    // }
     const storageRef = ref(storage, url);
     const updatedMenuImageList = menuImageList.filter(
-      (item: MenuImage) => item.url !== url,
+      (item: string) => item !== url,
     );
     setMenuImageList(updatedMenuImageList);
     await deleteObject(storageRef);
   };
 
-  const _onSelect = (menuImage: MenuImage) => {
-    const updatedMenuImageList = menuImageList.map((item: MenuImage) => {
-      if (item.url === menuImage.url) {
-        return { ...item, isSelected: !item.isSelected };
-      }
-      return item;
-    });
-    setMenuImageList(updatedMenuImageList);
-  };
-
   return (
-    <div>
+    <div className="flex items-center">
       <button onClick={_onOpen}>
         <PhotoIcon className="h-4 w-4" />
       </button>
@@ -104,30 +84,25 @@ export const MenuImageGallery = () => {
               <div className="flex items-center justify-between">
                 <div>My Gallery</div>
                 <UploadImageButton
+                  name={name}
                   menuImageList={menuImageList}
                   setMenuImageList={setMenuImageList}
                 />
               </div>
               <div className="no-scrollbar flex flex-wrap gap-2 overflow-x-auto">
-                {menuImageList.map((item: MenuImage) => (
-                  <div key={item.url} className="relative">
-                    <div className="absolute -top-1 left-0">
-                      <TickBox
-                        menuImage={item}
-                        menuImageList={menuImageList}
-                        setMenuImageList={setMenuImageList}
-                      />
-                    </div>
-                    <button onClick={() => _onSelect(item)}>
+                {menuImageList.map((item: string) => (
+                  <div key={item} className="relative">
+                    <div className="absolute -top-1 left-0" />
+                    <button>
                       <img
-                        src={item.url}
+                        src={item}
                         alt="user-icon"
                         className="h-20 w-20 rounded-lg bg-gray-200 object-cover"
                       />
                     </button>
                     <button
                       className="absolute right-0 top-0"
-                      onClick={() => _deleteAvatar(item.url)}
+                      onClick={() => _deleteAvatar(item)}
                     >
                       <XMarkIcon className="h-4 w-4 rounded-full bg-gray-400" />
                     </button>
@@ -143,11 +118,13 @@ export const MenuImageGallery = () => {
 };
 
 const UploadImageButton = ({
+  name,
   menuImageList,
   setMenuImageList,
 }: {
-  menuImageList: MenuImage[];
-  setMenuImageList: (updatedMenuImageList: MenuImage[]) => void;
+  name: string;
+  menuImageList: string[];
+  setMenuImageList: (updatedMenuImageList: string[]) => void;
 }) => {
   const { currentUser } = useSelector(selector.user);
   const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
@@ -173,7 +150,7 @@ const UploadImageButton = ({
     if (selectedFile) {
       const storageRef = ref(
         storage,
-        `users/${currentUser?.uid}/menus/${selectedFile.name}`,
+        `users/${currentUser?.uid}/menus/${name}/${selectedFile.name}`,
       );
       const uploadTask = uploadBytesResumable(storageRef, selectedFile);
       uploadTask.on(
@@ -189,13 +166,10 @@ const UploadImageButton = ({
           const downlardUrl_pathname = new URL(downloadUrl).pathname;
           if (
             menuImageList
-              .map((item: MenuImage) => new URL(item.url).pathname)
+              .map((item: string) => new URL(item).pathname)
               .indexOf(downlardUrl_pathname) === -1
           ) {
-            const updatedMenuImageList = [
-              ...menuImageList,
-              { isSelected: false, url: downloadUrl },
-            ];
+            const updatedMenuImageList = [...menuImageList, downloadUrl];
             setMenuImageList(updatedMenuImageList);
           }
         },
@@ -230,36 +204,5 @@ const UploadImageButton = ({
         />
       </form>
     </div>
-  );
-};
-
-const TickBox = ({
-  menuImage,
-  menuImageList,
-  setMenuImageList,
-}: {
-  menuImage: MenuImage;
-  menuImageList: MenuImage[];
-  setMenuImageList: (updatedMenuImageList: MenuImage[]) => void;
-}) => {
-  const _onTick = async () => {
-    const updatedMenuImageList = menuImageList.map((item: MenuImage) => {
-      if (item.url === menuImage.url) {
-        return { ...item, isSelected: !item.isSelected };
-      }
-      return item;
-    });
-    setMenuImageList(updatedMenuImageList);
-  };
-
-  return (
-    <button
-      className="h-4 w-4 rounded-md border-2 border-gray-500 bg-white"
-      onClick={_onTick}
-    >
-      {menuImage.isSelected ? (
-        <CheckIcon className="m-auto h-3 w-3 text-green-600" />
-      ) : null}
-    </button>
   );
 };
