@@ -35,7 +35,7 @@ export const Table = () => {
   return (
     <div
       className={clsx({
-        'flex flex-col gap-3 rounded-xl border-2 p-3': true,
+        'flex flex-col gap-3 rounded-xl border-2 p-1': true,
         'bg-gray-200': !order.isClosed,
         'bg-gray-400': order.isClosed,
       })}

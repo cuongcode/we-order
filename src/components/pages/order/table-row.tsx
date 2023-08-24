@@ -50,11 +50,11 @@ export const TableRow = ({
     <div
       key={row.id}
       className={clsx({
-        'flex w-full items-center gap-2 rounded-md text-xs': true,
+        'flex w-full items-center gap-1 rounded-md text-xs': true,
         'bg-gray-400': row.isTick,
       })}
     >
-      <div className="w-4">{rowIndex}</div>
+      <div className="w-2">{rowIndex}</div>
       <div
         className={clsx({
           'relative w-14 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
@@ -95,6 +95,27 @@ export const TableRow = ({
           placeholder="Type Here"
           value={row.drink.toUpperCase()}
           name="drink"
+          disabled={order.isClosed}
+          onChange={_updateRow}
+        />
+      </div>
+      <div
+        className={clsx({
+          'w-32 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+            true,
+          'bg-white': !row.isTick,
+          'bg-gray-400': row.isTick,
+        })}
+      >
+        <input
+          className={clsx({
+            'w-full': true,
+            'bg-gray-400': row.isTick,
+          })}
+          type="text"
+          placeholder="No topping"
+          value={row.topping}
+          name="topping"
           disabled={order.isClosed}
           onChange={_updateRow}
         />
@@ -146,27 +167,7 @@ export const TableRow = ({
       >
         <OptionsDropdown row={row} options={PERCENTAGE_OPTIONS} field="ice" />
       </div>
-      <div
-        className={clsx({
-          'w-32 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
-            true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
-      >
-        <input
-          className={clsx({
-            'w-full': true,
-            'bg-gray-400': row.isTick,
-          })}
-          type="text"
-          placeholder="No topping"
-          value={row.topping}
-          name="topping"
-          disabled={order.isClosed}
-          onChange={_updateRow}
-        />
-      </div>
+
       <div
         className={clsx({
           'z-10 w-16 rounded-md border-2 p-1 drop-shadow-md': true,

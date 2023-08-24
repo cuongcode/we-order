@@ -22,12 +22,13 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { deleteObject, listAll, ref } from 'firebase/storage';
+import { deleteObject, getDownloadURL, listAll, ref } from 'firebase/storage';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { UserProfile, UserTranferInfo } from '@/components/pages/create-order';
+import { MenuImageGallery } from '@/components/pages/create-order/menu-image-gallery';
 import { auth, db, storage } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { LogoImages } from '@/images';
@@ -45,6 +46,7 @@ const CreateOrderPage = () => {
     name: '',
     link: '',
   });
+  const [menuImageList, setMenuImageList] = useState<string[]>([]);
 
   const dispatch = useDispatch();
   const { currentUser } = useSelector(selector.user);
@@ -99,29 +101,55 @@ const CreateOrderPage = () => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="m-auto max-w-5xl">
-        <div className="my-12 w-full">
-          <img
-            className="m-auto w-1/2"
-            src={LogoImages.title_logo.src}
-            alt="title-logo"
-          />
-        </div>
-        <div className="flex gap-5">
-          <div className="flex w-1/2 flex-col gap-5">
-            <div className="flex gap-5">
-              <UserProfile />
-              <UserTranferInfo />
-            </div>
-            <MenusDropdown
-              selectedMenu={selectedMenu}
-              setSelectedMenu={setSelectedMenu}
+      <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
+        <div className="m-auto max-w-5xl lg:m-0 lg:w-1/2">
+          <div className="my-12 w-full">
+            <img
+              className="m-auto w-1/2"
+              src={LogoImages.title_logo.src}
+              alt="title-logo"
             />
-            <NewOrderButton orders={orders} selectedMenu={selectedMenu} />
           </div>
-          <div className="flex w-1/2 flex-col gap-4 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-            <OrderList orders={orders} />
+          <div className="flex gap-5">
+            <div className="flex w-1/2 flex-col gap-5">
+              <div className="flex gap-5">
+                <UserProfile />
+                <UserTranferInfo />
+              </div>
+              <MenusByEmbedLink
+                setMenuImageList={setMenuImageList}
+                selectedMenu={selectedMenu}
+                setSelectedMenu={setSelectedMenu}
+              />
+              <NewOrderButton orders={orders} selectedMenu={selectedMenu} />
+            </div>
+            <div className="flex w-1/2 flex-col gap-4 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+              <OrderList orders={orders} />
+            </div>
           </div>
+        </div>
+        <div className="mt-10 flex flex-col gap-3 lg:mt-0 lg:w-1/2">
+          <div className="text-center font-bold">MENU PREVIEW</div>
+          {selectedMenu.link !== '' ? (
+            <iframe
+              title="menu-frame"
+              src={selectedMenu.link}
+              className="h-screen w-full rounded-xl border-2 p-5"
+            />
+          ) : (
+            <div className="no-scrollbar flex h-screen flex-col gap-2 overflow-x-auto">
+              {menuImageList.map((url: string) => {
+                return (
+                  <img
+                    key={url}
+                    src={url}
+                    alt="user-icon"
+                    className="w-full rounded-xl"
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </Main>
@@ -142,7 +170,7 @@ const NewOrderButton = ({
 
   const _createOrder = async () => {
     if (currentUser) {
-      if (selectedMenu.link === '') {
+      if (selectedMenu.name === '') {
         setError('Please select a menu');
         return;
       }
@@ -279,10 +307,12 @@ const DeleteOrderButton = ({ order }: { order: Order }) => {
   );
 };
 
-const MenusDropdown = ({
+const MenusByEmbedLink = ({
+  setMenuImageList,
   selectedMenu,
   setSelectedMenu,
 }: {
+  setMenuImageList: (updatedMenuImageList: string[]) => void;
   selectedMenu: Menu;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
@@ -297,17 +327,85 @@ const MenusDropdown = ({
         </div>
       </div>
       <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
+        <div>Menus by embed link</div>
         <AddMenuForm />
-        <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
+        <Menus
+          setMenuImageList={setMenuImageList}
+          selectedMenu={selectedMenu}
+          setSelectedMenu={setSelectedMenu}
+        />
       </div>
+      <MenusByImage
+        selectedMenu={selectedMenu}
+        setSelectedMenu={setSelectedMenu}
+        setMenuImageList={setMenuImageList}
+      />
+    </div>
+  );
+};
+
+const MenusByImage = ({
+  selectedMenu,
+  setMenuImageList,
+  setSelectedMenu,
+}: {
+  selectedMenu: Menu;
+  setMenuImageList: (updatedMenuImageList: string[]) => void;
+  setSelectedMenu: (menu: Menu) => void;
+}) => {
+  const { currentUser } = useSelector(selector.user);
+  const [name, setName] = useState('');
+
+  const _addMenuByImage = async () => {
+    if (name !== '' && currentUser) {
+      const userRef = doc(db, 'users', currentUser?.uid);
+      await updateDoc(userRef, {
+        menusByImage: arrayUnion({ id: uuidv4(), name, link: '' }),
+      });
+      setName('');
+    }
+  };
+
+  return (
+    <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
+      <div>Menus by uploaded images</div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1">
+          <div>Name:</div>
+          <input
+            className="w-32 rounded-md border-2 px-1 hover:border-gray-600"
+            type="text"
+            placeholder="menu name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div className="text-xs text-gray-600">
+          Create menu then select images
+        </div>
+        <button
+          type="button"
+          className="rounded-md bg-white p-1 hover:bg-gray-400"
+          onClick={_addMenuByImage}
+        >
+          <PlusIcon className="h-4 w-4" />
+        </button>
+      </div>
+      <MenusByImageList
+        selectedMenu={selectedMenu}
+        setSelectedMenu={setSelectedMenu}
+        setMenuImageList={setMenuImageList}
+      />
     </div>
   );
 };
 
 const Menus = ({
+  setMenuImageList,
   selectedMenu,
   setSelectedMenu,
 }: {
+  setMenuImageList: (updatedMenuImageList: string[]) => void;
   selectedMenu: Menu;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
@@ -331,6 +429,7 @@ const Menus = ({
 
   const _selectMenu = async (menu: Menu) => {
     setSelectedMenu({ id: menu.id, name: menu.name, link: menu.link });
+    setMenuImageList([]);
   };
 
   const _deleteMenu = async (menu: Menu) => {
@@ -370,6 +469,102 @@ const Menus = ({
   );
 };
 
+const MenusByImageList = ({
+  selectedMenu,
+  setMenuImageList,
+  setSelectedMenu,
+}: {
+  selectedMenu: Menu;
+  setMenuImageList: (updatedMenuImageList: any) => void;
+  setSelectedMenu: (menu: Menu) => void;
+}) => {
+  const [menus, setMenus] = useState<Menu[]>([]);
+  const { currentUser } = useSelector(selector.user);
+
+  useEffect(() => {
+    _fetchMenus();
+  }, []);
+
+  const _fetchMenus = async () => {
+    if (currentUser) {
+      const docRef = doc(db, 'users', currentUser?.uid);
+      onSnapshot(docRef, (_doc) => {
+        const updatedMenus: Menu[] = _doc.data()?.menusByImage;
+        setMenus(updatedMenus);
+      });
+    }
+  };
+
+  const _selectMenu = async (menu: Menu) => {
+    setSelectedMenu({ id: menu.id, name: menu.name, link: menu.link });
+    await _fetchMenuImages(menu.name.replace(/\s+/g, ''));
+  };
+
+  const _deleteMenu = async (menu: Menu) => {
+    if (menu.id === selectedMenu.id) {
+      setSelectedMenu({ id: '', name: '', link: '' });
+    }
+    if (currentUser) {
+      await _deleteImageFiles(menu);
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+        menusByImage: arrayRemove({
+          id: menu.id,
+          name: menu.name,
+          link: menu.link,
+        }),
+      });
+    }
+  };
+
+  const _deleteImageFiles = async (menu: Menu) => {
+    const storageRef = ref(
+      storage,
+      `users/${currentUser?.uid}/menus/${menu.name.replace(/\s+/g, '')}`,
+    );
+    const files = await listAll(storageRef);
+    files.items.forEach(async (itemRef) => deleteObject(itemRef));
+  };
+
+  const _fetchMenuImages = async (menuName: string) => {
+    setMenuImageList([]);
+    const storageRef = ref(
+      storage,
+      `users/${currentUser?.uid}/menus/${menuName}`,
+    );
+    const files = await listAll(storageRef);
+    files.items.forEach(async (itemRef) => {
+      const url = await getDownloadURL(ref(storage, itemRef.fullPath));
+      setMenuImageList((prev: any) => [...prev, url]);
+    });
+  };
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {menus?.length === 0 || menus === undefined
+        ? 'You have no menu. Add one!'
+        : menus.map((menu: Menu) => (
+            <div key={menu.id} className="relative">
+              <div className="flex items-center gap-1 rounded-lg bg-white px-3 py-1 hover:bg-gray-400">
+                <button className=" " onClick={() => _selectMenu(menu)}>
+                  <div>{menu.name}</div>
+                </button>
+                <MenuImageGallery name={menu.name.replace(/\s+/g, '')} />
+              </div>
+              <button
+                className="absolute -left-1 -top-1"
+                onClick={() => {
+                  _deleteMenu(menu);
+                }}
+              >
+                <XCircleIcon className="h-3 w-3 rounded-full bg-red-200" />
+              </button>
+            </div>
+          ))}
+    </div>
+  );
+};
+
 const AddMenuForm = () => {
   const [name, setName] = useState('');
   const [link, setLink] = useState('');
@@ -389,22 +584,22 @@ const AddMenuForm = () => {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex w-5/12 items-center gap-1">
+      <div className="flex items-center gap-1">
         <div>Name:</div>
         <input
-          className="w-full rounded-md border-2 px-1 hover:border-gray-600"
+          className="w-32 rounded-md border-2 px-1 hover:border-gray-600"
           type="text"
           placeholder="menu name"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
-      <div className="flex w-7/12 items-center gap-1">
+      <div className="flex items-center gap-1">
         <div>Link:</div>
         <input
           className="w-full rounded-md border-2 px-1 hover:border-gray-600"
           type="text"
-          placeholder="paste link here"
+          placeholder="paste a link here"
           value={link}
           onChange={(e) => setLink(e.target.value)}
         />
