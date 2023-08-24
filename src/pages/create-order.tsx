@@ -22,7 +22,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { deleteObject, listAll, ref } from 'firebase/storage';
+import { deleteObject, getDownloadURL, listAll, ref } from 'firebase/storage';
 import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -46,6 +46,7 @@ const CreateOrderPage = () => {
     name: '',
     link: '',
   });
+  const [menuImageList, setMenuImageList] = useState<string[]>([]);
 
   const dispatch = useDispatch();
   const { currentUser } = useSelector(selector.user);
@@ -100,29 +101,55 @@ const CreateOrderPage = () => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="m-auto max-w-5xl">
-        <div className="my-12 w-full">
-          <img
-            className="m-auto w-1/2"
-            src={LogoImages.title_logo.src}
-            alt="title-logo"
-          />
-        </div>
-        <div className="flex gap-5">
-          <div className="flex w-1/2 flex-col gap-5">
-            <div className="flex gap-5">
-              <UserProfile />
-              <UserTranferInfo />
-            </div>
-            <MenusByEmbedLink
-              selectedMenu={selectedMenu}
-              setSelectedMenu={setSelectedMenu}
+      <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
+        <div className="m-auto max-w-5xl lg:m-0 lg:w-1/2">
+          <div className="my-12 w-full">
+            <img
+              className="m-auto w-1/2"
+              src={LogoImages.title_logo.src}
+              alt="title-logo"
             />
-            <NewOrderButton orders={orders} selectedMenu={selectedMenu} />
           </div>
-          <div className="flex w-1/2 flex-col gap-4 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-            <OrderList orders={orders} />
+          <div className="flex gap-5">
+            <div className="flex w-1/2 flex-col gap-5">
+              <div className="flex gap-5">
+                <UserProfile />
+                <UserTranferInfo />
+              </div>
+              <MenusByEmbedLink
+                setMenuImageList={setMenuImageList}
+                selectedMenu={selectedMenu}
+                setSelectedMenu={setSelectedMenu}
+              />
+              <NewOrderButton orders={orders} selectedMenu={selectedMenu} />
+            </div>
+            <div className="flex w-1/2 flex-col gap-4 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+              <OrderList orders={orders} />
+            </div>
           </div>
+        </div>
+        <div className="mt-10 flex flex-col gap-3 lg:mt-0 lg:w-1/2">
+          <div className="text-center font-bold">MENU PREVIEW</div>
+          {selectedMenu.link !== '' ? (
+            <iframe
+              title="menu-frame"
+              src={selectedMenu.link}
+              className="h-screen w-full rounded-xl border-2 p-5"
+            />
+          ) : (
+            <div className="no-scrollbar flex h-screen flex-col gap-2 overflow-x-auto">
+              {menuImageList.map((url: string) => {
+                return (
+                  <img
+                    key={url}
+                    src={url}
+                    alt="user-icon"
+                    className="w-full rounded-xl"
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </Main>
@@ -281,9 +308,11 @@ const DeleteOrderButton = ({ order }: { order: Order }) => {
 };
 
 const MenusByEmbedLink = ({
+  setMenuImageList,
   selectedMenu,
   setSelectedMenu,
 }: {
+  setMenuImageList: (updatedMenuImageList: string[]) => void;
   selectedMenu: Menu;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
@@ -300,16 +329,28 @@ const MenusByEmbedLink = ({
       <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2">
         <div>Menus by embed link</div>
         <AddMenuForm />
-        <Menus selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />
+        <Menus
+          setMenuImageList={setMenuImageList}
+          selectedMenu={selectedMenu}
+          setSelectedMenu={setSelectedMenu}
+        />
       </div>
-      <MenusByImage setSelectedMenu={setSelectedMenu} />
+      <MenusByImage
+        selectedMenu={selectedMenu}
+        setSelectedMenu={setSelectedMenu}
+        setMenuImageList={setMenuImageList}
+      />
     </div>
   );
 };
 
 const MenusByImage = ({
+  selectedMenu,
+  setMenuImageList,
   setSelectedMenu,
 }: {
+  selectedMenu: Menu;
+  setMenuImageList: (updatedMenuImageList: string[]) => void;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
   const { currentUser } = useSelector(selector.user);
@@ -350,15 +391,21 @@ const MenusByImage = ({
           <PlusIcon className="h-4 w-4" />
         </button>
       </div>
-      <MenusByImageList setSelectedMenu={setSelectedMenu} />
+      <MenusByImageList
+        selectedMenu={selectedMenu}
+        setSelectedMenu={setSelectedMenu}
+        setMenuImageList={setMenuImageList}
+      />
     </div>
   );
 };
 
 const Menus = ({
+  setMenuImageList,
   selectedMenu,
   setSelectedMenu,
 }: {
+  setMenuImageList: (updatedMenuImageList: string[]) => void;
   selectedMenu: Menu;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
@@ -382,6 +429,7 @@ const Menus = ({
 
   const _selectMenu = async (menu: Menu) => {
     setSelectedMenu({ id: menu.id, name: menu.name, link: menu.link });
+    setMenuImageList([]);
   };
 
   const _deleteMenu = async (menu: Menu) => {
@@ -422,8 +470,12 @@ const Menus = ({
 };
 
 const MenusByImageList = ({
+  selectedMenu,
+  setMenuImageList,
   setSelectedMenu,
 }: {
+  selectedMenu: Menu;
+  setMenuImageList: (updatedMenuImageList: any) => void;
   setSelectedMenu: (menu: Menu) => void;
 }) => {
   const [menus, setMenus] = useState<Menu[]>([]);
@@ -445,17 +497,22 @@ const MenusByImageList = ({
 
   const _selectMenu = async (menu: Menu) => {
     setSelectedMenu({ id: menu.id, name: menu.name, link: menu.link });
+    await _fetchMenuImages(menu.name.replace(/\s+/g, ''));
   };
 
   const _deleteMenu = async (menu: Menu) => {
-    // if (menu.id === selectedMenu.id) {
-    //   setSelectedMenu({ id: '', name: '', link: '' });
-    // }
+    if (menu.id === selectedMenu.id) {
+      setSelectedMenu({ id: '', name: '', link: '' });
+    }
     if (currentUser) {
       await _deleteImageFiles(menu);
       const userRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userRef, {
-        menusByImage: arrayRemove({ id: menu.id, name: menu.name }),
+        menusByImage: arrayRemove({
+          id: menu.id,
+          name: menu.name,
+          link: menu.link,
+        }),
       });
     }
   };
@@ -469,20 +526,31 @@ const MenusByImageList = ({
     files.items.forEach(async (itemRef) => deleteObject(itemRef));
   };
 
+  const _fetchMenuImages = async (menuName: string) => {
+    setMenuImageList([]);
+    const storageRef = ref(
+      storage,
+      `users/${currentUser?.uid}/menus/${menuName}`,
+    );
+    const files = await listAll(storageRef);
+    files.items.forEach(async (itemRef) => {
+      const url = await getDownloadURL(ref(storage, itemRef.fullPath));
+      setMenuImageList((prev: any) => [...prev, url]);
+    });
+  };
+
   return (
     <div className="flex flex-wrap gap-2">
       {menus?.length === 0 || menus === undefined
         ? 'You have no menu. Add one!'
         : menus.map((menu: Menu) => (
             <div key={menu.id} className="relative">
-              <button
-                className="flex items-center gap-1 rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
-                type="button"
-                onClick={() => _selectMenu(menu)}
-              >
-                <div>{menu.name}</div>
+              <div className="flex items-center gap-1 rounded-lg bg-white px-3 py-1 hover:bg-gray-400">
+                <button className=" " onClick={() => _selectMenu(menu)}>
+                  <div>{menu.name}</div>
+                </button>
                 <MenuImageGallery name={menu.name.replace(/\s+/g, '')} />
-              </button>
+              </div>
               <button
                 className="absolute -left-1 -top-1"
                 onClick={() => {
