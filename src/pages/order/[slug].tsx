@@ -5,7 +5,8 @@ import {
   orderBy,
   query as firestoreQuery,
 } from 'firebase/firestore';
-import React, { useEffect } from 'react';
+import { getDownloadURL, listAll, ref } from 'firebase/storage';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ImageGallery } from '@/components/common';
@@ -18,7 +19,7 @@ import {
   Table,
   WantedBoard,
 } from '@/components/pages/order';
-import { db } from '@/firebase';
+import { db, storage } from '@/firebase';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import {
@@ -33,6 +34,7 @@ import type { Order, User } from '@/types';
 
 const OrderPage = ({ query }: { query: any }) => {
   const { order } = useSelector(selector.order);
+  const [menuImageList, setMenuImageList] = useState<string[]>([]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -47,7 +49,10 @@ const OrderPage = ({ query }: { query: any }) => {
     if (order.uid) {
       _fetchShopOwner(order.uid);
     }
-  }, [order.uid]);
+    if (order.selectedMenuLink === '') {
+      _fetchMenuImages(order.uid, order.selectedMenuName.replace(/\s+/g, ''));
+    }
+  }, [order.uid, order.selectedMenuLink]);
 
   const _fetchOrder = () => {
     const docRef = doc(db, 'orders', query?.slug);
@@ -108,6 +113,15 @@ const OrderPage = ({ query }: { query: any }) => {
     });
   };
 
+  const _fetchMenuImages = async (uid: string, menuName: string) => {
+    const storageRef = ref(storage, `users/${uid}/menus/${menuName}`);
+    const files = await listAll(storageRef);
+    files.items.forEach(async (itemRef) => {
+      const url = await getDownloadURL(ref(storage, itemRef.fullPath));
+      setMenuImageList((prev: any) => [...prev, url]);
+    });
+  };
+
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       {!order.uid ? (
@@ -151,11 +165,31 @@ const OrderPage = ({ query }: { query: any }) => {
 
           <div className="flex flex-col gap-3 lg:w-1/2">
             <MenusDropdown />
-            <iframe
+            {/* <iframe
               title="menu-frame"
               src={order.selectedMenuLink}
               className="h-screen w-full rounded-xl border-2 p-5"
-            />
+            /> */}
+            {order.selectedMenuLink !== '' ? (
+              <iframe
+                title="menu-frame"
+                src={order.selectedMenuLink}
+                className="h-screen w-full rounded-xl border-2 p-5"
+              />
+            ) : (
+              <div className="no-scrollbar flex h-screen flex-col gap-2 overflow-x-auto">
+                {menuImageList.map((url: string) => {
+                  return (
+                    <img
+                      key={url}
+                      src={url}
+                      alt="user-icon"
+                      className="w-full rounded-xl"
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
       )}
