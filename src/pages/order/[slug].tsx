@@ -9,7 +9,7 @@ import { getDownloadURL, listAll, ref } from 'firebase/storage';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ImageGallery } from '@/components/common';
+import { ImageGallery, Portal } from '@/components/common';
 import {
   CalculateTotal,
   MenusDropdown,
@@ -20,6 +20,7 @@ import {
   WantedBoard,
 } from '@/components/pages/order';
 import { db, storage } from '@/firebase';
+import { useCheckClickOutside } from '@/hooks';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import {
@@ -165,11 +166,6 @@ const OrderPage = ({ query }: { query: any }) => {
 
           <div className="flex flex-col gap-3 lg:w-1/2">
             <MenusDropdown />
-            {/* <iframe
-              title="menu-frame"
-              src={order.selectedMenuLink}
-              className="h-screen w-full rounded-xl border-2 p-5"
-            /> */}
             {order.selectedMenuLink !== '' ? (
               <iframe
                 title="menu-frame"
@@ -205,49 +201,68 @@ OrderPage.getInitialProps = async (context: any) => {
 };
 
 const QRBoard = () => {
-  const { currentUser, shopOwner } = useSelector(selector.user);
-
   return (
     <div className="flex h-40 w-20 flex-col justify-between rounded-3xl border-2 bg-white  p-1 drop-shadow-md">
-      <div className="relative">
-        <div className="rounded-2xl border-2">
-          {shopOwner?.momoQR && shopOwner?.momoQR !== '' ? (
-            <img
-              src={shopOwner.momoQR}
-              alt=""
-              className="rounded-2xl bg-blue-200"
-            />
-          ) : (
-            <div className="flex h-16 w-16 flex-col justify-center">
-              <div className="text-center text-xs">Momo QR</div>
-            </div>
-          )}
-          {currentUser && currentUser.uid === shopOwner?.uid ? (
-            <div className="absolute -right-6 top-0">
-              <ImageGallery field="momoQR" />
-            </div>
-          ) : null}
-        </div>
-      </div>
-      <div className="relative">
-        <div className="rounded-2xl border-2">
-          {shopOwner?.bankQR && shopOwner?.bankQR !== '' ? (
-            <img
-              src={shopOwner.bankQR}
-              alt=""
-              className="rounded-2xl bg-blue-200"
-            />
-          ) : (
-            <div className="flex h-16 w-16 flex-col justify-center">
-              <div className="text-center text-xs">Bank QR</div>
-            </div>
-          )}
-          {currentUser && currentUser.uid === shopOwner?.uid ? (
-            <div className="absolute -right-6 top-0">
-              <ImageGallery field="bankQR" />
-            </div>
-          ) : null}
-        </div>
+      <QRButton field="momoQR" title="Momo QR" />
+      <QRButton field="bankQR" title="Bank QR" />
+    </div>
+  );
+};
+
+const QRButton = ({ field, title }: { field: keyof User; title: string }) => {
+  const { currentUser, shopOwner } = useSelector(selector.user);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const modalRef = useCheckClickOutside(() => {
+    setIsOpen(false);
+  });
+
+  const _onOpen = async () => {
+    setIsOpen(true);
+  };
+
+  return (
+    <div className="relative">
+      <div className="rounded-2xl border-2">
+        {shopOwner && shopOwner[field] && shopOwner[field] !== '' ? (
+          <>
+            <button onClick={_onOpen}>
+              <img
+                src={String(shopOwner[field])}
+                alt=""
+                className="rounded-2xl bg-blue-200"
+              />
+            </button>
+            {isOpen ? (
+              <Portal>
+                <div className="fixed inset-0 z-10 h-full w-full bg-gray-800/50">
+                  <div
+                    ref={modalRef}
+                    className="m-auto mt-16 flex h-fit w-fit flex-col gap-5 rounded-xl bg-white p-5"
+                  >
+                    <div className="flex h-fit w-fit flex-col items-center gap-2">
+                      <div className="font-nunito">{title}</div>
+                      <img
+                        src={String(shopOwner[field])}
+                        alt=""
+                        className="h-56 w-56 rounded-2xl bg-blue-200"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Portal>
+            ) : null}
+          </>
+        ) : (
+          <div className="flex h-16 w-16 flex-col justify-center">
+            <div className="text-center text-xs">{title}</div>
+          </div>
+        )}
+        {currentUser && currentUser.uid === shopOwner?.uid ? (
+          <div className="absolute -right-6 top-0">
+            <ImageGallery field={field} />
+          </div>
+        ) : null}
       </div>
     </div>
   );
