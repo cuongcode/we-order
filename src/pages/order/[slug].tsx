@@ -226,11 +226,11 @@ const QRButton = ({ field, title }: { field: keyof User; title: string }) => {
       <div className="rounded-2xl border-2">
         {shopOwner && shopOwner[field] && shopOwner[field] !== '' ? (
           <>
-            <button onClick={_onOpen}>
+            <button onClick={_onOpen} className="flex rounded-2xl">
               <img
                 src={String(shopOwner[field])}
                 alt=""
-                className="rounded-2xl bg-blue-200"
+                className="rounded-2xl object-cover"
               />
             </button>
             {isOpen ? (
@@ -245,7 +245,7 @@ const QRButton = ({ field, title }: { field: keyof User; title: string }) => {
                       <img
                         src={String(shopOwner[field])}
                         alt=""
-                        className="h-56 w-56 rounded-2xl bg-blue-200"
+                        className="h-56 w-56 rounded-2xl bg-blue-200 object-cover"
                       />
                     </div>
                   </div>
