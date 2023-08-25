@@ -103,7 +103,7 @@ const CreateOrderPage = () => {
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
         <div className="m-auto max-w-5xl lg:m-0 lg:w-1/2">
-          <div className="my-12 w-full">
+          <div className="mb-12 w-full">
             <img
               className="m-auto w-1/2"
               src={LogoImages.title_logo.src}
