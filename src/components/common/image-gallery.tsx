@@ -87,7 +87,6 @@ export const ImageGallery = ({ field }: { field: keyof User }) => {
                 <UploadImageButton
                   avatarList={avatarList}
                   setAvatarList={setAvatarList}
-                  field={field}
                 />
               </div>
               <div className="no-scrollbar flex flex-wrap gap-2 overflow-x-auto">
@@ -120,11 +119,9 @@ export const ImageGallery = ({ field }: { field: keyof User }) => {
 const UploadImageButton = ({
   avatarList,
   setAvatarList,
-  field,
 }: {
   avatarList: string[];
   setAvatarList: (updatedAvatarList: string[]) => void;
-  field: keyof User;
 }) => {
   const { currentUser } = useSelector(selector.user);
   const [selectedFile, setSelectedFile] = useState<Blob | undefined>(undefined);
@@ -163,14 +160,15 @@ const UploadImageButton = ({
         },
         async () => {
           const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-          if (currentUser) {
-            const docRef = doc(db, 'users', currentUser?.uid);
-            await updateDoc(docRef, {
-              [field]: downloadUrl,
-            });
+          const downlardUrl_pathname = new URL(downloadUrl).pathname;
+          if (
+            avatarList
+              .map((item: string) => new URL(item).pathname)
+              .indexOf(downlardUrl_pathname) === -1
+          ) {
+            const updatedMenuImageList = [...avatarList, downloadUrl];
+            setAvatarList(updatedMenuImageList);
           }
-          const updatedAvatarList = [...avatarList, downloadUrl];
-          setAvatarList(updatedAvatarList);
         },
       );
     }
