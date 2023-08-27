@@ -1,8 +1,10 @@
 import { HeartIcon as OutlineHeart } from '@heroicons/react/24/outline';
 import { HeartIcon as SolidHeart } from '@heroicons/react/24/solid';
+import clsx from 'clsx';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   increment,
   onSnapshot,
@@ -42,7 +44,7 @@ export const GiveHeartRow = ({ row }: { row: DrinkTableRow }) => {
 
 export const GiveHeartShopOwner = () => {
   const { order } = useSelector(selector.order);
-  const { currentUser } = useSelector(selector.user);
+  const { currentUser, shopOwner } = useSelector(selector.user);
   const { hearts } = useSelector(selector.heart);
   const dispatch = useDispatch();
 
@@ -51,14 +53,29 @@ export const GiveHeartShopOwner = () => {
   }, []);
 
   const _addHeart = async () => {
+    if (currentUser?.uid === shopOwner?.uid) {
+      return;
+    }
+    if (
+      currentUser &&
+      hearts.map((heart: Heart) => heart.uid).includes(currentUser.uid)
+    ) {
+      const id = hearts.filter(
+        (heart: Heart) => heart.uid === currentUser.uid,
+      )[0]?.id;
+      await deleteDoc(doc(db, 'orders', order.id, 'hearts', String(id)));
+      return;
+    }
     if (currentUser) {
       const newHeart: Heart = {
+        id: '',
         uid: currentUser.uid,
         nickname: String(currentUser.nickname),
       };
       await addDoc(collection(db, 'orders', order.id, 'hearts'), newHeart);
     } else {
       const newHeart: Heart = {
+        id: '',
         uid: '',
         nickname: '',
       };
@@ -78,7 +95,7 @@ export const GiveHeartShopOwner = () => {
   };
 
   return (
-    <div className="flex items-center">
+    <div className="relative flex items-center">
       <button onClick={_addHeart}>
         {hearts.length === 0 ? (
           <OutlineHeart className="h-4 w-4 text-red-400" />
@@ -86,7 +103,15 @@ export const GiveHeartShopOwner = () => {
           <SolidHeart className="h-4 w-4 text-red-400" />
         )}
       </button>
-      <div>{hearts.length}</div>
+      <div
+        className={clsx({
+          absolute: true,
+          '-right-2': hearts.length < 10,
+          '-right-4': hearts.length >= 10,
+        })}
+      >
+        {hearts.length}
+      </div>
     </div>
   );
 };

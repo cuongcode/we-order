@@ -55,7 +55,7 @@ export const ShopOwnerImage = () => {
         ) : null}
       </button>
       {currentUser && currentUser.uid === shopOwner?.uid ? (
-        <div className="absolute -right-4 top-0">
+        <div className="absolute -bottom-2 -right-4">
           <ImageGallery field="avatar" />
         </div>
       ) : null}

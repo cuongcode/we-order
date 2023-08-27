@@ -28,7 +28,7 @@ export const ShopOwnerProfile = () => {
       {currentUser && currentUser.uid === order.uid ? (
         <CloseOrderButton />
       ) : null}
-      <div className="absolute bottom-2 left-2">
+      <div className="absolute right-2 top-8">
         <GiveHeartShopOwner />
       </div>
     </div>
