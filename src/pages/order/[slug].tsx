@@ -235,7 +235,7 @@ const QRButton = ({ field, title }: { field: keyof User; title: string }) => {
             </button>
             {isOpen ? (
               <Portal>
-                <div className="fixed inset-0 z-10 h-full w-full bg-gray-800/50">
+                <div className="fixed inset-0 z-50 h-full w-full bg-gray-800/50">
                   <div
                     ref={modalRef}
                     className="m-auto mt-16 flex h-fit w-fit flex-col gap-5 rounded-xl bg-white p-5"

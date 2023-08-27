@@ -142,7 +142,7 @@ export const TableRow = ({
       </div>
       <div
         className={clsx({
-          'z-30 w-8 rounded-md border-2 p-1 drop-shadow-md': true,
+          'z-40 w-8 rounded-md border-2 p-1 drop-shadow-md': true,
           'bg-white': !row.isTick,
           'bg-gray-400': row.isTick,
         })}
@@ -151,7 +151,7 @@ export const TableRow = ({
       </div>
       <div
         className={clsx({
-          'z-20 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
+          'z-30 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
           'bg-white': !row.isTick,
           'bg-gray-400': row.isTick,
         })}
@@ -160,7 +160,7 @@ export const TableRow = ({
       </div>
       <div
         className={clsx({
-          'z-10 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
+          'z-20 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
           'bg-white': !row.isTick,
           'bg-gray-400': row.isTick,
         })}
@@ -183,11 +183,11 @@ export const TableRow = ({
         </div>
         <ShowFormula>
           {row.offerBy !== '--' ? (
-            <div className="absolute -top-16 right-0 z-10 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
+            <div className="absolute -top-16 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
               <OfferedByFormula row={row} />
             </div>
           ) : (
-            <div className="absolute -top-28 right-0 z-10 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
+            <div className="absolute -top-28 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
               <TransferFormula row={row} transfer={transfer} />
               <BonusFormula />
             </div>
