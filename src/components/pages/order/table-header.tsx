@@ -27,7 +27,7 @@ export const TableHeader = () => {
 
   return (
     <div className="flex w-full items-center gap-1 text-xs font-semibold">
-      <div className="w-2" />
+      <div className="w-3" />
       <div className="w-14">Name</div>
       <div className="flex grow items-center gap-2">
         <div>Drink</div>

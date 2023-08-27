@@ -54,7 +54,7 @@ export const TableRow = ({
         'bg-gray-400': row.isTick,
       })}
     >
-      <div className="w-2">{rowIndex}</div>
+      <div className="w-3">{rowIndex}</div>
       <div
         className={clsx({
           'relative w-14 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
