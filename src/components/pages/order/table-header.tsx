@@ -12,8 +12,8 @@ export const TableHeader = () => {
   const _SortDrinkName = () => {
     const sortedRows = [...rows];
     sortedRows.sort((rowA: DrinkTableRow, rowB: DrinkTableRow) => {
-      const x = rowA.drink.toLowerCase();
-      const y = rowB.drink.toLowerCase();
+      const x = rowA.drink.trim().toLowerCase();
+      const y = rowB.drink.trim().toLowerCase();
       if (x < y) {
         return -1;
       }
