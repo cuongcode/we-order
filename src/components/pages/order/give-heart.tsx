@@ -67,15 +67,13 @@ export const GiveHeartShopOwner = () => {
       return;
     }
     if (currentUser) {
-      const newHeart: Heart = {
-        id: '',
+      const newHeart = {
         uid: currentUser.uid,
         nickname: String(currentUser.nickname),
       };
       await addDoc(collection(db, 'orders', order.id, 'hearts'), newHeart);
     } else {
-      const newHeart: Heart = {
-        id: '',
+      const newHeart = {
         uid: '',
         nickname: '',
       };
