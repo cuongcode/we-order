@@ -51,16 +51,7 @@ export const MenuImageGallery = ({ name }: { name: string }) => {
     setMenuImageList(updatedMenuImageList);
   };
 
-  // const _setAvatar = async (url: string) => {
-  //   if (currentUser) {
-  //     const docRef = doc(db, 'users', currentUser?.uid);
-  //     await updateDoc(docRef, {
-  //       [field]: url,
-  //     });
-  //   }
-  // };
-
-  const _deleteAvatar = async (url: string) => {
+  const _deleteImage = async (url: string) => {
     const storageRef = ref(storage, url);
     const updatedMenuImageList = menuImageList.filter(
       (item: string) => item !== url,
@@ -102,7 +93,7 @@ export const MenuImageGallery = ({ name }: { name: string }) => {
                     </button>
                     <button
                       className="absolute right-0 top-0"
-                      onClick={() => _deleteAvatar(item)}
+                      onClick={() => _deleteImage(item)}
                     >
                       <XMarkIcon className="h-4 w-4 rounded-full bg-gray-400" />
                     </button>

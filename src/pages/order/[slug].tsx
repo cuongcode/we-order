@@ -119,7 +119,12 @@ const OrderPage = ({ query }: { query: any }) => {
     const files = await listAll(storageRef);
     files.items.forEach(async (itemRef) => {
       const url = await getDownloadURL(ref(storage, itemRef.fullPath));
-      setMenuImageList((prev: any) => [...prev, url]);
+      setMenuImageList((prev: any) => {
+        if (prev.includes(url)) {
+          return prev;
+        }
+        return [...prev, url];
+      });
     });
   };
 
