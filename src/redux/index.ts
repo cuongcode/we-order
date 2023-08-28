@@ -4,6 +4,8 @@ import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import createSagaMiddleware from 'redux-saga';
 
+import type { HeartState } from './Heart/HeartRedux';
+import HeartActions, { reducer as HeartReducer } from './Heart/HeartRedux';
 import immutablePersistenceTransform from './immutable-persistence-transfrom';
 import type { OrderState } from './Order/OrderRedux';
 import OrderActions, { reducer as OrderReducer } from './Order/OrderRedux';
@@ -15,18 +17,20 @@ import type { UserState } from './User/UserRedux';
 import UserActions, { reducer as UserReducer } from './User/UserRedux';
 import type { WantedState } from './Wanted/WantedRedux';
 import WantedActions, { reducer as WantedReducer } from './Wanted/WantedRedux';
+
 /* ------------- Assemble The Reducers ------------- */
 export const reducers = combineReducers({
   order: OrderReducer,
   rows: RowsReducer,
   user: UserReducer,
   wanted: WantedReducer,
+  heart: HeartReducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['user', 'order', 'rows', 'wanted'],
+  whitelist: ['user', 'order', 'rows', 'wanted', 'heart'],
   transforms: [immutablePersistenceTransform],
 };
 
@@ -64,5 +68,6 @@ export const selector = {
   rows: (state: RootState) => state.rows as unknown as RowsState,
   user: (state: RootState) => state.user as unknown as UserState,
   wanted: (state: RootState) => state.wanted as unknown as WantedState,
+  heart: (state: RootState) => state.heart as unknown as HeartState,
 };
-export { OrderActions, RowsActions, UserActions, WantedActions };
+export { HeartActions, OrderActions, RowsActions, UserActions, WantedActions };

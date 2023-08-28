@@ -35,7 +35,7 @@ export const ShopOwnerImage = () => {
         />
         {isOpen ? (
           <Portal>
-            <div className="fixed inset-0 z-10 h-full w-full bg-gray-800/50">
+            <div className="fixed inset-0 z-50 h-full w-full bg-gray-800/50">
               <div
                 ref={modalRef}
                 className="m-auto mt-16 flex h-fit w-fit rounded-xl bg-white p-5"
@@ -55,7 +55,7 @@ export const ShopOwnerImage = () => {
         ) : null}
       </button>
       {currentUser && currentUser.uid === shopOwner?.uid ? (
-        <div className="absolute -right-4 top-0">
+        <div className="absolute -bottom-2 -right-4">
           <ImageGallery field="avatar" />
         </div>
       ) : null}
