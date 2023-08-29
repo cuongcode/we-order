@@ -19,7 +19,7 @@ export const ShopOwnerProfile = () => {
   const { currentUser } = useSelector(selector.user);
   const { order } = useSelector(selector.order);
   return (
-    <div className="relative flex h-40 w-36 flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+    <div className="relative flex h-full w-full flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">SHOP OWNER</div>
       <ShopOwnerImage />
       <div className="mt-1">

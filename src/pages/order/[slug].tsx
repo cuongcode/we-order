@@ -133,8 +133,8 @@ const OrderPage = ({ query }: { query: any }) => {
       {!order.uid ? (
         <div>Page not found</div>
       ) : (
-        <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
-          <div className="flex flex-col lg:w-1/2">
+        <div className="mt-12 flex h-fit w-full flex-col 2xl:flex-row 2xl:gap-5">
+          <div className="flex flex-col 2xl:w-1/2">
             <div className="mb-10 w-full">
               <img
                 className="m-auto w-1/2"
@@ -144,9 +144,15 @@ const OrderPage = ({ query }: { query: any }) => {
             </div>
 
             <div className="mb-10 flex w-full gap-4 text-sm">
-              <ShopOwnerProfile />
-              <ShopOwnerTranferInfo />
-              <QRBoard />
+              <div className="h-40 w-36 shrink-0">
+                <ShopOwnerProfile />
+              </div>
+              <div className="h-40 w-56 shrink-0">
+                <ShopOwnerTranferInfo />
+              </div>
+              <div className="h-40 w-20 shrink-0">
+                <QRBoard />
+              </div>
               <div className="m-auto h-40 w-60 rounded-3xl border-2 bg-white p-5 drop-shadow-md">
                 <div className="mt-3">
                   <WantedBoard />
@@ -169,7 +175,7 @@ const OrderPage = ({ query }: { query: any }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 lg:w-1/2">
+          <div className="flex flex-col gap-3 2xl:w-1/2">
             <MenusDropdown />
             {order.selectedMenuLink !== '' ? (
               <iframe
@@ -207,7 +213,7 @@ OrderPage.getInitialProps = async (context: any) => {
 
 const QRBoard = () => {
   return (
-    <div className="flex h-40 w-20 flex-col justify-between rounded-3xl border-2 bg-white  p-1 drop-shadow-md">
+    <div className="flex h-full w-full flex-col justify-between rounded-3xl border-2 bg-white  p-1 drop-shadow-md">
       <QRButton field="momoQR" title="Momo QR" />
       <QRButton field="bankQR" title="Bank QR" />
     </div>

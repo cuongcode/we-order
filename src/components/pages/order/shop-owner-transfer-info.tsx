@@ -9,7 +9,7 @@ import type { User } from '@/types';
 
 export const ShopOwnerTranferInfo = () => {
   return (
-    <div className="flex h-40 w-56 flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+    <div className="flex h-full w-full flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
       <div className="font-bold">TRANSFER INFO</div>
       <div className="flex w-full flex-col items-start">
         <div className="flex h-6 w-full items-center">
