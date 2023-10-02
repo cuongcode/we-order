@@ -47,7 +47,7 @@ export const TableHeader = () => {
       <div className="w-11">Sugar</div>
       <div className="w-11">Ice</div>
       <div className="w-16">Offered by</div>
-      <div className="w-28">Transfer</div>
+      <div className="w-24">Transfer</div>
     </div>
   );
 };
