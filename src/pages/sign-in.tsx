@@ -1,10 +1,13 @@
+import { StopIcon } from '@heroicons/react/24/outline';
 import { signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import router from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { Portal } from '@/components/common';
 import { auth, db, provider } from '@/firebase';
+import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { UserActions } from '@/redux';
@@ -12,6 +15,11 @@ import { Main } from '@/templates/Main';
 import type { User } from '@/types';
 
 const SignIn = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const modalRef = useCheckClickOutside(() => {
+    setIsOpen(false);
+  });
+
   const dispatch = useDispatch();
 
   const _onSignIn = async () => {
@@ -54,6 +62,19 @@ const SignIn = () => {
     router.push('/create-order/');
   };
 
+  const _onAnonymousOrder = () => {
+    setIsOpen(true);
+  };
+
+  const _onClose = (e: any) => {
+    e.stopPropagation();
+    setIsOpen(false);
+  };
+
+  const _onCreateAnonymousOrder = () => {
+    //
+  };
+
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="m-auto max-w-5xl font-semibold">
@@ -68,7 +89,7 @@ const SignIn = () => {
           An easy way to order drink and food together
         </div>
         <div className="text-center text-lg">Order together is fun !</div>
-        <div className="mt-12 flex items-center justify-center gap-8">
+        <div className="mt-12 flex flex-col items-center justify-center gap-3">
           <button
             onClick={_onSignIn}
             className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400"
@@ -84,6 +105,55 @@ const SignIn = () => {
             </div>
             <div>Sign in as Anonymous</div>
           </button> */}
+          <button
+            className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400"
+            onClick={_onAnonymousOrder}
+          >
+            <div>Anonymous Order</div>
+            {isOpen ? (
+              <Portal>
+                <div className="fixed inset-0 z-50 h-full w-full bg-gray-800/50">
+                  <div
+                    ref={modalRef}
+                    className="m-auto mt-16 flex h-fit w-fit flex-col gap-2 rounded-xl bg-white p-5"
+                  >
+                    <div className="w-64">
+                      By using this, you are not able to :
+                    </div>
+                    <div className="ml-2">
+                      <div className="flex items-center gap-2">
+                        <StopIcon className="h-3 w-3" />
+                        <div>Save your information</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <StopIcon className="h-3 w-3" />
+                        <div>Save your favorite menus</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <StopIcon className="h-3 w-3" />
+                        <div>Lock order</div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between gap-2">
+                      <button
+                        className="w-full rounded-md bg-gray-300 py-1 hover:bg-gray-400"
+                        onClick={_onClose}
+                      >
+                        Back
+                      </button>
+                      <button
+                        className="w-full rounded-md bg-gray-300 py-1 hover:bg-gray-400"
+                        onClick={_onCreateAnonymousOrder}
+                      >
+                        Create order
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </Portal>
+            ) : null}
+          </button>
         </div>
       </div>
     </Main>
