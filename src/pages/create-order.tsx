@@ -25,6 +25,7 @@ import { Main } from '@/templates/Main';
 import type { Menu, Order, User } from '@/types';
 
 const CreateOrderPage = () => {
+  const { currentUser } = useSelector(selector.user);
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedMenu, setSelectedMenu] = useState<Menu>({
     id: '',
@@ -34,7 +35,6 @@ const CreateOrderPage = () => {
   const [menuImageList, setMenuImageList] = useState<string[]>([]);
 
   const dispatch = useDispatch();
-  const { currentUser } = useSelector(selector.user);
 
   useEffect(() => {
     _fetchOrders();
@@ -86,57 +86,61 @@ const CreateOrderPage = () => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
-        <div className="m-auto max-w-5xl lg:m-0 lg:w-1/2">
-          <div className="mb-12 w-full">
-            <img
-              className="m-auto w-1/2"
-              src={LogoImages.title_logo.src}
-              alt="title-logo"
-            />
-          </div>
-          <div className="flex gap-5">
-            <div className="flex w-1/2 flex-col gap-5">
-              <div className="flex gap-5">
-                <UserProfile />
-                <UserTranferInfo />
-              </div>
-              <MenusSection
-                setMenuImageList={setMenuImageList}
-                selectedMenu={selectedMenu}
-                setSelectedMenu={setSelectedMenu}
+      {!currentUser ? (
+        <div>Sign in to create order or use No sign in order</div>
+      ) : (
+        <div className="mt-12 flex h-fit w-full flex-col lg:flex lg:flex-row lg:gap-5">
+          <div className="m-auto max-w-5xl lg:m-0 lg:w-1/2">
+            <div className="mb-12 w-full">
+              <img
+                className="m-auto w-1/2"
+                src={LogoImages.title_logo.src}
+                alt="title-logo"
               />
-              <NewOrderButton orders={orders} selectedMenu={selectedMenu} />
             </div>
-            <div className="flex w-1/2 flex-col gap-4 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-              <OrderList orders={orders} />
+            <div className="flex gap-5">
+              <div className="flex w-1/2 flex-col gap-5">
+                <div className="flex gap-5">
+                  <UserProfile />
+                  <UserTranferInfo />
+                </div>
+                <MenusSection
+                  setMenuImageList={setMenuImageList}
+                  selectedMenu={selectedMenu}
+                  setSelectedMenu={setSelectedMenu}
+                />
+                <NewOrderButton orders={orders} selectedMenu={selectedMenu} />
+              </div>
+              <div className="flex w-1/2 flex-col gap-4 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+                <OrderList orders={orders} />
+              </div>
             </div>
           </div>
+          <div className="mt-10 flex flex-col gap-3 lg:mt-0 lg:w-1/2">
+            <div className="text-center font-bold">MENU PREVIEW</div>
+            {selectedMenu.link !== '' ? (
+              <iframe
+                title="menu-frame"
+                src={selectedMenu.link}
+                className="h-screen w-full rounded-xl border-2 p-5"
+              />
+            ) : (
+              <div className="no-scrollbar flex h-screen flex-col gap-2 overflow-x-auto">
+                {menuImageList.map((url: string) => {
+                  return (
+                    <img
+                      key={url}
+                      src={url}
+                      alt="user-icon"
+                      className="w-full rounded-xl"
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-        <div className="mt-10 flex flex-col gap-3 lg:mt-0 lg:w-1/2">
-          <div className="text-center font-bold">MENU PREVIEW</div>
-          {selectedMenu.link !== '' ? (
-            <iframe
-              title="menu-frame"
-              src={selectedMenu.link}
-              className="h-screen w-full rounded-xl border-2 p-5"
-            />
-          ) : (
-            <div className="no-scrollbar flex h-screen flex-col gap-2 overflow-x-auto">
-              {menuImageList.map((url: string) => {
-                return (
-                  <img
-                    key={url}
-                    src={url}
-                    alt="user-icon"
-                    className="w-full rounded-xl"
-                  />
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </div>
+      )}
     </Main>
   );
 };
