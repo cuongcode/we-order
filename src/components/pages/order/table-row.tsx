@@ -74,9 +74,7 @@ export const TableRow = ({
           disabled={order.isClosed}
           onChange={_updateRow}
         />
-        <div className="absolute -right-2 top-4 ">
-          {/* <GiveHeart row={row} /> */}
-        </div>
+        <div className="absolute -right-2 top-4 " />
       </div>
       <div
         className={clsx({
@@ -177,11 +175,8 @@ export const TableRow = ({
       >
         <OptionsDropdown row={row} options={offerByOptions} field="offerBy" />
       </div>
-      <div className="flex w-28 items-center gap-1">
-        <div className="w-16 rounded-sm bg-gray-400 p-1 drop-shadow-md">
-          <div>{transfer?.toLocaleString('en-US')}</div>
-        </div>
-        <ShowFormula>
+      <div className="flex w-24 items-center gap-1">
+        <ShowFormula transfer={transfer}>
           {row.offerBy !== '--' ? (
             <div className="absolute -top-16 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
               <OfferedByFormula row={row} />
@@ -198,8 +193,9 @@ export const TableRow = ({
         true &&
         order.isClosed ? (
           <TranferTickBox row={row} />
-        ) : null}
-        {!order.isClosed ? <DeleteRowButton row={row} /> : null}
+        ) : (
+          <DeleteRowButton row={row} />
+        )}
       </div>
     </div>
   );

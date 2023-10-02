@@ -133,8 +133,8 @@ const OrderPage = ({ query }: { query: any }) => {
       {!order.uid ? (
         <div>Page not found</div>
       ) : (
-        <div className="mt-12 flex h-fit w-full flex-col 2xl:flex-row 2xl:gap-5">
-          <div className="flex flex-col 2xl:w-1/2">
+        <div className="mt-12 flex h-fit w-full flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
+          <div className="flex w-full max-w-4xl flex-col 2xl:w-1/2">
             <div className="mb-10 w-full">
               <img
                 className="m-auto w-1/2"
@@ -153,7 +153,7 @@ const OrderPage = ({ query }: { query: any }) => {
               <div className="h-40 w-20 shrink-0">
                 <QRBoard />
               </div>
-              <div className="m-auto h-40 w-60 rounded-3xl border-2 bg-white p-5 drop-shadow-md">
+              <div className="m-auto hidden h-40 w-60 rounded-3xl border-2 bg-white p-5 drop-shadow-md md:block">
                 <div className="mt-3">
                   <WantedBoard />
                 </div>
@@ -175,7 +175,7 @@ const OrderPage = ({ query }: { query: any }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 2xl:w-1/2">
+          <div className="flex w-full max-w-4xl flex-col gap-3 2xl:w-1/2">
             <MenusDropdown />
             {order.selectedMenuLink !== '' ? (
               <iframe

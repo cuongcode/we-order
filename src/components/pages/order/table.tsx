@@ -40,7 +40,9 @@ export const Table = () => {
         'bg-gray-400': order.isClosed,
       })}
     >
-      <TableHeader />
+      <div className="hidden w-full md:block">
+        <TableHeader />
+      </div>
       <div className="flex w-full flex-col gap-2">
         {rows.map((row: DrinkTableRow, index: number) => (
           <TableRow

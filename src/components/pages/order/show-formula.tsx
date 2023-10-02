@@ -1,8 +1,13 @@
-import { QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
-export const ShowFormula = ({ children }: { children: ReactNode }) => {
+export const ShowFormula = ({
+  transfer,
+  children,
+}: {
+  transfer: number | undefined;
+  children: ReactNode;
+}) => {
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -13,7 +18,9 @@ export const ShowFormula = ({ children }: { children: ReactNode }) => {
       onMouseOut={() => setIsHover(false)}
       onBlur={() => setIsHover(false)}
     >
-      <QuestionMarkCircleIcon className="h-5 w-5" />
+      <div className="w-16 rounded-sm bg-gray-400 p-1 drop-shadow-md">
+        <div>{transfer?.toLocaleString('en-US')}</div>
+      </div>
       {isHover ? children : null}
     </div>
   );
