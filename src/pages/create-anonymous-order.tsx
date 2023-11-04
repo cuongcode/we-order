@@ -1,5 +1,5 @@
-import { doc, setDoc } from 'firebase/firestore';
-import React, { useState } from 'react';
+import { collection, doc, onSnapshot, query, setDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 
 import { db } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
@@ -7,17 +7,23 @@ import { Main } from '@/templates/Main';
 import type { NoSignInOrder } from '@/types';
 
 const CreateAnonymousOrderPage = () => {
+  const [nameIsTaken, setNameIsTaken] = useState(false);
   const [errors, setErrors] = useState<any>([]);
   const [orderName, setOrderName] = useState('');
   const [password, setPassword] = useState('');
-  // const [orderNamePool, setorderNamePool] = useState<any>([]);
+  const [orderNamePool, setorderNamePool] = useState<any>([]);
 
-  // useEffect(() => {
-  //   _fetchOrders();
-  // }, []);
+  useEffect(() => {
+    _fetchNoSignInOrder();
+  }, []);
 
   const _onOrderNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
+    if (orderNamePool.includes(value)) {
+      setNameIsTaken(true);
+    } else {
+      setNameIsTaken(false);
+    }
     setOrderName(value);
   };
   const _onOrderPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +31,7 @@ const CreateAnonymousOrderPage = () => {
     setPassword(value);
   };
   const _onCreateNoSignInOrder = async () => {
+    const newErrors = [];
     const newNoSignInOrder: NoSignInOrder = {
       id: orderName,
       isClosed: false,
@@ -34,14 +41,13 @@ const CreateAnonymousOrderPage = () => {
       selectedMenuLink: '',
       password,
     };
-    if (orderName !== '' && password !== '') {
+    if (orderName !== '' && password !== '' && !nameIsTaken) {
       const ref = doc(db, 'no_sign_in_orders', orderName);
       await setDoc(ref, newNoSignInOrder);
       setOrderName('');
       setPassword('');
       setErrors([]);
     }
-    const newErrors = [];
     if (orderName === '') {
       newErrors.push('noNameError');
     }
@@ -49,6 +55,15 @@ const CreateAnonymousOrderPage = () => {
       newErrors.push('noPasswordError');
     }
     setErrors(newErrors);
+  };
+  const _fetchNoSignInOrder = async () => {
+    const q = query(collection(db, 'no_sign_in_orders'));
+    onSnapshot(q, (snapshot) => {
+      const updatedNoSignInOrder = snapshot.docs.map((_doc: any) => {
+        return _doc.id;
+      });
+      setorderNamePool(updatedNoSignInOrder);
+    });
   };
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
@@ -67,6 +82,9 @@ const CreateAnonymousOrderPage = () => {
         </div>
         {errors.includes('noNameError') ? (
           <div className="text-red-400">Please input a name</div>
+        ) : null}
+        {nameIsTaken && orderName !== '' ? (
+          <div className="text-red-400">Name is taken</div>
         ) : null}
         <div>
           Enter a password (easy one). It will prevent other people to edit your
@@ -97,50 +115,3 @@ const CreateAnonymousOrderPage = () => {
 };
 
 export default CreateAnonymousOrderPage;
-
-// `https://we-order-omega.vercel.app/order/${order.id}`,
-
-// const _openOrder = (id: string | null) => {
-//   Router.push(`/order/${id}`);
-// };
-
-// const _createOrder = async () => {
-//   if (currentUser) {
-//     if (selectedMenu.name === '') {
-//       setError('Please select a menu');
-//       return;
-//     }
-//     if (orders.length === 10) {
-//       setError('You have got your maximum number of orders');
-//       return;
-//     }
-//     const newOrder = {
-//       timestamp: serverTimestamp(),
-//       shipFee: 0,
-//       discount: 0,
-//       selectedMenuName: selectedMenu.name,
-//       selectedMenuLink: selectedMenu.link,
-//       uid: currentUser.uid,
-//       isClosed: false,
-//       heart: 0,
-//     };
-//     await addDoc(collection(db, 'orders'), newOrder);
-//     setError('');
-//   }
-// };
-
-// const _fetchOrders = async () => {
-//   if (currentUser) {
-//     const q = query(
-//       collection(db, 'orders'),
-//       where('uid', '==', currentUser.uid),
-//       orderBy('timestamp', 'desc'),
-//     );
-//     onSnapshot(q, (snapshot) => {
-//       const updatedOrders = snapshot.docs.map((_doc: any) => {
-//         return { ..._doc.data(), id: _doc.id };
-//       });
-//       setOrders(updatedOrders);
-//     });
-//   }
-// };
