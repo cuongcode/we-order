@@ -72,7 +72,7 @@ const SignIn = () => {
   };
 
   const _onCreateAnonymousOrder = () => {
-    router.push('/create-anonymous-order/');
+    router.push('/create-no-sign-in-order/');
   };
 
   return (
