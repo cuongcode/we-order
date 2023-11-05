@@ -1,4 +1,5 @@
 import { collection, doc, onSnapshot, query, setDoc } from 'firebase/firestore';
+import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { db } from '@/firebase';
@@ -63,6 +64,7 @@ const CreateAnonymousOrderPage = () => {
       setOrderName('');
       setPassword('');
       setErrors([]);
+      Router.push(`/no-sign-in-order/${orderName}`);
     }
     if (orderName === '') {
       newErrors.push('noNameError');
@@ -86,7 +88,7 @@ const CreateAnonymousOrderPage = () => {
       <div>Work on progress</div>
       <div>
         <div>Choose your link name</div>
-        <div>https://we-order-omega.vercel.app/order/</div>
+        <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
         <div className="w-64 rounded-md border-2 bg-red-300">
           <input
             type="text"
