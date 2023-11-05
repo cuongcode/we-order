@@ -6,7 +6,13 @@ import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 import type { NoSignInOrder } from '@/types';
 
+const hasSpecialCharacters = (string: string) => {
+  const specialChars = /[^A-Za-z0-9-]/;
+  return specialChars.test(string);
+};
+
 const CreateAnonymousOrderPage = () => {
+  const [hasSpecialChars, setHasSpecialChars] = useState(false);
   const [nameIsTaken, setNameIsTaken] = useState(false);
   const [errors, setErrors] = useState<any>([]);
   const [orderName, setOrderName] = useState('');
@@ -23,6 +29,11 @@ const CreateAnonymousOrderPage = () => {
       setNameIsTaken(true);
     } else {
       setNameIsTaken(false);
+    }
+    if (hasSpecialCharacters(value)) {
+      setHasSpecialChars(true);
+    } else {
+      setHasSpecialChars(false);
     }
     setOrderName(value);
   };
@@ -41,7 +52,12 @@ const CreateAnonymousOrderPage = () => {
       selectedMenuLink: '',
       password,
     };
-    if (orderName !== '' && password !== '' && !nameIsTaken) {
+    if (
+      orderName !== '' &&
+      password !== '' &&
+      !nameIsTaken &&
+      !hasSpecialChars
+    ) {
       const ref = doc(db, 'no_sign_in_orders', orderName);
       await setDoc(ref, newNoSignInOrder);
       setOrderName('');
@@ -69,7 +85,7 @@ const CreateAnonymousOrderPage = () => {
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div>Work on progress</div>
       <div>
-        <div>Choose your link name. No space and special character.</div>
+        <div>Choose your link name</div>
         <div>https://we-order-omega.vercel.app/order/</div>
         <div className="w-64 rounded-md border-2 bg-red-300">
           <input
@@ -85,6 +101,11 @@ const CreateAnonymousOrderPage = () => {
         ) : null}
         {nameIsTaken && orderName !== '' ? (
           <div className="text-red-400">Name is taken</div>
+        ) : null}
+        {hasSpecialChars ? (
+          <div className="text-red-400">
+            Name should only includes A-Z, a-z, 0-9 and no space
+          </div>
         ) : null}
         <div>
           Enter a password (easy one). It will prevent other people to edit your
