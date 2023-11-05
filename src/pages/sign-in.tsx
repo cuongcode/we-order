@@ -62,7 +62,7 @@ const SignIn = () => {
     router.push('/create-order/');
   };
 
-  const _onAnonymousOrder = () => {
+  const _onNoSignInOrder = () => {
     setIsOpen(true);
   };
 
@@ -71,7 +71,7 @@ const SignIn = () => {
     setIsOpen(false);
   };
 
-  const _onCreateAnonymousOrder = () => {
+  const _onCreateNoSignInOrder = () => {
     router.push('/create-no-sign-in-order/');
   };
 
@@ -107,9 +107,9 @@ const SignIn = () => {
           </button> */}
           <button
             className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400"
-            onClick={_onAnonymousOrder}
+            onClick={_onNoSignInOrder}
           >
-            <div>Anonymous Order</div>
+            <div>No Sign In Order</div>
             {isOpen ? (
               <Portal>
                 <div className="fixed inset-0 z-50 h-full w-full bg-gray-800/50">
@@ -144,7 +144,7 @@ const SignIn = () => {
                       </button>
                       <button
                         className="w-full rounded-md bg-gray-300 py-1 hover:bg-gray-400"
-                        onClick={_onCreateAnonymousOrder}
+                        onClick={_onCreateNoSignInOrder}
                       >
                         Create order
                       </button>
