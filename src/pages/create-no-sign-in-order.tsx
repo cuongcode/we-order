@@ -52,6 +52,15 @@ const CreateAnonymousOrderPage = () => {
       selectedMenuName: '',
       selectedMenuLink: '',
       password,
+      nickname: '--',
+      momo: '',
+      bank1Name: '',
+      bank1Number: '',
+      bank2Name: '',
+      bank2Number: '',
+      avatar: '',
+      momoQR: '',
+      bankQR: '',
     };
     if (
       orderName !== '' &&
