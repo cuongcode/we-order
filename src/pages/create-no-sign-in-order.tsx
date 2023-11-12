@@ -3,6 +3,7 @@ import Router from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import { db } from '@/firebase';
+import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 import type { NoSignInOrder } from '@/types';
@@ -94,52 +95,76 @@ const CreateAnonymousOrderPage = () => {
   };
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div>Work on progress</div>
-      <div>
-        <div>Choose your link name</div>
-        <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
-        <div className="w-64 rounded-md border-2 bg-red-300">
-          <input
-            type="text"
-            placeholder="Enter a name for your link"
-            className="w-full"
-            value={orderName}
-            onChange={_onOrderNameChange}
-          />
-        </div>
-        {errors.includes('noNameError') ? (
-          <div className="text-red-400">Please input a name</div>
-        ) : null}
-        {nameIsTaken && orderName !== '' ? (
-          <div className="text-red-400">Name is taken</div>
-        ) : null}
-        {hasSpecialChars ? (
-          <div className="text-red-400">
-            Name should only includes A-Z, a-z, 0-9 and no space
+      <div className="mt-12 flex h-fit w-full flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
+        <div className="flex w-full max-w-4xl flex-col 2xl:w-1/2">
+          <div className="mb-20 w-full">
+            <img
+              className="m-auto w-1/2"
+              src={LogoImages.title_logo.src}
+              alt="title-logo"
+            />
           </div>
-        ) : null}
-        <div>
-          Enter a password (easy one). It will prevent other people to edit your
-          order
-        </div>
-        <div className="w-64 rounded-md border-2 bg-red-300">
-          <input
-            type="text"
-            placeholder="Enter an easy password"
-            className="w-full"
-            value={password}
-            onChange={_onOrderPasswordChange}
-          />
-        </div>
-        {errors.includes('noPasswordError') ? (
-          <div className="text-red-400">Please input a password</div>
-        ) : null}
-        <div className="w-fit rounded-md bg-gray-200 px-2 py-1 hover:bg-gray-400">
-          <button onClick={_onCreateNoSignInOrder}>Create Order Page</button>
-        </div>
-        <div>
-          When your order has been created, you can always reuse it or create a
-          new one.
+
+          <div className="flex w-full flex-col gap-4 text-sm">
+            <div className="m-auto flex flex-col gap-2">
+              <div className="relative">
+                <div className="text-lg font-semibold">
+                  Pick your link&#39;s name
+                </div>
+                <div className="flex gap-1">
+                  <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
+                  <div className="w-64 rounded-md border-2 px-2">
+                    <input
+                      type="text"
+                      placeholder="john-cena"
+                      className="w-full"
+                      value={orderName}
+                      onChange={_onOrderNameChange}
+                    />
+                  </div>
+                </div>
+                <div className="absolute">
+                  {errors.includes('noNameError') ? (
+                    <div className="text-red-400">Please input a name</div>
+                  ) : null}
+                  {nameIsTaken && orderName !== '' ? (
+                    <div className="text-red-400">Name is taken</div>
+                  ) : null}
+                  {hasSpecialChars ? (
+                    <div className="text-red-400">
+                      Name should only includes A-Z, a-z, 0-9 or &#39;-&#39; and
+                      no space
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+              <div className="relative mt-10">
+                <div className="text-lg font-semibold">Enter a password</div>
+                <div className="w-64 rounded-md border-2 px-2">
+                  <input
+                    type="text"
+                    placeholder="12345"
+                    className="w-full"
+                    value={password}
+                    onChange={_onOrderPasswordChange}
+                  />
+                </div>
+                <div className="absolute">
+                  {errors.includes('noPasswordError') ? (
+                    <div className="text-red-400">Please input a password</div>
+                  ) : null}
+                </div>
+              </div>
+              <div className="mt-10 flex justify-center">
+                <button
+                  className="rounded-lg bg-gray-200 p-4 text-lg hover:bg-gray-400"
+                  onClick={_onCreateNoSignInOrder}
+                >
+                  Create Order Page
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </Main>
