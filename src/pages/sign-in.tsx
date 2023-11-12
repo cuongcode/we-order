@@ -54,6 +54,10 @@ const SignIn = () => {
     router.push('/create-order/');
   };
 
+  const _onNoSignInOrder = () => {
+    router.push('/create-no-sign-in-order/');
+  };
+
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="m-auto max-w-5xl font-semibold">
@@ -68,7 +72,7 @@ const SignIn = () => {
           An easy way to order drink and food together
         </div>
         <div className="text-center text-lg">Order together is fun !</div>
-        <div className="mt-12 flex items-center justify-center gap-8">
+        <div className="mt-12 flex flex-col items-center justify-center gap-3">
           <button
             onClick={_onSignIn}
             className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400"
@@ -84,6 +88,12 @@ const SignIn = () => {
             </div>
             <div>Sign in as Anonymous</div>
           </button> */}
+          <button
+            className="flex w-60 flex-col items-center gap-2 rounded-2xl bg-gray-200 py-3 hover:bg-gray-400"
+            onClick={_onNoSignInOrder}
+          >
+            <div>No Sign In Order</div>
+          </button>
         </div>
       </div>
     </Main>
