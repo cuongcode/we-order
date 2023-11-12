@@ -1,13 +1,10 @@
-import { StopIcon } from '@heroicons/react/24/outline';
 import { signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import router from 'next/router';
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Portal } from '@/components/common';
 import { auth, db, provider } from '@/firebase';
-import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { UserActions } from '@/redux';
@@ -15,11 +12,6 @@ import { Main } from '@/templates/Main';
 import type { User } from '@/types';
 
 const SignIn = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const modalRef = useCheckClickOutside(() => {
-    setIsOpen(false);
-  });
-
   const dispatch = useDispatch();
 
   const _onSignIn = async () => {
@@ -63,15 +55,6 @@ const SignIn = () => {
   };
 
   const _onNoSignInOrder = () => {
-    setIsOpen(true);
-  };
-
-  const _onClose = (e: any) => {
-    e.stopPropagation();
-    setIsOpen(false);
-  };
-
-  const _onCreateNoSignInOrder = () => {
     router.push('/create-no-sign-in-order/');
   };
 
@@ -110,49 +93,6 @@ const SignIn = () => {
             onClick={_onNoSignInOrder}
           >
             <div>No Sign In Order</div>
-            {isOpen ? (
-              <Portal>
-                <div className="fixed inset-0 z-50 h-full w-full bg-gray-800/50">
-                  <div
-                    ref={modalRef}
-                    className="m-auto mt-16 flex h-fit w-fit flex-col gap-2 rounded-xl bg-white p-5"
-                  >
-                    <div className="w-64">
-                      By using this, you are not able to :
-                    </div>
-                    <div className="ml-2">
-                      <div className="flex items-center gap-2">
-                        <StopIcon className="h-3 w-3" />
-                        <div>Save your information</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <StopIcon className="h-3 w-3" />
-                        <div>Save your favorite menus</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <StopIcon className="h-3 w-3" />
-                        <div>Lock order</div>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between gap-2">
-                      <button
-                        className="w-full rounded-md bg-gray-300 py-1 hover:bg-gray-400"
-                        onClick={_onClose}
-                      >
-                        Back
-                      </button>
-                      <button
-                        className="w-full rounded-md bg-gray-300 py-1 hover:bg-gray-400"
-                        onClick={_onCreateNoSignInOrder}
-                      >
-                        Create order
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Portal>
-            ) : null}
           </button>
         </div>
       </div>
