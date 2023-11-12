@@ -15,6 +15,7 @@ import {
 import clsx from 'clsx';
 import {
   addDoc,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -30,21 +31,18 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Portal } from '@/components/common';
-import {
-  MenusDropdown,
-  OfferedByFormula,
-  ShowFormula,
-} from '@/components/pages/order';
+import { OfferedByFormula, ShowFormula } from '@/components/pages/order';
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { Icons, LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
 import { Main } from '@/templates/Main';
-import type { DrinkTableRow, NoSignInOrder } from '@/types';
+import type { DrinkTableRow, Menu, NoSignInOrder } from '@/types';
 import { numberArraySum } from '@/utils/base';
 
 const NoSignInOrderPage = ({ query }: { query: any }) => {
+  const { noSignInOrder } = useSelector(selector.order);
   const [orderNamePool, setorderNamePool] = useState<any>([]);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -140,6 +138,11 @@ const NoSignInOrderPage = ({ query }: { query: any }) => {
           </div>
           <div className="flex w-full max-w-4xl flex-col gap-3 2xl:w-1/2">
             <MenusDropdown />
+            <iframe
+              title="menu-frame"
+              src={noSignInOrder.selectedMenuLink}
+              className="h-screen w-full rounded-xl border-2 p-5"
+            />
           </div>
         </div>
       )}
@@ -1193,6 +1196,120 @@ const DiscountInput = ({ noSignInOrder }: { noSignInOrder: NoSignInOrder }) => {
         name="discount"
         onChange={_updateOrder}
       />
+    </div>
+  );
+};
+
+const MenusDropdown = () => {
+  const { noSignInOrder } = useSelector(selector.order);
+
+  const [isDropdown, setIsDropdown] = useState(false);
+
+  const menuDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        className="w-fit rounded-lg bg-gray-200 px-3 py-2 drop-shadow-md"
+        onClick={() => setIsDropdown(true)}
+      >
+        {noSignInOrder.selectedMenuName !== ''
+          ? noSignInOrder.selectedMenuName
+          : 'Input a menu'}
+      </button>
+      {isDropdown ? (
+        <div
+          ref={menuDropdownRef}
+          className="absolute top-12 flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2"
+        >
+          <AddMenuForm />
+          <Menus noSignInOrder={noSignInOrder} />
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+const Menus = ({ noSignInOrder }: { noSignInOrder: NoSignInOrder }) => {
+  const [menus, setMenus] = useState<Menu[]>([]);
+  useEffect(() => {
+    _fetchMenus();
+  }, []);
+
+  const _fetchMenus = async () => {
+    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
+    onSnapshot(docRef, (_doc) => {
+      const updatedMenus: Menu[] = _doc.data()?.menus;
+      setMenus(updatedMenus);
+    });
+  };
+
+  const _selectMenu = async (menuName: string, menuLink: string) => {
+    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
+    await updateDoc(docRef, {
+      selectedMenuName: menuName,
+      selectedMenuLink: menuLink,
+    });
+  };
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {menus?.map((menu: Menu) => (
+        <button
+          className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
+          type="button"
+          key={menu.id}
+          onClick={() => _selectMenu(menu.name, menu.link)}
+        >
+          {menu.name}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+const { v4: uuidv4 } = require('uuid');
+
+const AddMenuForm = () => {
+  const [name, setName] = useState('');
+  const [link, setLink] = useState('');
+  const { noSignInOrder } = useSelector(selector.order);
+
+  const _addMenu = async () => {
+    const userRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
+    await updateDoc(userRef, {
+      menus: arrayUnion({ id: uuidv4(), name, link }),
+    });
+    setName('');
+    setLink('');
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <div>Name:</div>
+      <input
+        className="w-48 rounded-md border-2 px-1 hover:border-gray-600"
+        type="text"
+        placeholder="menu name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
+      <div>Link:</div>
+      <input
+        className="w-48 rounded-md border-2 px-1 hover:border-gray-600"
+        type="text"
+        placeholder="paste link here"
+        value={link}
+        onChange={(e) => setLink(e.target.value)}
+      />
+      <button
+        type="button"
+        className="rounded-md bg-white p-1 hover:bg-gray-400"
+        onClick={_addMenu}
+      >
+        <PlusIcon className="h-4 w-4" />
+      </button>
     </div>
   );
 };
