@@ -3,8 +3,6 @@ import {
   BarsArrowDownIcon,
   CheckIcon,
   ClipboardDocumentIcon,
-  LockClosedIcon,
-  LockOpenIcon,
   MinusIcon,
   NoSymbolIcon,
   PencilSquareIcon,
@@ -165,7 +163,7 @@ const ShopOwnerProfile = () => {
       <div className="mt-1">
         <ShopOwnerNameInput />
       </div>
-      <CloseOrderButton />
+      {/* <CloseOrderButton /> */}
     </div>
   );
 };
@@ -272,35 +270,35 @@ const ShopOwnerNameInput = () => {
   );
 };
 
-const CloseOrderButton = () => {
-  // const { order } = useSelector(selector.order);
+// const CloseOrderButton = () => {
+//   // const { order } = useSelector(selector.order);
 
-  const _updateOrder = async () => {
-    // const docRef = doc(db, 'orders', order.id);
-    // await updateDoc(docRef, {
-    //   isClosed: !order.isClosed,
-    // });
-  };
+//   const _updateOrder = async () => {
+//     // const docRef = doc(db, 'orders', order.id);
+//     // await updateDoc(docRef, {
+//     //   isClosed: !order.isClosed,
+//     // });
+//   };
 
-  return (
-    <button
-      className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
-      onClick={_updateOrder}
-    >
-      {true ? (
-        <>
-          <LockClosedIcon className="h-4 w-4" />
-          <div className="min-w-max">Order is closed</div>
-        </>
-      ) : (
-        <>
-          <LockOpenIcon className="h-4 w-4" />
-          <div className="min-w-max">Order is open</div>
-        </>
-      )}
-    </button>
-  );
-};
+//   return (
+//     <button
+//       className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
+//       onClick={_updateOrder}
+//     >
+//       {true ? (
+//         <>
+//           <LockClosedIcon className="h-4 w-4" />
+//           <div className="min-w-max">Order is closed</div>
+//         </>
+//       ) : (
+//         <>
+//           <LockOpenIcon className="h-4 w-4" />
+//           <div className="min-w-max">Order is open</div>
+//         </>
+//       )}
+//     </button>
+//   );
+// };
 
 const ShopOwnerTranferInfo = () => {
   return (
