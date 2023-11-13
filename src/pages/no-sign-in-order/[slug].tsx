@@ -3,6 +3,8 @@ import {
   BarsArrowDownIcon,
   CheckIcon,
   ClipboardDocumentIcon,
+  LockClosedIcon,
+  LockOpenIcon,
   MinusIcon,
   NoSymbolIcon,
   PencilSquareIcon,
@@ -124,11 +126,11 @@ const NoSignInOrderPage = ({ query }: { query: any }) => {
               <SharedLink />
             </div>
             <div className="relative mb-5">
-              {/* {order.isClosed ? (
+              {noSignInOrder.isClosed ? (
                 <div className="absolute -top-7 right-1/2 text-xl font-bold text-gray-600">
                   CLOSED
                 </div>
-              ) : null} */}
+              ) : null}
               <Table />
             </div>
             <div className="mb-10">
@@ -164,7 +166,7 @@ const ShopOwnerProfile = () => {
       <div className="mt-1">
         <ShopOwnerNameInput />
       </div>
-      {/* <CloseOrderButton /> */}
+      <CloseOrderButton />
     </div>
   );
 };
@@ -213,75 +215,13 @@ export const ShopOwnerImage = () => {
 };
 
 const ShopOwnerNameInput = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { noSignInOrder } = useSelector(selector.order);
-  const [shopOwnerName, setShopOwnerName] = useState('');
-  const [isEdit, setIsEdit] = useState(false);
-
-  const _onCheckPassword = () => {
-    setIsOpen(true);
-  };
-
-  const onEdit = () => {
-    setIsOpen(false);
-    if (noSignInOrder?.nickname) {
-      setShopOwnerName(noSignInOrder.nickname);
-    }
-    setIsEdit(true);
-  };
-
-  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setShopOwnerName(value);
-  };
-
-  const _updateUserNickname = async () => {
-    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
-    await updateDoc(docRef, {
-      nickname: shopOwnerName,
-    });
-    setIsEdit(false);
-  };
 
   return (
     <div className="relative">
-      {isEdit ? (
-        <>
-          <div className="h-6 w-20 rounded-md border-2 text-center hover:border-gray-600">
-            <input
-              className="h-5 w-full rounded-md text-center"
-              type="text"
-              value={shopOwnerName}
-              name="shopOwnerName"
-              onChange={_onChange}
-            />
-          </div>
-          <button
-            className="absolute -right-5 top-1"
-            onClick={_updateUserNickname}
-          >
-            <CheckIcon className="h-4 w-4" />
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="h-6 w-20 rounded-md border-2 border-white text-center">
-            {noSignInOrder?.nickname}
-          </div>
-          <button
-            className="absolute -right-5 top-2"
-            onClick={_onCheckPassword}
-          >
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
-          {isOpen ? (
-            <CheckPasswordPortal
-              onClose={() => setIsOpen(false)}
-              onEdit={onEdit}
-            />
-          ) : null}
-        </>
-      )}
+      <div className="h-6 w-20 rounded-md border-2 border-white text-center">
+        {noSignInOrder?.nickname}
+      </div>
     </div>
   );
 };
@@ -376,40 +316,188 @@ const CheckPassword = ({
   );
 };
 
-// const CloseOrderButton = () => {
-//   // const { order } = useSelector(selector.order);
+const CloseOrderButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { noSignInOrder } = useSelector(selector.order);
 
-//   const _updateOrder = async () => {
-//     // const docRef = doc(db, 'orders', order.id);
-//     // await updateDoc(docRef, {
-//     //   isClosed: !order.isClosed,
-//     // });
-//   };
+  const _onCheckPassword = () => {
+    setIsOpen(true);
+  };
 
-//   return (
-//     <button
-//       className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
-//       onClick={_updateOrder}
-//     >
-//       {true ? (
-//         <>
-//           <LockClosedIcon className="h-4 w-4" />
-//           <div className="min-w-max">Order is closed</div>
-//         </>
-//       ) : (
-//         <>
-//           <LockOpenIcon className="h-4 w-4" />
-//           <div className="min-w-max">Order is open</div>
-//         </>
-//       )}
-//     </button>
-//   );
-// };
+  const _updateOrder = async () => {
+    setIsOpen(false);
+    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
+    await updateDoc(docRef, {
+      isClosed: !noSignInOrder.isClosed,
+    });
+  };
+
+  return (
+    <>
+      <button
+        className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
+        onClick={_onCheckPassword}
+      >
+        {noSignInOrder.isClosed ? (
+          <>
+            <LockClosedIcon className="h-4 w-4" />
+            <div className="min-w-max">Order is closed</div>
+          </>
+        ) : (
+          <>
+            <LockOpenIcon className="h-4 w-4" />
+            <div className="min-w-max">Order is open</div>
+          </>
+        )}
+      </button>
+      {isOpen ? (
+        <CheckPasswordPortal
+          onClose={() => setIsOpen(false)}
+          onEdit={_updateOrder}
+        />
+      ) : null}
+    </>
+  );
+};
 
 const ShopOwnerTranferInfo = () => {
+  const { noSignInOrder } = useSelector(selector.order);
+  const [nickname, setNickname] = useState('');
+  const [momo, setMomo] = useState('');
+  const [bank1Name, setBank1Name] = useState('');
+  const [bank1Number, setBank1Number] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+
+  const modalRef = useCheckClickOutside(() => {
+    setIsEdit(false);
+  });
+  const _onNicknameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setNickname(value);
+  };
+  const _onMomoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setMomo(value);
+  };
+  const _onbank1NameChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setBank1Name(value);
+  };
+  const _onbank1NumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setBank1Number(value);
+  };
+  const _onCheckPassword = () => {
+    setIsOpen(true);
+  };
+  const onEdit = () => {
+    setIsOpen(false);
+    setNickname(noSignInOrder.nickname);
+    setMomo(noSignInOrder.momo);
+    setBank1Name(noSignInOrder.bank1Name);
+    setBank1Number(noSignInOrder.bank1Number);
+    setIsEdit(true);
+  };
+  const _onCancel = () => {
+    setIsEdit(false);
+  };
+  const _updateUserProfile = async () => {
+    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
+    await updateDoc(docRef, {
+      nickname,
+      momo,
+      bank1Name,
+      bank1Number,
+    });
+    setIsEdit(false);
+  };
   return (
     <div className="flex h-full w-full flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-      <div className="font-bold">TRANSFER INFO</div>
+      <div className="relative flex w-full items-center justify-center">
+        <div className="font-bold">TRANSFER INFO</div>
+        <button className="absolute right-0" onClick={_onCheckPassword}>
+          <PencilSquareIcon className="h-3 w-3" />
+        </button>
+        {isOpen ? (
+          <CheckPasswordPortal
+            onClose={() => setIsOpen(false)}
+            onEdit={onEdit}
+          />
+        ) : null}
+        {isEdit ? (
+          <Portal>
+            <div className="fixed inset-0 z-50 h-full w-full bg-gray-800/50">
+              <div
+                ref={modalRef}
+                className="m-auto mt-16 flex h-fit w-96 flex-col gap-5 rounded-xl bg-white p-5"
+              >
+                <div className="flex flex-col items-center gap-5">
+                  <div className="text-lg font-semibold">Your Profile</div>
+                  <div className=" w-full">
+                    <div>Nickname: </div>
+                    <div className="w-full rounded-md border-2 p-1">
+                      <input
+                        type="text"
+                        value={nickname}
+                        onChange={_onNicknameChange}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className=" w-full">
+                    <div>Momo: </div>
+                    <div className="w-full rounded-md border-2 p-1">
+                      <input
+                        type="text"
+                        value={momo}
+                        onChange={_onMomoChange}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className=" w-full">
+                    <div>Bank Name: </div>
+                    <div className="w-full rounded-md border-2 p-1">
+                      <input
+                        type="text"
+                        value={bank1Name}
+                        onChange={_onbank1NameChange}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className=" w-full">
+                    <div>Bank Number: </div>
+                    <div className="w-full rounded-md border-2 p-1">
+                      <input
+                        type="text"
+                        value={bank1Number}
+                        onChange={_onbank1NumberChange}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-3 flex w-full gap-2">
+                    <button
+                      onClick={_onCancel}
+                      className="w-1/2 rounded-md bg-gray-200 py-2 hover:bg-gray-400"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={_updateUserProfile}
+                      className="w-1/2 rounded-md bg-gray-200 py-2 hover:bg-gray-400"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Portal>
+        ) : null}
+      </div>
       <div className="flex w-full flex-col items-start">
         <div className="flex h-6 w-full items-center">
           <div className="w-11">Momo</div>
@@ -431,67 +519,13 @@ const ShopOwnerTranferInfo = () => {
   );
 };
 const ShopOwnerMomoInput = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { noSignInOrder } = useSelector(selector.order);
-  const [momo, setMomo] = useState('');
-  const [isEdit, setIsEdit] = useState(false);
-
-  const _onCheckPassword = () => {
-    setIsOpen(true);
-  };
-
-  const onEdit = () => {
-    setIsOpen(false);
-    if (noSignInOrder) {
-      setMomo(noSignInOrder.momo);
-    }
-    setIsEdit(true);
-  };
-
-  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setMomo(value);
-  };
-
-  const _updateUserMomo = async () => {
-    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
-    await updateDoc(docRef, {
-      momo,
-    });
-    setIsEdit(false);
-  };
 
   return (
     <div className="flex items-center justify-between">
-      {isEdit ? (
-        <>
-          <input
-            className="w-28 rounded-md border-2 px-1 hover:border-gray-600"
-            type="text"
-            value={momo}
-            name="shopOwnerMomo"
-            onChange={_onChange}
-          />
-          <button className="" onClick={_updateUserMomo}>
-            <CheckIcon className="h-3 w-3" />
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="w-28 rounded-md border-2 border-white px-1">
-            {noSignInOrder?.momo || '--'}
-          </div>
-          <button className="" onClick={_onCheckPassword}>
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
-          {isOpen ? (
-            <CheckPasswordPortal
-              onClose={() => setIsOpen(false)}
-              onEdit={onEdit}
-            />
-          ) : null}
-        </>
-      )}
+      <div className="w-28 rounded-md border-2 border-white px-1">
+        {noSignInOrder?.momo || '--'}
+      </div>
     </div>
   );
 };
@@ -503,86 +537,17 @@ const ShopOwnerBankInput = ({
   field1: keyof NoSignInOrder;
   field2: keyof NoSignInOrder;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const { noSignInOrder } = useSelector(selector.order);
-  const [bankName, setBankName] = useState<any>('');
-  const [bankNumber, setBankNumber] = useState<any>('');
-  const [isEdit, setIsEdit] = useState(false);
-
-  const _onCheckPassword = () => {
-    setIsOpen(true);
-  };
-
-  const onEdit = () => {
-    setIsOpen(false);
-    if (noSignInOrder) {
-      setBankName(noSignInOrder[field1]);
-      setBankNumber(noSignInOrder[field2]);
-      setIsEdit(true);
-    }
-  };
-
-  const _onBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setBankName(value);
-  };
-  const _onBankNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setBankNumber(value);
-  };
-
-  const _updateUserBank = async () => {
-    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
-    await updateDoc(docRef, {
-      [field1]: bankName,
-      [field2]: bankNumber,
-    });
-    setIsEdit(false);
-  };
-
   return (
     <div className="flex w-full items-center justify-between">
-      {isEdit ? (
-        <>
-          <div className="flex items-center">
-            <input
-              className="w-12 rounded-md border-2 px-1 hover:border-gray-600"
-              type="text"
-              value={bankName}
-              onChange={_onBankNameChange}
-            />
-            <input
-              className="w-32 rounded-md border-2 px-1 hover:border-gray-600"
-              type="text"
-              value={bankNumber}
-              onChange={_onBankNumberChange}
-            />
-          </div>
-          <button className="" onClick={_updateUserBank}>
-            <CheckIcon className="h-3 w-3" />
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="flex items-center">
-            <div className="w-12 rounded-md border-2 border-white px-1">
-              {noSignInOrder ? noSignInOrder[field1]?.toString() || '--' : ''}
-            </div>
-            <div className="w-32 rounded-md border-2 border-white px-1">
-              {noSignInOrder ? noSignInOrder[field2]?.toString() : ''}
-            </div>
-          </div>
-          <button className="" onClick={_onCheckPassword}>
-            <PencilSquareIcon className="h-3 w-3" />
-          </button>
-          {isOpen ? (
-            <CheckPasswordPortal
-              onClose={() => setIsOpen(false)}
-              onEdit={onEdit}
-            />
-          ) : null}
-        </>
-      )}
+      <div className="flex items-center">
+        <div className="w-12 rounded-md border-2 border-white px-1">
+          {noSignInOrder ? noSignInOrder[field1]?.toString() || '--' : ''}
+        </div>
+        <div className="w-32 rounded-md border-2 border-white px-1">
+          {noSignInOrder ? noSignInOrder[field2]?.toString() : ''}
+        </div>
+      </div>
     </div>
   );
 };

@@ -37,6 +37,10 @@ const CreateAnonymousOrderPage = () => {
     } else {
       setHasSpecialChars(false);
     }
+    if (value !== '') {
+      const newError = errors.filter((i: any) => i !== 'noNameError');
+      setErrors(newError);
+    }
     setOrderName(value);
   };
   const _onOrderPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,74 +99,70 @@ const CreateAnonymousOrderPage = () => {
   };
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="mt-12 flex h-fit w-full flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
-        <div className="flex w-full max-w-4xl flex-col 2xl:w-1/2">
-          <div className="mb-20 w-full">
-            <img
-              className="m-auto w-1/2"
-              src={LogoImages.title_logo.src}
-              alt="title-logo"
-            />
-          </div>
+      <div className="m-auto max-w-5xl font-semibold">
+        <div className="mb-20 mt-12 w-full">
+          <img
+            className="m-auto w-1/2"
+            src={LogoImages.title_logo.src}
+            alt="title-logo"
+          />
+        </div>
 
-          <div className="flex w-full flex-col gap-4 text-sm">
-            <div className="m-auto flex flex-col gap-2">
-              <div className="relative">
-                <div className="text-lg font-semibold">
-                  Pick your link&#39;s name
-                </div>
-                <div className="flex gap-1">
-                  <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
-                  <div className="w-64 rounded-md border-2 px-2">
-                    <input
-                      type="text"
-                      placeholder="john-cena"
-                      className="w-full"
-                      value={orderName}
-                      onChange={_onOrderNameChange}
-                    />
-                  </div>
-                </div>
-                <div className="absolute">
-                  {errors.includes('noNameError') ? (
-                    <div className="text-red-400">Please input a name</div>
-                  ) : null}
-                  {nameIsTaken && orderName !== '' ? (
-                    <div className="text-red-400">Name is taken</div>
-                  ) : null}
-                  {hasSpecialChars ? (
-                    <div className="text-red-400">
-                      Name should only includes A-Z, a-z, 0-9 or &#39;-&#39; and
-                      no space
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-              <div className="relative mt-10">
-                <div className="text-lg font-semibold">Enter a password</div>
+        <div className="flex w-full flex-col gap-4 text-sm">
+          <div className="m-auto flex flex-col gap-2">
+            <div className="relative">
+              <div className="text-lg font-semibold">Pick a name</div>
+              <div className="flex gap-1">
+                <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
                 <div className="w-64 rounded-md border-2 px-2">
                   <input
                     type="text"
-                    placeholder="12345"
+                    placeholder="example: john-cena"
                     className="w-full"
-                    value={password}
-                    onChange={_onOrderPasswordChange}
+                    value={orderName}
+                    onChange={_onOrderNameChange}
                   />
                 </div>
-                <div className="absolute">
-                  {errors.includes('noPasswordError') ? (
-                    <div className="text-red-400">Please input a password</div>
-                  ) : null}
-                </div>
               </div>
-              <div className="mt-10 flex justify-center">
-                <button
-                  className="rounded-lg bg-gray-200 p-4 text-lg hover:bg-gray-400"
-                  onClick={_onCreateNoSignInOrder}
-                >
-                  Create Order Page
-                </button>
+              <div className="absolute">
+                {errors.includes('noNameError') ? (
+                  <div className="text-red-400">Please input a name</div>
+                ) : null}
+                {nameIsTaken && orderName !== '' ? (
+                  <div className="text-red-400">Name is taken</div>
+                ) : null}
+                {hasSpecialChars ? (
+                  <div className="text-red-400">
+                    Name should only includes A-Z, a-z, 0-9 or &#39;-&#39; and
+                    no space
+                  </div>
+                ) : null}
               </div>
+            </div>
+            <div className="relative mt-5">
+              <div className="text-lg font-semibold">Enter a password</div>
+              <div className="w-64 rounded-md border-2 px-2">
+                <input
+                  type="text"
+                  placeholder="example: 12345"
+                  className="w-full"
+                  value={password}
+                  onChange={_onOrderPasswordChange}
+                />
+              </div>
+              <div className="absolute">
+                {errors.includes('noPasswordError') ? (
+                  <div className="text-red-400">Please input a password</div>
+                ) : null}
+              </div>
+            </div>
+            <div className="mt-10 flex justify-center">
+              <button
+                className="rounded-lg bg-gray-200 p-4 text-lg hover:bg-gray-400"
+                onClick={_onCreateNoSignInOrder}
+              >
+                Create Order Page
+              </button>
             </div>
           </div>
         </div>
