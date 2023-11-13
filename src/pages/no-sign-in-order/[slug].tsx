@@ -3,6 +3,8 @@ import {
   BarsArrowDownIcon,
   CheckIcon,
   ClipboardDocumentIcon,
+  LockClosedIcon,
+  LockOpenIcon,
   MinusIcon,
   NoSymbolIcon,
   PencilSquareIcon,
@@ -124,11 +126,11 @@ const NoSignInOrderPage = ({ query }: { query: any }) => {
               <SharedLink />
             </div>
             <div className="relative mb-5">
-              {/* {order.isClosed ? (
+              {noSignInOrder.isClosed ? (
                 <div className="absolute -top-7 right-1/2 text-xl font-bold text-gray-600">
                   CLOSED
                 </div>
-              ) : null} */}
+              ) : null}
               <Table />
             </div>
             <div className="mb-10">
@@ -164,7 +166,7 @@ const ShopOwnerProfile = () => {
       <div className="mt-1">
         <ShopOwnerNameInput />
       </div>
-      {/* <CloseOrderButton /> */}
+      <CloseOrderButton />
     </div>
   );
 };
@@ -376,35 +378,49 @@ const CheckPassword = ({
   );
 };
 
-// const CloseOrderButton = () => {
-//   // const { order } = useSelector(selector.order);
+const CloseOrderButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { noSignInOrder } = useSelector(selector.order);
 
-//   const _updateOrder = async () => {
-//     // const docRef = doc(db, 'orders', order.id);
-//     // await updateDoc(docRef, {
-//     //   isClosed: !order.isClosed,
-//     // });
-//   };
+  const _onCheckPassword = () => {
+    setIsOpen(true);
+  };
 
-//   return (
-//     <button
-//       className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
-//       onClick={_updateOrder}
-//     >
-//       {true ? (
-//         <>
-//           <LockClosedIcon className="h-4 w-4" />
-//           <div className="min-w-max">Order is closed</div>
-//         </>
-//       ) : (
-//         <>
-//           <LockOpenIcon className="h-4 w-4" />
-//           <div className="min-w-max">Order is open</div>
-//         </>
-//       )}
-//     </button>
-//   );
-// };
+  const _updateOrder = async () => {
+    setIsOpen(false);
+    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
+    await updateDoc(docRef, {
+      isClosed: !noSignInOrder.isClosed,
+    });
+  };
+
+  return (
+    <>
+      <button
+        className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
+        onClick={_onCheckPassword}
+      >
+        {noSignInOrder.isClosed ? (
+          <>
+            <LockClosedIcon className="h-4 w-4" />
+            <div className="min-w-max">Order is closed</div>
+          </>
+        ) : (
+          <>
+            <LockOpenIcon className="h-4 w-4" />
+            <div className="min-w-max">Order is open</div>
+          </>
+        )}
+      </button>
+      {isOpen ? (
+        <CheckPasswordPortal
+          onClose={() => setIsOpen(false)}
+          onEdit={_updateOrder}
+        />
+      ) : null}
+    </>
+  );
+};
 
 const ShopOwnerTranferInfo = () => {
   return (
