@@ -559,7 +559,7 @@ const SharedLink = () => {
 
   const _copyClipboard = () => {
     navigator.clipboard.writeText(
-      `https://we-order-omega.vercel.app/order/${noSignInOrder.id}`,
+      `https://we-order-omega.vercel.app/no-sign-in-order/${noSignInOrder.id}`,
     );
     setIsClick(true);
   };
