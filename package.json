@@ -30,6 +30,7 @@
     "@heroicons/react": "^2.0.18",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/react-slick": "^0.23.10",
+    "axios": "^1.6.2",
     "cheerio": "^1.0.0-rc.12",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.9",
