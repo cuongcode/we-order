@@ -47,13 +47,28 @@ export async function getStaticProps() {
   // const { data } = await axios.get(
   //   'https://gappapi.deliverynow.vn/api/delivery/get_from_url?url=ho-chi-minh/lasimi-tra-ngon-dam-vi-phan-van-tri',
   // );
-  const res = await fetch(
-    'https://gappapi.deliverynow.vn/api/delivery/get_from_url?url=ho-chi-minh/lasimi-tra-ngon-dam-vi-phan-van-tri',
-    {
-      method: 'GET',
-    },
-  );
-  const json = await res.json();
+  try {
+    const res = await fetch(
+      'https://gappapi.deliverynow.vn/api/delivery/get_from_url?url=ho-chi-minh/lasimi-tra-ngon-dam-vi-phan-van-tri',
+      {
+        method: 'GET',
+        headers: {
+          'x-foody-access-token': '',
+          'x-foody-api-version': 1,
+          'x-foody-app-type': 1004,
+          'x-foody-client-id': '',
+          'x-foody-client-language': 'vi',
+          'x-foody-client-type': 1,
+          'x-foody-client-version': '3.0.0',
+          'x-sap-ri': '96ec58652e93bbc0c351353edbdf8c6c45fb1c621c2cb0b7',
+        },
+      },
+    );
+    const json = await res.json();
+    console.log(json);
+  } catch (error) {
+    console.log('asd', error);
+  }
   // const { data } = await axios.get('https://shopeefood.vn/');
   //   col-auto item-restaurant-img
   // item-restaurant-name
@@ -63,7 +78,6 @@ export async function getStaticProps() {
   // const items = $('.item-restaurant-name').text();
   // const prices = $('.current-price').text();
   // const p = $('p').text();
-  console.log(json);
   return {
     props: {},
     // revalidate: 10, // rerun after 10 seconds
