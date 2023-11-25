@@ -13,34 +13,6 @@ const Test = ({
   dish_type_names: any;
   dishes: any;
 }) => {
-  // useEffect(() => {
-  //   // scraping();
-  // }, []);
-  // https://shopeefood.vn/ho-chi-minh/lasimi-tra-ngon-dam-vi-phan-van-tri
-  // const scraping = async () => {
-  //   try {
-  //     const res = await fetch(
-  //       'https://gappapi.deliverynow.vn/api/delivery/get_from_url?url=ho-chi-minh/lasimi-tra-ngon-dam-vi-phan-van-tri',
-  //       {
-  //         method: 'GET',
-  //         headers: {
-  //           // 'x-foody-access-token': '',
-  //           'x-foody-api-version': 1,
-  //           'x-foody-app-type': 1004,
-  //           'x-foody-client-id': '',
-  //           // 'x-foody-client-language': 'vi',
-  //           'x-foody-client-type': 1,
-  //           'x-foody-client-version': '3.0.0',
-  //         },
-  //       },
-  //     );
-  //     const json = await res.json();
-  //     console.log('json', json);
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
-
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="m-auto max-w-5xl font-semibold">
@@ -78,7 +50,7 @@ export async function getStaticProps() {
 
   const { result, error } = handleError(res1);
   if (error) {
-    console.log(error.message);
+    //
   }
   const deliveryId = result.reply.delivery_id;
 
@@ -93,6 +65,5 @@ export async function getStaticProps() {
   );
   return {
     props: { dish_type_names, dishes },
-    // revalidate: 10, // rerun after 10 seconds
   };
 }
