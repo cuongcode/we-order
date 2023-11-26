@@ -17,18 +17,18 @@ import {
   serverTimestamp,
   updateDoc,
 } from 'firebase/firestore';
-import { range } from 'lodash';
-import { useState } from 'react';
+import { debounce, range } from 'lodash';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { RowsActions, selector } from '@/redux';
-import type { DrinkTableRow } from '@/types';
+import type { Dish, DrinkTableRow } from '@/types';
 
 import { OfferedByFormula, ShowFormula } from '../order';
 
-export const Table = () => {
+export const Table = ({ dishes }: { dishes: Dish[] }) => {
   const { noSignInOrder } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
 
@@ -70,6 +70,7 @@ export const Table = () => {
             row={row}
             rowIndex={numberArray[index]}
             transfer={transferList[index]}
+            dishes={dishes}
           />
         ))}
       </div>
@@ -133,13 +134,23 @@ const TableRow = ({
   row,
   rowIndex,
   transfer,
+  dishes,
 }: {
   row: DrinkTableRow;
   rowIndex: any;
   transfer: number | undefined;
+  dishes: Dish[];
 }) => {
+  const [showAutoComplete, setShowAutoComplete] = useState(false);
+  const [autoCompleteList, setAutoCompleteList] = useState<Dish[]>([]);
   const { noSignInOrder } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
+  const _debounceSearch = useCallback(
+    debounce((searchString) => {
+      _autoCompleteDrink(searchString);
+    }, 500),
+    [],
+  );
 
   // useMemo here ?
   const offerByOptions = [
@@ -161,7 +172,34 @@ const TableRow = ({
     await updateDoc(docRef, {
       [name]: value,
     });
+    _debounceSearch(value);
   };
+
+  const _showAutoComplete = () => {
+    setShowAutoComplete(true);
+  };
+
+  const _autoCompleteDrink = (searchString: string) => {
+    if (searchString === '') {
+      setAutoCompleteList([]);
+      return;
+    }
+
+    const list = dishes.filter((dish: Dish) => {
+      const normalizeDish = dish.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      return normalizeDish.includes(searchString.toLocaleLowerCase());
+    });
+    setAutoCompleteList(list);
+  };
+
+  // const _onChangeSearchDrink = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const searchSymbol = e.target.value;
+  //   setSymbol(searchSymbol);
+  //   _debounceSearch(searchSymbol);
+  // };
 
   return (
     <div
@@ -212,7 +250,20 @@ const TableRow = ({
           name="drink"
           disabled={noSignInOrder.isClosed}
           onChange={_updateRow}
+          onClick={_showAutoComplete}
         />
+        {showAutoComplete ? (
+          <div className="bg-white">
+            {autoCompleteList.map((dish: Dish) => {
+              return (
+                <div key={dish.id} className="flex gap-2">
+                  <div> {dish.name}</div>
+                  <div> {dish.price}</div>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
       <div
         className={clsx({

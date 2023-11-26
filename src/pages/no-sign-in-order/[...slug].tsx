@@ -24,14 +24,14 @@ import { OrderActions, RowsActions, selector } from '@/redux';
 import { ApiInstance } from '@/services/api';
 import { handleError } from '@/services/apiHelper';
 import { Main } from '@/templates/Main';
-import type { NoSignInOrder } from '@/types';
+import type { Dish, NoSignInOrder } from '@/types';
 
 const NoSignInOrderPage = ({
   orderId,
   dishes,
 }: {
   orderId: any;
-  dishes: any;
+  dishes: Dish[];
 }) => {
   const { noSignInOrder } = useSelector(selector.order);
   const [orderNamePool, setorderNamePool] = useState<any>([]);
@@ -139,19 +139,11 @@ const NoSignInOrderPage = ({
                   CLOSED
                 </div>
               ) : null}
-              <Table />
+              <Table dishes={dishes} />
             </div>
             <div className="mb-10">
               <CalculateTotal />
             </div>
-          </div>
-          <div className="flex w-full max-w-4xl flex-col gap-3 2xl:w-1/2">
-            {dishes?.map((dish: any) => (
-              <div key={dish.id}>
-                <div>{dish.name}</div>
-                <div>{dish.price}</div>
-              </div>
-            ))}
           </div>
           <div className="flex w-full max-w-4xl flex-col gap-3 2xl:w-1/2">
             <MenusDropdown />
@@ -168,12 +160,6 @@ const NoSignInOrderPage = ({
 };
 
 export default NoSignInOrderPage;
-
-// interface Dish {
-//   name: string;
-//   price: number;
-//   photo: string;
-// }
 
 export const getServerSideProps = async (context: any) => {
   const { query } = context;
