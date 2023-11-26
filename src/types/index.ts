@@ -1,4 +1,5 @@
 export * from './BankInfo';
+export * from './Dish';
 export * from './DrinkTableData';
 export * from './DrinkTableRow';
 export * from './Heart';
