@@ -195,11 +195,9 @@ const TableRow = ({
     setAutoCompleteList(list);
   };
 
-  // const _onChangeSearchDrink = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const searchSymbol = e.target.value;
-  //   setSymbol(searchSymbol);
-  //   _debounceSearch(searchSymbol);
-  // };
+  const autoCompleteRef = useCheckClickOutside(() => {
+    setShowAutoComplete(false);
+  });
 
   return (
     <div
@@ -233,7 +231,7 @@ const TableRow = ({
       </div>
       <div
         className={clsx({
-          'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+          'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600 relative z-50':
             true,
           'bg-white': !row.isTick,
           'bg-gray-400': row.isTick,
@@ -253,11 +251,17 @@ const TableRow = ({
           onClick={_showAutoComplete}
         />
         {showAutoComplete ? (
-          <div className="bg-white">
+          <div
+            ref={autoCompleteRef}
+            className="absolute -right-64 top-0 z-10 flex flex-col rounded-md bg-white shadow-lg"
+          >
             {autoCompleteList.map((dish: Dish) => {
               return (
-                <div key={dish.id} className="flex gap-2">
-                  <div> {dish.name}</div>
+                <div
+                  key={dish.id}
+                  className="flex gap-2 px-2 py-1 hover:bg-gray-400"
+                >
+                  <div className="w-48"> {dish.name}</div>
                   <div> {dish.price}</div>
                 </div>
               );
