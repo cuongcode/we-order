@@ -53,7 +53,7 @@ const NoSignInOrderPage = ({
     ) {
       _addMenuLink();
     }
-  }, [noSignInOrder.selectedMenuLink, orderNamePool]);
+  }, [noSignInOrder.selectedMenuLink]);
 
   const _fetchNoSignInOrder = () => {
     const docRef = doc(db, 'no_sign_in_orders', orderId);

@@ -145,12 +145,6 @@ const TableRow = ({
   const [autoCompleteList, setAutoCompleteList] = useState<Dish[]>([]);
   const { noSignInOrder } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
-  const _debounceSearch = useCallback(
-    debounce((searchString) => {
-      _autoCompleteDrink(searchString);
-    }, 500),
-    [],
-  );
 
   // useMemo here ?
   const offerByOptions = [
@@ -159,6 +153,13 @@ const TableRow = ({
       .filter((_row: DrinkTableRow) => _row.offerBy === '--')
       .map((_row: DrinkTableRow) => _row.name),
   ].filter((option: string) => option !== row.name && option !== '');
+
+  const _debounceSearch = useCallback(
+    debounce((searchString) => {
+      _autoCompleteDrink(searchString);
+    }, 500),
+    [dishes],
+  );
 
   const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -185,7 +186,7 @@ const TableRow = ({
       return;
     }
 
-    const list = dishes.filter((dish: Dish) => {
+    const list = dishes?.filter((dish: Dish) => {
       const normalizeDish = dish.name
         .toLowerCase()
         .normalize('NFD')
@@ -198,6 +199,7 @@ const TableRow = ({
   const autoCompleteRef = useCheckClickOutside(() => {
     setShowAutoComplete(false);
   });
+
   const _selectDrink = async (dish: Dish) => {
     const docRef = doc(
       db,
@@ -212,6 +214,7 @@ const TableRow = ({
     });
     setShowAutoComplete(false);
   };
+
   return (
     <div
       key={row.id}
