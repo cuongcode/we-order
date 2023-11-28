@@ -198,7 +198,20 @@ const TableRow = ({
   const autoCompleteRef = useCheckClickOutside(() => {
     setShowAutoComplete(false);
   });
-
+  const _selectDrink = async (dish: Dish) => {
+    const docRef = doc(
+      db,
+      'no_sign_in_orders',
+      noSignInOrder.id,
+      'rows',
+      row.id,
+    );
+    await updateDoc(docRef, {
+      drink: dish.name,
+      price: dish.price,
+    });
+    setShowAutoComplete(false);
+  };
   return (
     <div
       key={row.id}
@@ -253,17 +266,23 @@ const TableRow = ({
         {showAutoComplete ? (
           <div
             ref={autoCompleteRef}
-            className="absolute -right-64 top-0 z-10 flex flex-col rounded-md bg-white shadow-lg"
+            className="absolute -right-80 top-0 z-10 flex max-h-72 flex-col divide-y divide-gray-400 overflow-x-auto rounded-lg bg-white p-1 shadow-lg"
           >
             {autoCompleteList.map((dish: Dish) => {
               return (
-                <div
+                <button
                   key={dish.id}
-                  className="flex gap-2 px-2 py-1 hover:bg-gray-400"
+                  className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-gray-400"
+                  onClick={() => _selectDrink(dish)}
                 >
-                  <div className="w-48"> {dish.name}</div>
-                  <div> {dish.price}</div>
-                </div>
+                  <img
+                    src={dish.photo}
+                    alt="drink"
+                    className="h-10 w-10 rounded-lg bg-gray-200 object-cover"
+                  />
+                  <div className="w-48 text-left"> {dish.name}</div>
+                  <div> {dish.price.toLocaleString('en-US')}</div>
+                </button>
               );
             })}
           </div>
