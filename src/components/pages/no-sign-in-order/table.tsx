@@ -17,18 +17,18 @@ import {
   serverTimestamp,
   updateDoc,
 } from 'firebase/firestore';
-import { range } from 'lodash';
-import { useState } from 'react';
+import { debounce, range } from 'lodash';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { RowsActions, selector } from '@/redux';
-import type { DrinkTableRow } from '@/types';
+import type { Dish, DrinkTableRow } from '@/types';
 
 import { OfferedByFormula, ShowFormula } from '../order';
 
-export const Table = () => {
+export const Table = ({ dishes }: { dishes: Dish[] }) => {
   const { noSignInOrder } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
 
@@ -70,6 +70,7 @@ export const Table = () => {
             row={row}
             rowIndex={numberArray[index]}
             transfer={transferList[index]}
+            dishes={dishes}
           />
         ))}
       </div>
@@ -133,11 +134,15 @@ const TableRow = ({
   row,
   rowIndex,
   transfer,
+  dishes,
 }: {
   row: DrinkTableRow;
   rowIndex: any;
   transfer: number | undefined;
+  dishes: Dish[];
 }) => {
+  const [showAutoComplete, setShowAutoComplete] = useState(false);
+  const [autoCompleteList, setAutoCompleteList] = useState<Dish[]>([]);
   const { noSignInOrder } = useSelector(selector.order);
   const { rows } = useSelector(selector.rows);
 
@@ -148,6 +153,13 @@ const TableRow = ({
       .filter((_row: DrinkTableRow) => _row.offerBy === '--')
       .map((_row: DrinkTableRow) => _row.name),
   ].filter((option: string) => option !== row.name && option !== '');
+
+  const _debounceSearch = useCallback(
+    debounce((searchString) => {
+      _autoCompleteDrink(searchString);
+    }, 500),
+    [dishes],
+  );
 
   const _updateRow = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -161,6 +173,46 @@ const TableRow = ({
     await updateDoc(docRef, {
       [name]: value,
     });
+    _debounceSearch(value);
+  };
+
+  const _showAutoComplete = () => {
+    setShowAutoComplete(true);
+  };
+
+  const _autoCompleteDrink = (searchString: string) => {
+    if (searchString === '') {
+      setAutoCompleteList([]);
+      return;
+    }
+
+    const list = dishes?.filter((dish: Dish) => {
+      const normalizeDish = dish.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+      return normalizeDish.includes(searchString.toLocaleLowerCase());
+    });
+    setAutoCompleteList(list);
+  };
+
+  const autoCompleteRef = useCheckClickOutside(() => {
+    setShowAutoComplete(false);
+  });
+
+  const _selectDrink = async (dish: Dish) => {
+    const docRef = doc(
+      db,
+      'no_sign_in_orders',
+      noSignInOrder.id,
+      'rows',
+      row.id,
+    );
+    await updateDoc(docRef, {
+      drink: dish.name,
+      price: dish.price,
+    });
+    setShowAutoComplete(false);
   };
 
   return (
@@ -195,7 +247,7 @@ const TableRow = ({
       </div>
       <div
         className={clsx({
-          'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
+          'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600 relative z-50':
             true,
           'bg-white': !row.isTick,
           'bg-gray-400': row.isTick,
@@ -212,7 +264,32 @@ const TableRow = ({
           name="drink"
           disabled={noSignInOrder.isClosed}
           onChange={_updateRow}
+          onClick={_showAutoComplete}
         />
+        {showAutoComplete ? (
+          <div
+            ref={autoCompleteRef}
+            className="absolute -right-80 top-0 z-10 flex max-h-72 flex-col divide-y divide-gray-400 overflow-x-auto rounded-lg bg-white p-1 shadow-lg"
+          >
+            {autoCompleteList.map((dish: Dish) => {
+              return (
+                <button
+                  key={dish.id}
+                  className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-gray-400"
+                  onClick={() => _selectDrink(dish)}
+                >
+                  <img
+                    src={dish.photo}
+                    alt="drink"
+                    className="h-10 w-10 rounded-lg bg-gray-200 object-cover"
+                  />
+                  <div className="w-48 text-left"> {dish.name}</div>
+                  <div> {dish.price.toLocaleString('en-US')}</div>
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
       <div
         className={clsx({
