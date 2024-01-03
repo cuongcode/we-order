@@ -1,7 +1,9 @@
 import { collection, doc, onSnapshot, query, setDoc } from 'firebase/firestore';
 import Router from 'next/router';
+import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 
+import { BaseButton } from '@/components/base';
 import { db } from '@/firebase';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
@@ -43,10 +45,12 @@ const CreateAnonymousOrderPage = () => {
     }
     setOrderName(value);
   };
+
   const _onOrderPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setPassword(value);
   };
+
   const _onCreateNoSignInOrder = async () => {
     const newErrors = [];
     const newNoSignInOrder: NoSignInOrder = {
@@ -97,73 +101,59 @@ const CreateAnonymousOrderPage = () => {
       setorderNamePool(updatedNoSignInOrder);
     });
   };
+
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="m-auto max-w-5xl font-semibold">
-        <div className="mb-20 mt-12 w-full">
-          <img
-            className="m-auto w-1/2"
-            src={LogoImages.title_logo.src}
-            alt="title-logo"
-          />
-        </div>
+      <div className="m-auto flex max-w-5xl flex-col font-semibold">
+        <img
+          className="mb-20 mt-12 w-[300px] self-center"
+          src={LogoImages.title_logo.src}
+          alt="title-logo"
+        />
 
         <div className="flex w-full flex-col gap-4 text-sm">
-          <div className="m-auto flex flex-col gap-2">
-            <div className="relative">
-              <div className="text-lg font-semibold">Pick a name</div>
-              <div className="flex gap-1">
-                <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
-                <div className="w-64 rounded-md border-2 px-2">
-                  <input
-                    type="text"
-                    placeholder="example: john-cena"
-                    className="w-full"
-                    value={orderName}
-                    onChange={_onOrderNameChange}
-                  />
-                </div>
-              </div>
-              <div className="absolute">
-                {errors.includes('noNameError') ? (
-                  <div className="text-red-400">Please input a name</div>
-                ) : null}
-                {nameIsTaken && orderName !== '' ? (
-                  <div className="text-red-400">Name is taken</div>
-                ) : null}
-                {hasSpecialChars ? (
-                  <div className="text-red-400">
-                    Name should only includes A-Z, a-z, 0-9 or &#39;-&#39; and
-                    no space
-                  </div>
-                ) : null}
-              </div>
+          <div className="m-auto flex flex-col gap-10">
+            <div className="flex flex-col gap-2">
+              <Input
+                title="Pick a name"
+                value={orderName}
+                onChange={_onOrderNameChange}
+                prefix={
+                  <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
+                }
+                errorText={
+                  <>
+                    {errors.includes('noNameError') ? (
+                      <div className="text-red-400">Please input a name</div>
+                    ) : null}
+                    {nameIsTaken && orderName !== '' ? (
+                      <div className="text-red-400">Name is taken</div>
+                    ) : null}
+                    {hasSpecialChars ? (
+                      <div className="text-red-400">
+                        Name should only includes A-Z, a-z, 0-9 or &#39;-&#39;
+                        and no space
+                      </div>
+                    ) : null}
+                  </>
+                }
+              />
+              <Input
+                title="Enter a password"
+                value={password}
+                onChange={_onOrderPasswordChange}
+                errorText={
+                  errors.includes('noPasswordError') ? (
+                    <div className="text-red-400">Please input a password</div>
+                  ) : null
+                }
+              />
             </div>
-            <div className="relative mt-5">
-              <div className="text-lg font-semibold">Enter a password</div>
-              <div className="w-64 rounded-md border-2 px-2">
-                <input
-                  type="text"
-                  placeholder="example: 12345"
-                  className="w-full"
-                  value={password}
-                  onChange={_onOrderPasswordChange}
-                />
-              </div>
-              <div className="absolute">
-                {errors.includes('noPasswordError') ? (
-                  <div className="text-red-400">Please input a password</div>
-                ) : null}
-              </div>
-            </div>
-            <div className="mt-10 flex justify-center">
-              <button
-                className="rounded-lg bg-gray-200 p-4 text-lg hover:bg-gray-400"
-                onClick={_onCreateNoSignInOrder}
-              >
-                Create Order Page
-              </button>
-            </div>
+            <BaseButton
+              className="self-center"
+              text="Create Order Page"
+              onClick={_onCreateNoSignInOrder}
+            />
           </div>
         </div>
       </div>
@@ -172,3 +162,36 @@ const CreateAnonymousOrderPage = () => {
 };
 
 export default CreateAnonymousOrderPage;
+
+const Input = ({
+  title,
+  value,
+  onChange,
+  errorText,
+  prefix,
+}: {
+  title: string;
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  errorText: ReactNode;
+  prefix?: ReactNode;
+}) => {
+  return (
+    <div className="relative mt-5">
+      <div className="text-lg font-semibold">{title}</div>
+      <div className="flex gap-2">
+        {prefix}
+        <div className="flex w-64 items-center rounded-md border-2 px-2">
+          <input
+            type="text"
+            placeholder="example: 12345"
+            className="w-full"
+            value={value}
+            onChange={onChange}
+          />
+        </div>
+      </div>
+      <div className="absolute">{errorText}</div>
+    </div>
+  );
+};

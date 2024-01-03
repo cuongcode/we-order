@@ -60,14 +60,12 @@ const SignIn = () => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="m-auto max-w-5xl font-semibold">
-        <div className="mb-3 mt-12 w-full">
-          <img
-            className="m-auto w-1/2"
-            src={LogoImages.title_logo.src}
-            alt="title-logo"
-          />
-        </div>
+      <div className="m-auto flex max-w-5xl flex-col font-semibold">
+        <img
+          className="mb-3 mt-12 w-[400px] self-center"
+          src={LogoImages.title_logo.src}
+          alt="title-logo"
+        />
         <div className="text-center text-lg">
           An easy way to order drink and food together
         </div>
