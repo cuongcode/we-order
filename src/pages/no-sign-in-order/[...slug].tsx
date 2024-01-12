@@ -18,7 +18,6 @@ import {
   Table,
 } from '@/components/pages/no-sign-in-order';
 import { db } from '@/firebase';
-import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { OrderActions, RowsActions, selector } from '@/redux';
 import { ApiInstance } from '@/services/api';
@@ -113,14 +112,6 @@ const NoSignInOrderPage = ({
       ) : (
         <div className="mt-12 flex h-fit w-full flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
           <div className="flex w-full max-w-4xl flex-col 2xl:w-1/2">
-            <div className="mb-10 w-full">
-              <img
-                className="m-auto w-1/2"
-                src={LogoImages.title_logo.src}
-                alt="title-logo"
-              />
-            </div>
-
             <div className="mb-10 flex w-full gap-4 text-sm">
               <div className="h-40 w-36 shrink-0">
                 <ShopOwnerProfile />

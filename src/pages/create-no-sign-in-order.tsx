@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react';
 
 import { Button } from '@/components/base';
 import { db } from '@/firebase';
-import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 import type { NoSignInOrder } from '@/types';
@@ -105,12 +104,6 @@ const CreateAnonymousOrderPage = () => {
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
       <div className="m-auto flex max-w-5xl flex-col font-semibold">
-        <img
-          className="mb-20 mt-12 w-[300px] self-center"
-          src={LogoImages.title_logo.src}
-          alt="title-logo"
-        />
-
         <div className="flex w-full flex-col gap-4 text-sm">
           <div className="m-auto flex flex-col gap-10">
             <div className="flex flex-col gap-2">
