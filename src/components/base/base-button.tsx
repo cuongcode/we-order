@@ -1,27 +1,48 @@
 import clsx from 'clsx';
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
 
-interface BaseButtonProps {
-  children?: React.ReactNode;
-  className?: string;
+interface SimpleButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text?: string;
-  onClick: () => void;
+  className?: string;
+  onClick?: () => void;
+  fetching?: boolean;
+  children?: ReactNode;
+  disabled?: boolean;
 }
-export const BaseButton: FC<BaseButtonProps> = ({
-  children,
-  className,
-  text,
-  onClick,
-}) => {
+export const SimpleButton: FC<SimpleButtonProps> = (props) => {
+  const { text, className, onClick, fetching, children, disabled, ...rest } =
+    props;
+
   return (
     <button
-      className={clsx(
-        'rounded-lg bg-gray-200 p-4 text-lg hover:bg-gray-400',
-        className,
-      )}
+      className={clsx('disabled:cursor-not-allowed', className)}
       onClick={onClick}
+      disabled={disabled || fetching || !onClick}
+      {...rest}
     >
-      {children || text}
+      {text}
+      {children}
     </button>
   );
+};
+
+interface ButtonProps extends SimpleButtonProps {
+  preset?: keyof typeof presetBtClassName;
+  className?: string;
+}
+export const Button: FC<ButtonProps> = (props) => {
+  const { preset = 'primary', className, ...rest } = props;
+
+  return (
+    <SimpleButton
+      className={clsx(presetBtClassName[preset], className)}
+      {...rest}
+    />
+  );
+};
+
+const presetBtClassName = {
+  base: '',
+  primary: 'font-bold text-2xl text-white bg-violet-500 rounded-2xl py-2 px-6',
 };
