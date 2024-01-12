@@ -3,7 +3,7 @@ import Router from 'next/router';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 
-import { Button } from '@/components/base';
+import { BaseInput, Button } from '@/components/base';
 import { db } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
@@ -110,10 +110,9 @@ const CreateAnonymousOrderPage = () => {
               <Input
                 title="Pick a name"
                 value={orderName}
+                placeholder="john-cena"
                 onChange={_onOrderNameChange}
-                prefix={
-                  <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
-                }
+                prefix="https://we-order-omega.vercel.app/no-sign-in-order/"
                 errorText={
                   <>
                     {errors.includes('noNameError') ? (
@@ -134,6 +133,7 @@ const CreateAnonymousOrderPage = () => {
               <Input
                 title="Enter a password"
                 value={password}
+                placeholder="example: 123456"
                 onChange={_onOrderPasswordChange}
                 errorText={
                   errors.includes('noPasswordError') ? (
@@ -143,8 +143,8 @@ const CreateAnonymousOrderPage = () => {
               />
             </div>
             <Button
-              className="self-center"
               text="Create Order Page"
+              className="self-center"
               onClick={_onCreateNoSignInOrder}
             />
           </div>
@@ -162,29 +162,30 @@ const Input = ({
   onChange,
   errorText,
   prefix,
+  placeholder,
 }: {
   title: string;
   value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   errorText: ReactNode;
-  prefix?: ReactNode;
+  prefix?: string;
+  placeholder?: string;
 }) => {
   return (
-    <div className="relative mt-5">
-      <div className="text-lg font-semibold">{title}</div>
-      <div className="flex gap-2">
-        {prefix}
-        <div className="flex w-64 items-center rounded-md border-2 px-2">
-          <input
-            type="text"
-            placeholder="example: 12345"
-            className="w-full"
-            value={value}
-            onChange={onChange}
-          />
-        </div>
+    <div className="mt-6 flex flex-col gap-4">
+      <div className="flex">
+        <div className="text-base font-medium">{title}</div>
+        <div className="text-violet-500">*</div>
       </div>
-      <div className="absolute">{errorText}</div>
+      <div className="flex items-center gap-2">
+        <BaseInput
+          placeholder={placeholder}
+          errorText={errorText}
+          value={value}
+          onChange={onChange}
+          prefix={prefix}
+        />
+      </div>
     </div>
   );
 };
