@@ -3,7 +3,7 @@ import Router from 'next/router';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 
-import { BaseButton } from '@/components/base';
+import { Button } from '@/components/base';
 import { db } from '@/firebase';
 import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
@@ -149,7 +149,7 @@ const CreateAnonymousOrderPage = () => {
                 }
               />
             </div>
-            <BaseButton
+            <Button
               className="self-center"
               text="Create Order Page"
               onClick={_onCreateNoSignInOrder}
