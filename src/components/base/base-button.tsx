@@ -16,10 +16,7 @@ export const SimpleButton: FC<SimpleButtonProps> = (props) => {
 
   return (
     <button
-      className={clsx(
-        'flex items-center justify-center gap-1 leading-none disabled:cursor-not-allowed',
-        className,
-      )}
+      className={clsx('disabled:cursor-not-allowed', className)}
       onClick={onClick}
       disabled={disabled || fetching || !onClick}
       {...rest}
@@ -32,8 +29,6 @@ export const SimpleButton: FC<SimpleButtonProps> = (props) => {
 
 interface ButtonProps extends SimpleButtonProps {
   preset?: keyof typeof presetBtClassName;
-  large?: boolean;
-  small?: boolean;
   className?: string;
 }
 export const Button: FC<ButtonProps> = (props) => {
@@ -41,11 +36,7 @@ export const Button: FC<ButtonProps> = (props) => {
 
   return (
     <SimpleButton
-      className={clsx(
-        presetBtClassName[preset],
-        presetTextClassName[preset],
-        className,
-      )}
+      className={clsx(presetBtClassName[preset], className)}
       {...rest}
     />
   );
@@ -53,12 +44,5 @@ export const Button: FC<ButtonProps> = (props) => {
 
 const presetBtClassName = {
   base: '',
-  primary:
-    'bg-primary-500 enabled:hover:bg-primary-400 disabled:bg-primary-300',
-};
-
-const presetTextClassName = {
-  base: '',
-  primary: 'font-medium text-fixed-white disabled:text-primary-400',
-  cancel: 'text-xs text-red-500 disabled:text-neutral-400',
+  primary: 'font-bold text-2xl text-white bg-violet-500 rounded-2xl py-2 px-6',
 };

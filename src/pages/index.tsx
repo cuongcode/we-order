@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 
+import { Button } from '@/components/base';
 import { FeatureLine } from '@/components/pages/home';
 import { FEATURE_LIST } from '@/components/pages/home/data';
 import { LogoImages } from '@/images';
@@ -31,6 +32,7 @@ const LandingPage = () => {
           ))}
         </div>
         <ButtonOrder currentUser={currentUser} />
+        <Button className="mt-5" text="Card" />
       </div>
     </Main>
   );
