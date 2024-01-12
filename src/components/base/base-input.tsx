@@ -27,17 +27,19 @@ export const BaseInput: FC<BaseInputProps> = (props) => {
     <div className="relative w-full">
       <div
         className={clsx(
-          'flex w-full items-center rounded-xl border border-slate-800 bg-slate-900 px-6 py-4',
+          'flex w-full items-center gap-2 overflow-hidden rounded-xl border border-slate-800 bg-slate-900',
           className,
         )}
       >
         {prefix ? (
-          <div className="w-full text-sm font-light">{prefix}</div>
+          <div className="flex flex-1 items-center justify-center self-stretch bg-slate-800 px-4 text-sm font-light">
+            {prefix}
+          </div>
         ) : null}
         <input
           type="text"
           placeholder={placeholder}
-          className="w-fit bg-slate-900 text-sm font-light placeholder:text-sm"
+          className="w-fit bg-slate-900 p-4 text-sm font-light placeholder:text-sm"
           value={value}
           onChange={onChange}
           disabled={disabled}
