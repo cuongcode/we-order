@@ -41,6 +41,7 @@ module.exports = {
       },
       fontFamily: {
         nunito: ['Nunito'],
+        dmsan: ['DM+Sans'],
       },
     },
   },
