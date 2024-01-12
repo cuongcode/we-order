@@ -19,7 +19,7 @@ const Main = (props: IMainProps) => {
   const { currentUser } = useSelector(selector.user);
 
   return (
-    <div className="w-full p-2 font-dmsan text-gray-800 antialiased">
+    <div className="h-screen w-full bg-slate-900 p-2 font-dmsan text-white antialiased">
       {props.meta}
 
       <div className="flex h-12 items-center justify-between rounded-xl bg-gray-400 py-1 pl-2 pr-4">
