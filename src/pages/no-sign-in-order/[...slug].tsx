@@ -109,22 +109,19 @@ const NoSignInOrderPage = ({
       {!orderNamePool.includes(orderId) ? (
         <div>Page not found</div>
       ) : (
-        <div className="mt-10 flex min-h-0 w-full flex-1 flex-col items-center gap-10 2xl:flex-row 2xl:items-start 2xl:gap-5">
+        <div className="mt-10 flex w-full flex-1 flex-col items-center gap-10 2xl:flex-row 2xl:items-start 2xl:gap-5">
           <div className="flex w-full max-w-4xl flex-col gap-10 2xl:w-1/2">
             <ShopOwnerProfile />
-
             <SharedLink />
-
             <Table dishes={dishes} />
-
             <CalculateTotal />
           </div>
-          <div className="flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-3 2xl:w-1/2">
+          <div className="flex w-full max-w-4xl flex-1 flex-col gap-5 2xl:w-1/2">
             <MenusDropdown />
             <iframe
               title="menu-frame"
               src={noSignInOrder.selectedMenuLink}
-              className="h-screen w-full rounded-xl border-2 p-5"
+              className="h-screen w-full rounded-2xl"
             />
           </div>
         </div>
