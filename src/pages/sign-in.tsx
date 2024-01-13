@@ -1,58 +1,61 @@
-import { signInWithPopup } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
 import router from 'next/router';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast';
 
 import { Button, Text } from '@/components/base';
-import { auth, db, provider } from '@/firebase';
 import { Icons } from '@/images';
 import { Meta } from '@/layouts/Meta';
-import { UserActions } from '@/redux';
 import { Main } from '@/templates/Main';
-import type { User } from '@/types';
 
 const SignIn = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const _onSignIn = async () => {
-    const result = await signInWithPopup(auth, provider);
-    const { user } = result;
-    const docRef = doc(db, 'users', user.uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      const firestoreUser: User = {
-        uid: docSnap.data()?.uid,
-        nickname: docSnap.data()?.nickname,
-        momo: docSnap.data()?.momo,
-        bank1Name: docSnap.data()?.bank1Name,
-        bank1Number: docSnap.data()?.bank1Number,
-        bank2Name: docSnap.data()?.bank2Name,
-        bank2Number: docSnap.data()?.bank2Number,
-        menus: docSnap.data()?.menus,
-        avatar: docSnap.data()?.avatar,
-        momoQR: docSnap.data()?.momoQR,
-        bankQR: docSnap.data()?.bankQR,
-      };
-      dispatch(UserActions.setCurrentUser(firestoreUser));
-    } else {
-      const newUser: User = {
-        uid: user.uid,
-        nickname: user.displayName,
-        momo: '',
-        bank1Name: '',
-        bank1Number: '',
-        bank2Name: '',
-        bank2Number: '',
-        menus: [],
-        avatar: '',
-        momoQR: '',
-        bankQR: '',
-      };
-      await setDoc(docRef, newUser);
-      dispatch(UserActions.setCurrentUser(newUser));
-    }
-    router.push('/create-order/');
+  // const _onSignIn = async () => {
+  //   const result = await signInWithPopup(auth, provider);
+  //   const { user } = result;
+  //   const docRef = doc(db, 'users', user.uid);
+  //   const docSnap = await getDoc(docRef);
+  //   if (docSnap.exists()) {
+  //     const firestoreUser: User = {
+  //       uid: docSnap.data()?.uid,
+  //       nickname: docSnap.data()?.nickname,
+  //       momo: docSnap.data()?.momo,
+  //       bank1Name: docSnap.data()?.bank1Name,
+  //       bank1Number: docSnap.data()?.bank1Number,
+  //       bank2Name: docSnap.data()?.bank2Name,
+  //       bank2Number: docSnap.data()?.bank2Number,
+  //       menus: docSnap.data()?.menus,
+  //       avatar: docSnap.data()?.avatar,
+  //       momoQR: docSnap.data()?.momoQR,
+  //       bankQR: docSnap.data()?.bankQR,
+  //     };
+  //     dispatch(UserActions.setCurrentUser(firestoreUser));
+  //   } else {
+  //     const newUser: User = {
+  //       uid: user.uid,
+  //       nickname: user.displayName,
+  //       momo: '',
+  //       bank1Name: '',
+  //       bank1Number: '',
+  //       bank2Name: '',
+  //       bank2Number: '',
+  //       menus: [],
+  //       avatar: '',
+  //       momoQR: '',
+  //       bankQR: '',
+  //     };
+  //     await setDoc(docRef, newUser);
+  //     dispatch(UserActions.setCurrentUser(newUser));
+  //   }
+  //   router.push('/create-order/');
+  // };
+
+  const _onComingSoom = () => {
+    toast.success('Feature coming soon', {
+      style: {
+        textAlign: 'center',
+      },
+    });
   };
 
   const _onNoSignInOrder = () => {
@@ -70,7 +73,7 @@ const SignIn = () => {
         />
         <div className="mt-6 flex flex-col items-center justify-center gap-3 self-stretch">
           <Button
-            onClick={_onSignIn}
+            onClick={_onComingSoom}
             className="flex items-center justify-center gap-2 self-stretch bg-slate-800"
           >
             <img
@@ -87,6 +90,7 @@ const SignIn = () => {
             <Text preset="p2" text="Sign in as anonymous" />
           </Button>
         </div>
+        <Toaster />
       </div>
     </Main>
   );
