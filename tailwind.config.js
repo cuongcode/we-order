@@ -16,6 +16,15 @@ module.exports = {
     },
     extend: {
       colors: {
+        main: {
+          bg: '#1a2240',
+          cbg: '#0e152f',
+          purple: '#7551FF',
+        },
+        primary: {
+          800: '#1a2240',
+          900: '#0e152f',
+        },
         gray: {
           100: '#f7fafc',
           200: '#edf2f7',

@@ -34,8 +34,8 @@ export const TableAddRowButton = () => {
   return (
     <button
       className={clsx(
-        'w-full rounded-lg px-2 py-1 drop-shadow-sm hover:drop-shadow-md',
-        noSignInOrder.isClosed ? 'bg-gray-400' : 'bg-slate-900',
+        'w-20 self-center rounded-lg bg-main-purple px-2 py-1 drop-shadow-sm hover:drop-shadow-md',
+        noSignInOrder.isClosed ? 'opacity-60' : '',
       )}
       type="button"
       onClick={_addRow}

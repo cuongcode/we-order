@@ -47,8 +47,8 @@ export const Table = ({ dishes }: { dishes: Dish[] }) => {
   return (
     <div
       className={clsx(
-        'flex flex-col gap-2 rounded-xl px-4 py-3',
-        noSignInOrder.isClosed ? 'bg-gray-400' : 'bg-slate-800',
+        'flex flex-col gap-2 rounded-2xl px-8 py-5',
+        noSignInOrder.isClosed ? 'bg-primary-900' : 'bg-main-bg',
       )}
     >
       <div className="hidden w-full md:block">
@@ -92,7 +92,7 @@ const TableHeader = () => {
   };
 
   return (
-    <div className="flex w-full items-center gap-1 text-xs font-semibold">
+    <div className="mb-2 flex w-full items-center gap-1 border-b border-b-gray-800 pb-2 text-xs font-semibold">
       <div className="w-3" />
       <div className="w-14">Name</div>
       <div className="flex grow items-center gap-2">
