@@ -144,7 +144,7 @@ const CreateAnonymousOrderPage = () => {
             </div>
             <Button
               text="Create Order Page"
-              className="self-center"
+              className="self-stretch"
               onClick={_onCreateNoSignInOrder}
             />
           </div>
