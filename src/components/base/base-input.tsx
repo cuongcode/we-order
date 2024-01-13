@@ -2,6 +2,8 @@ import clsx from 'clsx';
 import type { FC, ReactNode } from 'react';
 import React from 'react';
 
+import { Text } from '@/components/base/text';
+
 interface BaseInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   value?: string;
   placeholder?: string;
@@ -46,7 +48,9 @@ export const BaseInput: FC<BaseInputProps> = (props) => {
           {...rest}
         />
       </div>
-      <div className="absolute">{errorText}</div>
+      <Text className="absolute" preset="error">
+        {errorText}
+      </Text>
     </div>
   );
 };
