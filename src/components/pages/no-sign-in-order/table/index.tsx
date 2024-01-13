@@ -48,7 +48,7 @@ export const Table = ({ dishes }: { dishes: Dish[] }) => {
     <div
       className={clsx(
         'flex flex-col gap-2 rounded-2xl px-8 py-5',
-        noSignInOrder.isClosed ? 'bg-primary-900' : 'bg-main-bg',
+        noSignInOrder.isClosed ? 'bg-main-cbg' : 'bg-main-bg',
       )}
     >
       <div className="hidden w-full md:block">
