@@ -10,6 +10,7 @@ import {
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { Button } from '@/components/base';
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { selector } from '@/redux';
@@ -49,24 +50,25 @@ export const DeleteRowButton = ({ row }: { row: DrinkTableRow }) => {
 
   return (
     <div ref={deleteRowButtonRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setIsDropdown(true)}
-        className="rounded-md bg-main-cbg p-1 hover:bg-gray-500"
-      >
+      <button type="button" onClick={() => setIsDropdown(true)} className="p-1">
         <TrashIcon className="h-3 w-3" />
       </button>
       {isDropdown ? (
-        <div className="absolute -left-7 top-6 z-10 flex gap-1 rounded-md bg-white p-1">
-          <button className="rounded-md bg-gray-200 p-1" onClick={_deleteRow}>
+        <div className="absolute -left-7 top-6 z-10 flex gap-1 bg-main-bbg p-1">
+          <Button
+            preset="base"
+            className="bg-green-700 p-1"
+            onClick={_deleteRow}
+          >
             <CheckIcon className="h-3 w-3" />
-          </button>
-          <button
-            className="rounded-md bg-gray-200 p-1"
+          </Button>
+          <Button
+            preset="base"
+            className="bg-main-purple p-1"
             onClick={() => setIsDropdown(false)}
           >
             <XMarkIcon className="h-3 w-3" />
-          </button>
+          </Button>
         </div>
       ) : null}
     </div>
