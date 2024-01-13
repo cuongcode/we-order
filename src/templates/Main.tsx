@@ -83,24 +83,26 @@ const Navbar = () => {
     router.push('/create-order/');
   };
   return (
-    <div className="flex h-10 w-fit items-center gap-4 self-end rounded-full bg-slate-800 p-2">
-      {/* <BaseInput className="rounded-full" /> */}
-      {currentUser ? (
-        <>
-          <Text preset="p2" text={`Welcome ${currentUser?.nickname}`} />
-          <Button preset="base" onClick={_onCreateOrder}>
-            <PlusCircleIcon className="h-5 w-5 text-white" />
+    <div className="flex h-10 items-center justify-between">
+      <Text preset="h4" className="font-bold" text="We Order" />
+      <div className="flex h-full w-fit items-center gap-4 self-end rounded-full bg-slate-800 p-2">
+        {currentUser ? (
+          <>
+            <Text preset="p2" text={`Welcome ${currentUser?.nickname}`} />
+            <Button preset="base" onClick={_onCreateOrder}>
+              <PlusCircleIcon className="h-5 w-5 text-white" />
+            </Button>
+            <SignOutDropdown />
+          </>
+        ) : (
+          <Button preset="base" onClick={_onSignIn}>
+            <ArrowLeftCircleIcon className="h-5 w-5 text-white" />
           </Button>
-          <SignOutDropdown />
-        </>
-      ) : (
-        <Button preset="base" onClick={_onSignIn}>
-          <ArrowLeftCircleIcon className="h-5 w-5 text-white" />
+        )}
+        <Button preset="image" onClick={_onHome}>
+          <img className="h-full" src={LogoImages.logo.src} alt="logo" />
         </Button>
-      )}
-      <Button preset="image" onClick={_onHome}>
-        <img className="h-full" src={LogoImages.logo.src} alt="logo" />
-      </Button>
+      </div>
     </div>
   );
 };
