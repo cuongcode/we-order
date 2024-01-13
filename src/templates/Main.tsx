@@ -112,7 +112,7 @@ const Footer = () => {
     <div className="mt-10 flex self-center">
       <Text
         preset="p3"
-        text="© 2024 We Oder. Made with love by Cuong Nguyen helped by Long Tran."
+        text="© 2024 We Oder. Made with love by Cuong Nguyen."
       />
     </div>
   );

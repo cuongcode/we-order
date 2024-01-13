@@ -18,7 +18,9 @@ const CreateAnonymousOrderPage = () => {
   const [hasSpecialChars, setHasSpecialChars] = useState(false);
   const [nameIsTaken, setNameIsTaken] = useState(false);
   const [errors, setErrors] = useState<any>([]);
-  const [orderName, setOrderName] = useState('');
+  const [orderName, setOrderName] = useState(
+    `od-${Math.round(Math.random() * 1000000)}`,
+  );
   const [password, setPassword] = useState('');
   const [orderNamePool, setorderNamePool] = useState<any>([]);
 
