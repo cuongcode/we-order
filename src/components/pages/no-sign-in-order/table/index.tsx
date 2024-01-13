@@ -237,13 +237,13 @@ const TableRow = ({
         {showAutoComplete ? (
           <div
             ref={autoCompleteRef}
-            className="absolute -right-80 top-0 z-10 flex max-h-72 flex-col divide-y divide-gray-400 overflow-x-auto rounded-lg bg-white p-1 shadow-lg"
+            className="absolute -right-80 top-0 z-10 flex max-h-72 flex-col divide-y divide-slate-800 overflow-x-auto rounded-lg bg-slate-900 p-1 shadow-lg"
           >
             {autoCompleteList?.map((dish: Dish) => {
               return (
                 <button
                   key={dish.id}
-                  className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-gray-400"
+                  className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-gray-800"
                   onClick={() => _selectDrink(dish)}
                 >
                   <img
