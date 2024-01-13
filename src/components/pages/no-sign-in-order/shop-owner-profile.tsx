@@ -17,8 +17,8 @@ import { EditProfileButton } from './edit-profile-button';
 export const ShopOwnerProfile = () => {
   const { noSignInOrder } = useSelector(selector.order);
   return (
-    <div className="relative flex w-full flex-col items-center gap-6 rounded-3xl bg-slate-800 p-3">
-      <div className="flex h-28 w-full items-center justify-center rounded-2xl bg-slate-900">
+    <div className="relative flex w-full flex-col items-center gap-6 rounded-3xl bg-main-bg p-3">
+      <div className="flex h-28 w-full items-center justify-center rounded-2xl bg-main-cbg">
         <div className="relative h-24 w-24">
           <ShopOwnerImage />
         </div>
@@ -54,10 +54,10 @@ const ShopOwnerImage = () => {
   };
 
   return (
-    <div className="absolute top-14 rounded-full bg-slate-900 p-[5px]">
+    <div className="absolute top-14 rounded-full bg-main-cbg p-[5px]">
       <button
         onClick={_onOpen}
-        className="flex h-24 w-24 origin-center rounded-full bg-slate-800"
+        className="flex h-24 w-24 origin-center rounded-full bg-main-bg"
       >
         <img
           className="h-full w-full rounded-full object-cover"

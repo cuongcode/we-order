@@ -26,7 +26,7 @@ export const MenusDropdown = () => {
       {isDropdown ? (
         <div
           ref={menuDropdownRef}
-          className="absolute top-12 flex w-full flex-col gap-2 rounded-lg bg-slate-800 p-2"
+          className="absolute top-12 flex w-full flex-col gap-2 rounded-lg bg-main-bg p-2"
         >
           <AddMenuForm />
           <Menus noSignInOrder={noSignInOrder} />
@@ -62,7 +62,7 @@ const Menus = ({ noSignInOrder }: { noSignInOrder: NoSignInOrder }) => {
     <div className="flex flex-wrap gap-2">
       {menus?.map((menu: Menu) => (
         <button
-          className="rounded-lg bg-slate-900 px-3 py-1 hover:bg-slate-800"
+          className="rounded-lg bg-main-cbg px-3 py-1 hover:bg-main-bg"
           type="button"
           key={menu.id}
           onClick={() => _selectMenu(menu.name, menu.link)}
@@ -94,7 +94,7 @@ const AddMenuForm = () => {
     <div className="flex items-center gap-2">
       <div>Name:</div>
       <input
-        className="w-48 rounded-md bg-slate-900 px-1"
+        className="w-48 rounded-md bg-main-cbg px-1"
         type="text"
         placeholder="menu name"
         value={name}
@@ -102,7 +102,7 @@ const AddMenuForm = () => {
       />
       <div>Link:</div>
       <input
-        className="w-48 rounded-md bg-slate-900 px-1"
+        className="w-48 rounded-md bg-main-cbg px-1"
         type="text"
         placeholder="paste link here"
         value={link}
@@ -110,7 +110,7 @@ const AddMenuForm = () => {
       />
       <button
         type="button"
-        className="rounded-md bg-slate-900 p-1 hover:bg-gray-400"
+        className="rounded-md bg-main-cbg p-1 hover:bg-gray-400"
         onClick={_addMenu}
       >
         <PlusIcon className="h-4 w-4" />

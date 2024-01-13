@@ -13,13 +13,13 @@ export const RowInput: FC<RowInputProps> = (props) => {
     <div
       className={clsx(
         'rounded-md p-1',
-        isTick ? 'bg-gray-400' : 'bg-slate-900',
+        isTick ? 'opacity-60' : 'bg-main-cbg',
         className,
       )}
     >
       <input
         className={clsx(
-          'w-full bg-slate-900 font-semibold',
+          'w-full bg-main-cbg font-semibold',
           isTick ? 'bg-gray-400' : '',
         )}
         {...rest}

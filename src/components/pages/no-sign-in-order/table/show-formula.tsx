@@ -18,7 +18,7 @@ export const ShowFormula = ({
       onMouseOut={() => setIsHover(false)}
       onBlur={() => setIsHover(false)}
     >
-      <div className="w-16 rounded-sm bg-slate-800 p-1 drop-shadow-md">
+      <div className="w-16 rounded-sm bg-main-bg p-1 drop-shadow-md">
         <div>{transfer?.toLocaleString('en-US')}</div>
       </div>
       {isHover ? children : null}

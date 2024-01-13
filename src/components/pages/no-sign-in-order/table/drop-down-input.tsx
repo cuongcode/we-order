@@ -89,7 +89,7 @@ const OptionsDropdown = ({
       {isDropdown && showOptions.length !== 0 ? (
         <div
           className={clsx({
-            'absolute flex flex-col items-center gap-1 bg-slate-900 p-1 rounded-lg':
+            'absolute flex flex-col items-center gap-1 bg-main-cbg p-1 rounded-lg':
               true,
             '-top-1 left-10': field === 'sugar' || field === 'ice',
             '-top-1 left-7': field === 'size',
@@ -101,7 +101,7 @@ const OptionsDropdown = ({
               key={option}
               type="button"
               className={clsx({
-                'bg-slate-800 rounded-md text-center hover:bg-gray-500': true,
+                'bg-main-bg rounded-md text-center hover:bg-gray-500': true,
                 'w-9 h-6': field === 'sugar' || field === 'ice',
                 'w-6 h-6': field === 'size',
                 'h-6 w-14': field === 'offerBy',

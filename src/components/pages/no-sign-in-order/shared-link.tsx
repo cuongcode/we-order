@@ -20,7 +20,7 @@ export const SharedLink = () => {
   return (
     <div className="flex flex-col gap-2">
       <Text preset="h4" text="Share this link :" />
-      <div className="flex w-fit items-center gap-4 rounded-xl border border-slate-800 px-6 py-4">
+      <div className="flex w-fit items-center gap-4 rounded-xl border border-main-bg px-6 py-4">
         <Text
           preset="p2"
           className="font-light"

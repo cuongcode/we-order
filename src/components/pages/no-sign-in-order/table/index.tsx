@@ -237,7 +237,7 @@ const TableRow = ({
         {showAutoComplete ? (
           <div
             ref={autoCompleteRef}
-            className="absolute -right-80 top-0 z-10 flex max-h-72 flex-col divide-y divide-slate-800 overflow-x-auto rounded-lg bg-slate-900 p-1 shadow-lg"
+            className="absolute -right-80 top-0 z-10 flex max-h-72 flex-col divide-y divide-main-bg overflow-x-auto rounded-lg bg-main-cbg p-1 shadow-lg"
           >
             {autoCompleteList?.map((dish: Dish) => {
               return (
@@ -310,11 +310,11 @@ const TableRow = ({
       <div className="flex w-24 items-center gap-1">
         <ShowFormula transfer={transfer}>
           {row.offerBy !== '--' ? (
-            <div className="absolute -top-16 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-slate-900 p-2">
+            <div className="absolute -top-16 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-main-cbg p-2">
               <OfferedByFormula row={row} />
             </div>
           ) : (
-            <div className="absolute -top-28 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-slate-900 p-2">
+            <div className="absolute -top-28 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-main-cbg p-2">
               <TransferFormula row={row} transfer={transfer} />
               <BonusFormula />
             </div>

@@ -52,7 +52,7 @@ export const DeleteRowButton = ({ row }: { row: DrinkTableRow }) => {
       <button
         type="button"
         onClick={() => setIsDropdown(true)}
-        className="rounded-md bg-slate-900 p-1 hover:bg-gray-500"
+        className="rounded-md bg-main-cbg p-1 hover:bg-gray-500"
       >
         <TrashIcon className="h-3 w-3" />
       </button>

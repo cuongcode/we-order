@@ -74,7 +74,7 @@ const SignIn = () => {
         <div className="mt-6 flex flex-col items-center justify-center gap-3 self-stretch">
           <Button
             onClick={_onComingSoom}
-            className="flex items-center justify-center gap-2 self-stretch bg-slate-800"
+            className="flex items-center justify-center gap-2 self-stretch bg-main-bg"
           >
             <img
               className="w-5"

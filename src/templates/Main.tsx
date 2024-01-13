@@ -21,7 +21,7 @@ type IMainProps = {
 
 const Main = (props: IMainProps) => {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-slate-900 p-2 font-dmsan text-white antialiased">
+    <div className="flex min-h-screen w-full flex-col bg-main-cbg p-2 font-dmsan text-white antialiased">
       {props.meta}
 
       <Navbar />
@@ -87,7 +87,7 @@ const Navbar = () => {
   return (
     <div className="flex h-10 items-center justify-between">
       <Text preset="h4" className="font-bold" text="We Order" />
-      <div className="flex h-full w-fit items-center gap-4 self-end rounded-full bg-slate-800 p-2">
+      <div className="flex h-full w-fit items-center gap-4 self-end rounded-full bg-main-bg p-2">
         {currentUser ? (
           <>
             <Text preset="p2" text={`Welcome ${currentUser?.nickname}`} />
