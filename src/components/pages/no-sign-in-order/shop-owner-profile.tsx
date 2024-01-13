@@ -8,10 +8,12 @@ import { useCheckClickOutside } from '@/hooks';
 import { Icons } from '@/images';
 import { selector } from '@/redux';
 
+import { EditProfileButton } from './edit-profile-button';
+
 export const ShopOwnerProfile = () => {
   const { noSignInOrder } = useSelector(selector.order);
   return (
-    <div className="relative flex h-full w-full flex-col items-center gap-6 rounded-3xl bg-slate-800 p-3">
+    <div className="relative flex w-full flex-col items-center gap-6 rounded-3xl bg-slate-800 p-3">
       <div className="flex h-28 w-full items-center justify-center rounded-2xl bg-slate-900">
         <div className="relative h-24 w-24">
           <ShopOwnerImage />
@@ -30,6 +32,7 @@ export const ShopOwnerProfile = () => {
         />
       </div>
       <TransferInfo className="mb-3 self-center" />
+      <EditProfileButton className="absolute right-5 top-5" />
       {/* <CloseOrderButton /> */}
     </div>
   );
