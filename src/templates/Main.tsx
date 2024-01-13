@@ -21,7 +21,7 @@ type IMainProps = {
 
 const Main = (props: IMainProps) => {
   return (
-    <div className="flex h-screen w-full flex-col bg-slate-900 p-2 font-dmsan text-white antialiased">
+    <div className="flex min-h-screen w-full flex-col bg-slate-900 p-2 font-dmsan text-white antialiased">
       {props.meta}
 
       <Navbar />
@@ -109,7 +109,7 @@ const Navbar = () => {
 
 const Footer = () => {
   return (
-    <div className="flex self-center">
+    <div className="mt-10 flex self-center">
       <Text
         preset="p3"
         text="© 2024 We Oder. Made with love by Cuong Nguyen helped by Long Tran."
