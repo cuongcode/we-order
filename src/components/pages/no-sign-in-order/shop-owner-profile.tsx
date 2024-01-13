@@ -12,10 +12,12 @@ export const ShopOwnerProfile = () => {
   const { noSignInOrder } = useSelector(selector.order);
   return (
     <div className="relative flex h-full w-full flex-col items-center gap-6 rounded-3xl bg-slate-800 p-3">
-      <div className="relative h-28 w-full rounded-2xl bg-slate-900">
-        <ShopOwnerImage />
+      <div className="flex h-28 w-full items-center justify-center rounded-2xl bg-slate-900">
+        <div className="relative h-24 w-24">
+          <ShopOwnerImage />
+        </div>
       </div>
-      <div className="flex flex-col">
+      <div className="mt-11 flex flex-col">
         <Text
           preset="h3b"
           text={noSignInOrder?.nickname}
@@ -45,10 +47,10 @@ const ShopOwnerImage = () => {
   };
 
   return (
-    <div className="absolute  w-fit rounded-full bg-slate-800 p-1">
+    <div className="absolute top-14 rounded-full bg-slate-900 p-[5px]">
       <button
         onClick={_onOpen}
-        className="flex h-20 w-20 rounded-full bg-gray-200"
+        className="flex h-24 w-24 origin-center rounded-full bg-slate-800"
       >
         <img
           className="h-full w-full rounded-full object-cover"
