@@ -19,7 +19,7 @@ interface DropDownInputProps {
 export const DropDownInput: FC<DropDownInputProps> = (props) => {
   const { className, isTick, row, options, field } = props;
   return (
-    <div className={clsx('rounded-md', isTick ? 'bg-gray-400' : '', className)}>
+    <div className={clsx('rounded-md', isTick ? 'bg-main-bbg' : '', className)}>
       <OptionsDropdown row={row} options={options} field={field} />
     </div>
   );
