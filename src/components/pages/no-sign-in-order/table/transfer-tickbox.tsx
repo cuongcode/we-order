@@ -1,4 +1,5 @@
 import { CheckIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 
@@ -23,9 +24,15 @@ export const TransferTickBox = ({ row }: { row: DrinkTableRow }) => {
   };
 
   return (
-    <button className="h-5 w-5 rounded-md bg-white" onClick={_onTick}>
+    <button
+      className={clsx(
+        'h-5 w-5 border',
+        row.isTick ? 'border-main-purple bg-main-purple' : 'bg-main-bg',
+      )}
+      onClick={_onTick}
+    >
       {row.isTick ? (
-        <CheckIcon className="m-auto h-4 w-4 text-green-600" />
+        <CheckIcon className="m-auto h-4 w-4 text-main-cbg" />
       ) : null}
     </button>
   );
