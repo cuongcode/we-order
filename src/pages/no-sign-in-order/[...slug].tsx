@@ -112,7 +112,7 @@ const NoSignInOrderPage = ({
         <div className="flex min-h-0 w-full flex-1 flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
           <div className="mt-10 flex w-full max-w-4xl flex-col 2xl:w-1/2">
             <div className="mb-10 flex w-full gap-4 text-sm">
-              <div className="w-full shrink-0">
+              <div className="w-full">
                 <ShopOwnerProfile />
               </div>
               {/* <div className="h-40 w-56 shrink-0">
