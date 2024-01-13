@@ -3,7 +3,7 @@ import Router from 'next/router';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 
-import { BaseInput, Button } from '@/components/base';
+import { BaseInput, Button, Text } from '@/components/base';
 import { db } from '@/firebase';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
@@ -103,51 +103,57 @@ const CreateAnonymousOrderPage = () => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="m-auto flex max-w-5xl flex-col font-semibold">
-        <div className="flex w-full flex-col gap-4 text-sm">
-          <div className="m-auto flex flex-col gap-10">
-            <div className="flex flex-col gap-2">
-              <Input
-                title="Pick a name"
-                value={orderName}
-                placeholder="john-cena"
-                onChange={_onOrderNameChange}
-                prefix="https://we-order-omega.vercel.app/no-sign-in-order/"
-                errorText={
-                  <>
-                    {errors.includes('noNameError') ? (
-                      <div className="text-red-400">Please input a name</div>
-                    ) : null}
-                    {nameIsTaken && orderName !== '' ? (
-                      <div className="text-red-400">Name is taken</div>
-                    ) : null}
-                    {hasSpecialChars ? (
-                      <div className="text-red-400">
-                        Name should only includes A-Z, a-z, 0-9 or &#39;-&#39;
-                        and no space
-                      </div>
-                    ) : null}
-                  </>
-                }
-              />
-              <Input
-                title="Enter a password"
-                value={password}
-                placeholder="example: 123456"
-                onChange={_onOrderPasswordChange}
-                errorText={
-                  errors.includes('noPasswordError') ? (
-                    <div className="text-red-400">Please input a password</div>
-                  ) : null
-                }
-              />
-            </div>
-            <Button
-              text="Create Order Page"
-              className="self-stretch"
-              onClick={_onCreateNoSignInOrder}
+      <div className="m-auto flex max-w-xl flex-col">
+        <div className="flex flex-col gap-12">
+          <div className="flex flex-col ">
+            <Text preset="h1b" text="Create Order" />
+            <Text
+              preset="p2"
+              className="font-light"
+              text="Pick a name and password to create order"
             />
           </div>
+          <div className="flex flex-col gap-6">
+            <Input
+              title="Pick a name"
+              value={orderName}
+              placeholder="john-cena"
+              onChange={_onOrderNameChange}
+              prefix="https://we-order-omega.vercel.app/no-sign-in-order/"
+              errorText={
+                <>
+                  {errors.includes('noNameError') ? (
+                    <div className="text-red-400">Please input a name</div>
+                  ) : null}
+                  {nameIsTaken && orderName !== '' ? (
+                    <div className="text-red-400">Name is taken</div>
+                  ) : null}
+                  {hasSpecialChars ? (
+                    <div className="text-red-400">
+                      Name should only includes A-Z, a-z, 0-9 or &#39;-&#39; and
+                      no space
+                    </div>
+                  ) : null}
+                </>
+              }
+            />
+            <Input
+              title="Enter a password"
+              value={password}
+              placeholder="example: 123456"
+              onChange={_onOrderPasswordChange}
+              errorText={
+                errors.includes('noPasswordError') ? (
+                  <div className="text-red-400">Please input a password</div>
+                ) : null
+              }
+            />
+          </div>
+          <Button
+            text="Create Order Page"
+            className="self-stretch"
+            onClick={_onCreateNoSignInOrder}
+          />
         </div>
       </div>
     </Main>
@@ -172,20 +178,18 @@ const Input = ({
   placeholder?: string;
 }) => {
   return (
-    <div className="mt-6 flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <div className="flex">
-        <div className="text-base font-medium">{title}</div>
-        <div className="text-violet-500">*</div>
+        <Text text={title} preset="p1" />
+        <Text text="*" className="text-violet-500" preset="p1" />
       </div>
-      <div className="flex items-center gap-2">
-        <BaseInput
-          placeholder={placeholder}
-          errorText={errorText}
-          value={value}
-          onChange={onChange}
-          prefix={prefix}
-        />
-      </div>
+      <BaseInput
+        placeholder={placeholder}
+        errorText={errorText}
+        value={value}
+        onChange={onChange}
+        prefix={prefix}
+      />
     </div>
   );
 };

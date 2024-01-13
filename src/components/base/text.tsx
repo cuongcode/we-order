@@ -20,6 +20,7 @@ export const Text: FC<TextProps> = (props) => {
 export type TextPresets = keyof typeof presetClassName;
 const presetClassName = {
   h1: 'text-[34px]',
+  h1b: 'text-[34px] font-semibold',
   h1p: 'text-[34px] font-medium',
   h2: 'text-[24px]',
   h2p: 'text-[24px] font-semibold',
