@@ -26,7 +26,7 @@ const Main = (props: IMainProps) => {
 
       <Navbar />
 
-      <main className="flex h-full flex-col">{props.children}</main>
+      <main className="flex min-h-0 flex-1 flex-col">{props.children}</main>
 
       <Footer />
     </div>

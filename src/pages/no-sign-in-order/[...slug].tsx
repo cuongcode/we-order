@@ -109,7 +109,7 @@ const NoSignInOrderPage = ({
       {!orderNamePool.includes(orderId) ? (
         <div>Page not found</div>
       ) : (
-        <div className="flex h-fit w-full flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
+        <div className="flex min-h-0 w-full flex-1 flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
           <div className="flex w-full max-w-4xl flex-col 2xl:w-1/2">
             <div className="mb-10 flex w-full gap-4 text-sm">
               <div className="w-full shrink-0">
@@ -135,7 +135,7 @@ const NoSignInOrderPage = ({
               <CalculateTotal />
             </div>
           </div>
-          <div className="flex w-full max-w-4xl flex-col gap-3 2xl:w-1/2">
+          <div className="flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-3 2xl:w-1/2">
             <MenusDropdown />
             <iframe
               title="menu-frame"
