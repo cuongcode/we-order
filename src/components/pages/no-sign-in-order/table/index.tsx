@@ -18,6 +18,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { debounce, range } from 'lodash';
+import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -26,7 +27,7 @@ import { useCheckClickOutside } from '@/hooks';
 import { RowsActions, selector } from '@/redux';
 import type { Dish, DrinkTableRow } from '@/types';
 
-import { OfferedByFormula, ShowFormula } from '../order';
+import { OfferedByFormula, ShowFormula } from '../../order';
 
 export const Table = ({ dishes }: { dishes: Dish[] }) => {
   const { noSignInOrder } = useSelector(selector.order);
@@ -54,11 +55,10 @@ export const Table = ({ dishes }: { dishes: Dish[] }) => {
 
   return (
     <div
-      className={clsx({
-        'flex flex-col gap-2 rounded-xl border-2 p-1': true,
-        'bg-gray-200': !noSignInOrder.isClosed,
-        'bg-gray-400': noSignInOrder.isClosed,
-      })}
+      className={clsx(
+        'flex flex-col gap-2 rounded-xl px-4 py-3',
+        noSignInOrder.isClosed ? 'bg-gray-400' : 'bg-slate-800',
+      )}
     >
       <div className="hidden w-full md:block">
         <TableHeader />
@@ -218,23 +218,21 @@ const TableRow = ({
   return (
     <div
       key={row.id}
-      className={clsx({
-        'flex w-full items-center gap-1 rounded-md text-xs': true,
-        'bg-gray-400': row.isTick,
-      })}
+      className={clsx(
+        'flex w-full items-center gap-1 rounded-md text-xs',
+        row.isTick ? 'bg-gray-400' : '',
+      )}
     >
       <div className="w-3">{rowIndex}</div>
-      <div
-        className={clsx({
-          'relative w-14 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
-            true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
+      {/* <div
+        className={clsx(
+          'relative w-14 rounded-md p-1',
+          row.isTick ? 'bg-gray-400' : 'bg-slate-900',
+        )}
       >
         <input
           className={clsx({
-            'w-full font-semibold': true,
+            'w-full font-semibold bg-slate-900': true,
             'bg-gray-400': row.isTick,
           })}
           type="text"
@@ -243,8 +241,14 @@ const TableRow = ({
           disabled={noSignInOrder.isClosed}
           onChange={_updateRow}
         />
-        <div className="absolute -right-2 top-4 " />
-      </div>
+      </div> */}
+      <RowInput
+        value={row.name}
+        disable={noSignInOrder.isClosed}
+        onChange={_updateRow}
+        isTick={row.isTick}
+        className="w-14"
+      />
       <div
         className={clsx({
           'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600 relative z-50':
@@ -388,6 +392,39 @@ const TableRow = ({
           <DeleteRowButton row={row} />
         )}
       </div>
+    </div>
+  );
+};
+
+interface RowInputProps {
+  className?: string;
+  value?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  isTick: boolean;
+  disable?: boolean;
+}
+
+const RowInput: FC<RowInputProps> = (props) => {
+  const { className, value, isTick, disable, onChange } = props;
+  return (
+    <div
+      className={clsx(
+        'rounded-md p-1',
+        isTick ? 'bg-gray-400' : 'bg-slate-900',
+        className,
+      )}
+    >
+      <input
+        className={clsx({
+          'w-full font-semibold bg-slate-900': true,
+          'bg-gray-400': isTick,
+        })}
+        type="text"
+        value={value}
+        name="name"
+        disabled={disable}
+        onChange={onChange}
+      />
     </div>
   );
 };
