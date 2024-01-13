@@ -27,6 +27,8 @@ const Main = (props: IMainProps) => {
       <Navbar />
 
       <main className="flex h-full flex-col">{props.children}</main>
+
+      <Footer />
     </div>
   );
 };
@@ -99,6 +101,17 @@ const Navbar = () => {
       <Button preset="image" onClick={_onHome}>
         <img className="h-full" src={LogoImages.logo.src} alt="logo" />
       </Button>
+    </div>
+  );
+};
+
+const Footer = () => {
+  return (
+    <div className="flex self-center">
+      <Text
+        preset="p3"
+        text="© 2024 We Oder. Made with love by Cuong Nguyen helped by Long Tran."
+      />
     </div>
   );
 };
