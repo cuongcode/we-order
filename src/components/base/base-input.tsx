@@ -29,12 +29,12 @@ export const BaseInput: FC<BaseInputProps> = (props) => {
     <div className="relative w-full">
       <div
         className={clsx(
-          'flex w-full items-center gap-2 overflow-hidden rounded-xl border border-main-bg bg-main-cbg',
+          'flex w-full items-center gap-2 overflow-hidden rounded-xl border border-main-bbg bg-main-cbg',
           className,
         )}
       >
         {prefix ? (
-          <div className="flex flex-1 items-center justify-center self-stretch bg-main-bg px-4 text-sm font-light">
+          <div className="flex flex-1 items-center justify-center self-stretch bg-main-bbg px-4 text-sm font-light">
             {prefix}
           </div>
         ) : null}
