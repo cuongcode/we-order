@@ -18,7 +18,6 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { debounce, range } from 'lodash';
-import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -28,6 +27,7 @@ import { RowsActions, selector } from '@/redux';
 import type { Dish, DrinkTableRow } from '@/types';
 
 import { OfferedByFormula, ShowFormula } from '../../order';
+import { RowInput } from './row-input';
 
 export const Table = ({ dishes }: { dishes: Dish[] }) => {
   const { noSignInOrder } = useSelector(selector.order);
@@ -244,32 +244,32 @@ const TableRow = ({
       </div> */}
       <RowInput
         value={row.name}
-        disable={noSignInOrder.isClosed}
+        disabled={noSignInOrder.isClosed}
         onChange={_updateRow}
         isTick={row.isTick}
         className="w-14"
       />
-      <div
+
+      <RowInput
+        value={row.name}
+        disabled={noSignInOrder.isClosed}
+        onChange={_updateRow}
+        isTick={row.isTick}
+        className="grow"
+      />
+      <RowInput
         className={clsx({
-          'grow rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600 relative z-50':
-            true,
-          'bg-white': !row.isTick,
+          'w-full': true,
           'bg-gray-400': row.isTick,
         })}
+        isTick={row.isTick}
+        placeholder="Type Here"
+        value={row.drink.toUpperCase()}
+        name="drink"
+        disabled={noSignInOrder.isClosed}
+        onChange={_updateRow}
+        onClick={_showAutoComplete}
       >
-        <input
-          className={clsx({
-            'w-full': true,
-            'bg-gray-400': row.isTick,
-          })}
-          type="text"
-          placeholder="Type Here"
-          value={row.drink.toUpperCase()}
-          name="drink"
-          disabled={noSignInOrder.isClosed}
-          onChange={_updateRow}
-          onClick={_showAutoComplete}
-        />
         {showAutoComplete ? (
           <div
             ref={autoCompleteRef}
@@ -294,7 +294,7 @@ const TableRow = ({
             })}
           </div>
         ) : null}
-      </div>
+      </RowInput>
       <div
         className={clsx({
           'w-32 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
@@ -392,39 +392,6 @@ const TableRow = ({
           <DeleteRowButton row={row} />
         )}
       </div>
-    </div>
-  );
-};
-
-interface RowInputProps {
-  className?: string;
-  value?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  isTick: boolean;
-  disable?: boolean;
-}
-
-const RowInput: FC<RowInputProps> = (props) => {
-  const { className, value, isTick, disable, onChange } = props;
-  return (
-    <div
-      className={clsx(
-        'rounded-md p-1',
-        isTick ? 'bg-gray-400' : 'bg-slate-900',
-        className,
-      )}
-    >
-      <input
-        className={clsx({
-          'w-full font-semibold bg-slate-900': true,
-          'bg-gray-400': isTick,
-        })}
-        type="text"
-        value={value}
-        name="name"
-        disabled={disable}
-        onChange={onChange}
-      />
     </div>
   );
 };
