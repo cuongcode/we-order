@@ -1,22 +1,6 @@
-import {
-  BarsArrowDownIcon,
-  CheckIcon,
-  NoSymbolIcon,
-  PlusIcon,
-  TrashIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline';
+import { BarsArrowDownIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  query as firestoreQuery,
-  serverTimestamp,
-  updateDoc,
-} from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { debounce, range } from 'lodash';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,8 +10,15 @@ import { useCheckClickOutside } from '@/hooks';
 import { RowsActions, selector } from '@/redux';
 import type { Dish, DrinkTableRow } from '@/types';
 
-import { OfferedByFormula, ShowFormula } from '../../order';
+import { OfferedByFormula } from '../../order';
+import { TableAddRowButton } from './add-row-button';
+import { BonusFormula } from './bonus-formula';
+import { DeleteRowButton } from './delete-row-button';
+import { DropDownInput } from './drop-down-input';
 import { RowInput } from './row-input';
+import { ShowFormula } from './show-formula';
+import { TransferFormula } from './transfer-formula';
+import { TransferTickBox } from './transfer-tickbox';
 
 export const Table = ({ dishes }: { dishes: Dish[] }) => {
   const { noSignInOrder } = useSelector(selector.order);
@@ -224,25 +215,8 @@ const TableRow = ({
       )}
     >
       <div className="w-3">{rowIndex}</div>
-      {/* <div
-        className={clsx(
-          'relative w-14 rounded-md p-1',
-          row.isTick ? 'bg-gray-400' : 'bg-slate-900',
-        )}
-      >
-        <input
-          className={clsx({
-            'w-full font-semibold bg-slate-900': true,
-            'bg-gray-400': row.isTick,
-          })}
-          type="text"
-          value={row.name}
-          name="name"
-          disabled={noSignInOrder.isClosed}
-          onChange={_updateRow}
-        />
-      </div> */}
       <RowInput
+        name="name"
         value={row.name}
         disabled={noSignInOrder.isClosed}
         onChange={_updateRow}
@@ -251,31 +225,21 @@ const TableRow = ({
       />
 
       <RowInput
-        value={row.name}
-        disabled={noSignInOrder.isClosed}
-        onChange={_updateRow}
-        isTick={row.isTick}
-        className="grow"
-      />
-      <RowInput
-        className={clsx({
-          'w-full': true,
-          'bg-gray-400': row.isTick,
-        })}
-        isTick={row.isTick}
-        placeholder="Type Here"
-        value={row.drink.toUpperCase()}
         name="drink"
+        value={row.drink.toUpperCase()}
         disabled={noSignInOrder.isClosed}
         onChange={_updateRow}
         onClick={_showAutoComplete}
+        isTick={row.isTick}
+        className="relative z-50 grow"
+        placeholder="Type Here"
       >
         {showAutoComplete ? (
           <div
             ref={autoCompleteRef}
             className="absolute -right-80 top-0 z-10 flex max-h-72 flex-col divide-y divide-gray-400 overflow-x-auto rounded-lg bg-white p-1 shadow-lg"
           >
-            {autoCompleteList.map((dish: Dish) => {
+            {autoCompleteList?.map((dish: Dish) => {
               return (
                 <button
                   key={dish.id}
@@ -295,433 +259,73 @@ const TableRow = ({
           </div>
         ) : null}
       </RowInput>
-      <div
-        className={clsx({
-          'w-32 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
-            true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
-      >
-        <input
-          className={clsx({
-            'w-full': true,
-            'bg-gray-400': row.isTick,
-          })}
-          type="text"
-          placeholder="No topping"
-          value={row.topping}
-          name="topping"
-          disabled={noSignInOrder.isClosed}
-          onChange={_updateRow}
-        />
-      </div>
-      <div
-        className={clsx({
-          'w-14 rounded-md border-2 p-1 drop-shadow-md hover:border-gray-600':
-            true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
-      >
-        <input
-          className={clsx({
-            'w-full': true,
-            'bg-gray-400': row.isTick,
-          })}
-          type="number"
-          value={row.price !== 0 ? row.price : ''}
-          name="price"
-          disabled={noSignInOrder.isClosed}
-          onChange={_updateRow}
-        />
-      </div>
-      <div
-        className={clsx({
-          'z-40 w-8 rounded-md border-2 p-1 drop-shadow-md': true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
-      >
-        <OptionsDropdown row={row} options={SIZE_OPTIONS} field="size" />
-      </div>
-      <div
-        className={clsx({
-          'z-30 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
-      >
-        <OptionsDropdown row={row} options={PERCENTAGE_OPTIONS} field="sugar" />
-      </div>
-      <div
-        className={clsx({
-          'z-20 w-11 rounded-md border-2 p-1 drop-shadow-md': true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
-      >
-        <OptionsDropdown row={row} options={PERCENTAGE_OPTIONS} field="ice" />
-      </div>
 
-      <div
-        className={clsx({
-          'z-10 w-16 rounded-md border-2 p-1 drop-shadow-md': true,
-          'bg-white': !row.isTick,
-          'bg-gray-400': row.isTick,
-        })}
-      >
-        <OptionsDropdown row={row} options={offerByOptions} field="offerBy" />
-      </div>
+      <RowInput
+        className="w-32"
+        placeholder="No topping"
+        value={row.topping}
+        name="topping"
+        disabled={noSignInOrder.isClosed}
+        onChange={_updateRow}
+        isTick={row.isTick}
+      />
+
+      <RowInput
+        className="w-14"
+        type="number"
+        value={row.price !== 0 ? row.price : ''}
+        name="price"
+        disabled={noSignInOrder.isClosed}
+        onChange={_updateRow}
+        isTick={row.isTick}
+      />
+      <DropDownInput
+        className="z-40 w-8"
+        isTick={row.isTick}
+        row={row}
+        field="size"
+        options={SIZE_OPTIONS}
+      />
+      <DropDownInput
+        className="z-30 w-11"
+        isTick={row.isTick}
+        row={row}
+        field="sugar"
+        options={PERCENTAGE_OPTIONS}
+      />
+      <DropDownInput
+        className="z-20 w-11"
+        isTick={row.isTick}
+        row={row}
+        field="ice"
+        options={PERCENTAGE_OPTIONS}
+      />
+      <DropDownInput
+        className="z-10 w-16"
+        isTick={row.isTick}
+        row={row}
+        field="offerBy"
+        options={offerByOptions}
+      />
       <div className="flex w-24 items-center gap-1">
         <ShowFormula transfer={transfer}>
           {row.offerBy !== '--' ? (
-            <div className="absolute -top-16 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
+            <div className="absolute -top-16 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-slate-900 p-2">
               <OfferedByFormula row={row} />
             </div>
           ) : (
-            <div className="absolute -top-28 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-white p-2">
+            <div className="absolute -top-28 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-slate-900 p-2">
               <TransferFormula row={row} transfer={transfer} />
               <BonusFormula />
             </div>
           )}
         </ShowFormula>
         {noSignInOrder.isClosed ? (
-          <TranferTickBox row={row} />
+          <TransferTickBox row={row} />
         ) : (
           <DeleteRowButton row={row} />
         )}
       </div>
     </div>
-  );
-};
-
-const OptionsDropdown = ({
-  options,
-  row,
-  field,
-}: {
-  options: string[];
-  row: DrinkTableRow;
-  field: keyof DrinkTableRow;
-}) => {
-  const { noSignInOrder } = useSelector(selector.order);
-  const { rows } = useSelector(selector.rows);
-
-  const [isDropdown, setIsDropdown] = useState(false);
-
-  const showOptions = options.filter((option: string) => option !== row[field]);
-
-  const optionDropdownRef = useCheckClickOutside(() => setIsDropdown(false));
-
-  const _onDropdown = () => {
-    if (!noSignInOrder.isClosed) {
-      setIsDropdown(true);
-    }
-  };
-
-  const _updateManyRows = async (newValue: string) => {
-    const updatedRows = rows.filter(
-      (r: DrinkTableRow) => r.offerBy === row.name,
-    );
-    updatedRows.forEach(async (r: DrinkTableRow) => {
-      const ref = doc(db, 'no_sign_in_orders', noSignInOrder.id, 'rows', r.id);
-      await updateDoc(ref, {
-        [field]: newValue,
-      });
-    });
-  };
-
-  const _updateRow = async (newValue: string) => {
-    const docRef = doc(
-      db,
-      'no_sign_in_orders',
-      noSignInOrder.id,
-      'rows',
-      row.id,
-    );
-    await updateDoc(docRef, {
-      [field]: newValue,
-    });
-    if (field === 'offerBy') {
-      _updateManyRows(newValue);
-    }
-    setIsDropdown(false);
-  };
-
-  return (
-    <div
-      ref={optionDropdownRef}
-      className={clsx({ relative: true, 'bg-gray-400': row.isTick })}
-    >
-      <button type="button" className="w-full" onClick={_onDropdown}>
-        {row[field]}
-      </button>
-      {isDropdown && showOptions.length !== 0 ? (
-        <div
-          className={clsx({
-            'absolute flex flex-col items-center gap-1 bg-gray-400 p-1 rounded-lg':
-              true,
-            '-top-1 left-10': field === 'sugar' || field === 'ice',
-            '-top-1 left-7': field === 'size',
-            '-top-1 left-16': field === 'offerBy',
-          })}
-        >
-          {showOptions.map((option: string) => (
-            <button
-              key={option}
-              type="button"
-              className={clsx({
-                'bg-white rounded-md text-center hover:bg-gray-500': true,
-                'w-9 h-6': field === 'sugar' || field === 'ice',
-                'w-6 h-6': field === 'size',
-                'h-6 w-14': field === 'offerBy',
-              })}
-              onClick={() => _updateRow(option)}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-const TransferFormula = ({
-  transfer,
-  row,
-}: {
-  transfer: number | undefined;
-  row: DrinkTableRow;
-}) => {
-  const { noSignInOrder } = useSelector(selector.order);
-  const { rows } = useSelector(selector.rows);
-
-  const quantity = rows.length;
-  const bonus = (noSignInOrder.shipFee - noSignInOrder.discount) / quantity;
-  const roundedBonus = Math.ceil(bonus / 500) * 500;
-
-  const transferList: number[] = rows.map(
-    (r: DrinkTableRow) => Number(r.price) + roundedBonus,
-  );
-
-  return (
-    <div className="flex gap-1">
-      <div>
-        <div className="font-semibold">transfer</div>
-        <div>{transfer?.toLocaleString('en-US')}</div>
-      </div>
-      <div>
-        <div>=</div>
-        <div>=</div>
-      </div>
-      <div>
-        <div className="font-semibold">price</div>
-        <div>{Number(row.price).toLocaleString('en-US')}</div>
-      </div>
-      <div>
-        <div>+</div>
-        <div>+</div>
-      </div>
-      <div className="text-red-400">
-        <div className="font-semibold">bonus</div>
-        <div>({roundedBonus.toLocaleString('en-US')})</div>
-      </div>
-      {rows.map((r: DrinkTableRow, index: number) => {
-        if (r.offerBy === row.name) {
-          return (
-            <>
-              <div>
-                <div>+</div>
-                <div>+</div>
-              </div>
-              <div>
-                <div>{r.name}</div>
-                <div>{transferList[index]?.toLocaleString('en-US')}</div>
-              </div>
-            </>
-          );
-        }
-        return null;
-      })}
-    </div>
-  );
-};
-
-const BonusFormula = () => {
-  const { noSignInOrder } = useSelector(selector.order);
-  const { rows } = useSelector(selector.rows);
-
-  const quantity = rows.length;
-  const bonus = (noSignInOrder.shipFee - noSignInOrder.discount) / quantity;
-  const roundedBonus = Math.ceil(bonus / 500) * 500;
-
-  return (
-    <div className="flex gap-1">
-      <div className="text-red-400">
-        <div className="font-semibold">bonus</div>
-        <div>{roundedBonus.toLocaleString('en-US')}</div>
-      </div>
-      <div>
-        <div>=</div>
-        <div>=</div>
-      </div>
-      <div>
-        <div>(</div>
-        <div>(</div>
-      </div>
-      <div className="min-w-max">
-        <div className="font-semibold">ship fee</div>
-        <div>{Number(noSignInOrder.shipFee).toLocaleString('en-US')}</div>
-      </div>
-      <div>
-        <div>-</div>
-        <div>-</div>
-      </div>
-      <div>
-        <div className="font-semibold">discount</div>
-        <div>{Number(noSignInOrder.discount).toLocaleString('en-US')}</div>
-      </div>
-      <div>
-        <div>)</div>
-        <div>)</div>
-      </div>
-      <div>
-        <div>/</div>
-        <div>/</div>
-      </div>
-      <div>
-        <div>quantity</div>
-        <div>{quantity}</div>
-      </div>
-    </div>
-  );
-};
-
-const TranferTickBox = ({ row }: { row: DrinkTableRow }) => {
-  const { noSignInOrder } = useSelector(selector.order);
-
-  const _onTick = async () => {
-    const docRef = doc(
-      db,
-      'no_sign_in_orders',
-      noSignInOrder.id,
-      'rows',
-      row.id,
-    );
-    await updateDoc(docRef, {
-      isTick: !row.isTick,
-    });
-  };
-
-  return (
-    <button className="h-5 w-5 rounded-md bg-white" onClick={_onTick}>
-      {row.isTick ? (
-        <CheckIcon className="m-auto h-4 w-4 text-green-600" />
-      ) : null}
-    </button>
-  );
-};
-
-const DeleteRowButton = ({ row }: { row: DrinkTableRow }) => {
-  const { noSignInOrder } = useSelector(selector.order);
-
-  const [isDropdown, setIsDropdown] = useState(false);
-
-  const deleteRowButtonRef = useCheckClickOutside(() => setIsDropdown(false));
-
-  const _deleteRow = async () => {
-    const q = firestoreQuery(
-      collection(db, 'no_sign_in_orders', noSignInOrder.id, 'rows'),
-    );
-    const queryrRows = await getDocs(q);
-    queryrRows.forEach(async (_row) => {
-      if (_row.data().offerBy === row.name) {
-        await updateDoc(
-          doc(db, 'no_sign_in_orders', noSignInOrder.id, 'rows', _row.id),
-          {
-            offerBy: '--',
-          },
-        );
-      }
-    });
-    const docRef = doc(
-      db,
-      'no_sign_in_orders',
-      noSignInOrder.id,
-      'rows',
-      row.id,
-    );
-    await deleteDoc(docRef);
-  };
-
-  return (
-    <div ref={deleteRowButtonRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setIsDropdown(true)}
-        className="rounded-md bg-gray-400 p-1 hover:bg-gray-500"
-      >
-        <TrashIcon className="h-3 w-3" />
-      </button>
-      {isDropdown ? (
-        <div className="absolute -left-7 top-6 z-10 flex gap-1 rounded-md bg-white p-1">
-          <button className="rounded-md bg-gray-200 p-1" onClick={_deleteRow}>
-            <CheckIcon className="h-3 w-3" />
-          </button>
-          <button
-            className="rounded-md bg-gray-200 p-1"
-            onClick={() => setIsDropdown(false)}
-          >
-            <XMarkIcon className="h-3 w-3" />
-          </button>
-        </div>
-      ) : null}
-    </div>
-  );
-};
-
-const TableAddRowButton = () => {
-  const { noSignInOrder } = useSelector(selector.order);
-
-  const _addRow = async () => {
-    if (noSignInOrder.isClosed) {
-      return;
-    }
-    const newRow = {
-      timestamp: serverTimestamp(),
-      name: '',
-      drink: '',
-      size: 'S',
-      price: 0,
-      sugar: '100%',
-      ice: '100%',
-      topping: '',
-      heart: 0,
-      offerBy: '--',
-      isTick: false,
-    };
-    await addDoc(
-      collection(db, 'no_sign_in_orders', noSignInOrder.id, 'rows'),
-      newRow,
-    );
-  };
-  return (
-    <button
-      className={clsx({
-        'w-full rounded-lg px-2 py-1 drop-shadow-sm hover:drop-shadow-md': true,
-        'bg-white': !noSignInOrder.isClosed,
-        'bg-gray-400': noSignInOrder.isClosed,
-      })}
-      type="button"
-      onClick={_addRow}
-    >
-      {noSignInOrder.isClosed ? (
-        <NoSymbolIcon className="m-auto h-5 w-5" />
-      ) : (
-        <PlusIcon className="m-auto h-5 w-5" />
-      )}
-    </button>
   );
 };
