@@ -25,8 +25,10 @@ const presetClassName = {
   h2: 'text-[24px]',
   h2p: 'text-[24px] font-semibold',
   h3: 'text-2xl',
+  h3b: 'text-2xl font-semibold',
   h3p: 'text-2xl font-medium',
   h4: 'text-lg',
+  h4b: 'text-lg font-semibold',
   h4p: 'text-lg font-medium',
 
   p1: 'text-base',

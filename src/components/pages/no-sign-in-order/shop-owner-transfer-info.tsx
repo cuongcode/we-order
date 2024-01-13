@@ -4,11 +4,11 @@ import type { ChangeEvent } from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { Text } from '@/components/base';
 import { Portal } from '@/components/common';
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { selector } from '@/redux';
-import type { NoSignInOrder } from '@/types';
 
 import { CheckPasswordPortal } from './check-password-portal';
 
@@ -65,9 +65,9 @@ export const ShopOwnerTransferInfo = () => {
     setIsEdit(false);
   };
   return (
-    <div className="flex h-full w-full flex-col items-center gap-2 rounded-3xl border-2 bg-white p-3 drop-shadow-md">
+    <div className="flex h-full w-full flex-col items-center gap-2 rounded-3xl bg-slate-800 p-3 drop-shadow-md">
       <div className="relative flex w-full items-center justify-center">
-        <div className="font-bold">TRANSFER INFO</div>
+        <Text text="TRANSFER INFO" />
         <button className="absolute right-0" onClick={_onCheckPassword}>
           <PencilSquareIcon className="h-3 w-3" />
         </button>
@@ -150,56 +150,31 @@ export const ShopOwnerTransferInfo = () => {
           </Portal>
         ) : null}
       </div>
-      <div className="flex w-full flex-col items-start">
-        <div className="flex h-6 w-full items-center">
-          <div className="w-11">Momo</div>
-          <div className="mx-2">:</div>
-          <div className="grow">
-            <ShopOwnerMomoInput />
-          </div>
-        </div>
-        <div className="flex w-full">
-          <div className="w-11">Bank</div>
-          <div className="mx-2">:</div>
-        </div>
-        <div className="flex w-full flex-col">
-          <ShopOwnerBankInput field1="bank1Name" field2="bank1Number" />
-          <ShopOwnerBankInput field1="bank2Name" field2="bank2Number" />
-        </div>
-      </div>
+      <TransferInfo />
     </div>
   );
 };
 
-const ShopOwnerMomoInput = () => {
-  const { noSignInOrder } = useSelector(selector.order);
-
-  return (
-    <div className="flex items-center justify-between">
-      <div className="w-28 rounded-md border-2 border-white px-1">
-        {noSignInOrder?.momo || '--'}
-      </div>
-    </div>
-  );
-};
-
-const ShopOwnerBankInput = ({
-  field1,
-  field2,
-}: {
-  field1: keyof NoSignInOrder;
-  field2: keyof NoSignInOrder;
-}) => {
+const TransferInfo = () => {
   const { noSignInOrder } = useSelector(selector.order);
   return (
-    <div className="flex w-full items-center justify-between">
-      <div className="flex items-center">
-        <div className="w-12 rounded-md border-2 border-white px-1">
-          {noSignInOrder ? noSignInOrder[field1]?.toString() || '--' : ''}
-        </div>
-        <div className="w-32 rounded-md border-2 border-white px-1">
-          {noSignInOrder ? noSignInOrder[field2]?.toString() : ''}
-        </div>
+    <div className="grid w-full grid-cols-[48px_12px_1fr] grid-rows-2 flex-col">
+      <Text preset="p2" text="Momo" />
+      <Text preset="p2" text=":" className="w-fit" />
+      <Text preset="p2" text={noSignInOrder?.momo || '--'} />
+      <Text preset="p2" text="Bank" />
+      <Text preset="p2" text=":" />
+      <div className="flex items-center gap-4">
+        <Text
+          preset="p2"
+          text={
+            noSignInOrder ? noSignInOrder.bank1Name?.toString() || '--' : ''
+          }
+        />
+        <Text
+          preset="p2"
+          text={noSignInOrder ? noSignInOrder.bank1Number?.toString() : ''}
+        />
       </div>
     </div>
   );
