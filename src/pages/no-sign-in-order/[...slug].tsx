@@ -109,33 +109,17 @@ const NoSignInOrderPage = ({
       {!orderNamePool.includes(orderId) ? (
         <div>Page not found</div>
       ) : (
-        <div className="flex min-h-0 w-full flex-1 flex-col items-center 2xl:flex-row 2xl:items-start 2xl:gap-5">
-          <div className="mt-10 flex w-full max-w-4xl flex-col 2xl:w-1/2">
-            <div className="mb-10 flex w-full gap-4 text-sm">
-              <div className="w-full">
-                <ShopOwnerProfile />
-              </div>
-              {/* <div className="h-40 w-56 shrink-0">
-                <ShopOwnerTransferInfo />
-              </div> */}
-            </div>
+        <div className="mt-10 flex min-h-0 w-full flex-1 flex-col items-center gap-10 2xl:flex-row 2xl:items-start 2xl:gap-5">
+          <div className="flex w-full max-w-4xl flex-col gap-10 2xl:w-1/2">
+            <ShopOwnerProfile />
 
-            <div className="mb-10">
-              <SharedLink />
-            </div>
-            <div className="relative mb-5">
-              {noSignInOrder.isClosed ? (
-                <div className="absolute -top-7 right-1/2 text-xl font-bold text-gray-600">
-                  CLOSED
-                </div>
-              ) : null}
-              <Table dishes={dishes} />
-            </div>
-            <div className="mb-10">
-              <CalculateTotal />
-            </div>
+            <SharedLink />
+
+            <Table dishes={dishes} />
+
+            <CalculateTotal />
           </div>
-          <div className="flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-3 2xl:mt-10 2xl:w-1/2">
+          <div className="flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-3 2xl:w-1/2">
             <MenusDropdown />
             <iframe
               title="menu-frame"
