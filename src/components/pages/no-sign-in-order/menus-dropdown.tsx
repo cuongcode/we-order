@@ -3,6 +3,7 @@ import { arrayUnion, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { Button } from '@/components/base';
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { selector } from '@/redux';
@@ -17,19 +18,15 @@ export const MenusDropdown = () => {
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        className="w-fit rounded-lg bg-gray-200 px-3 py-2 drop-shadow-md"
-        onClick={() => setIsDropdown(true)}
-      >
+      <Button onClick={() => setIsDropdown(true)} className="w-full">
         {noSignInOrder.selectedMenuName !== ''
           ? noSignInOrder.selectedMenuName
           : 'Input a menu'}
-      </button>
+      </Button>
       {isDropdown ? (
         <div
           ref={menuDropdownRef}
-          className="absolute top-12 flex w-full flex-col gap-2 rounded-lg bg-gray-200 p-2"
+          className="absolute top-12 flex w-full flex-col gap-2 rounded-lg bg-slate-800 p-2"
         >
           <AddMenuForm />
           <Menus noSignInOrder={noSignInOrder} />
@@ -65,7 +62,7 @@ const Menus = ({ noSignInOrder }: { noSignInOrder: NoSignInOrder }) => {
     <div className="flex flex-wrap gap-2">
       {menus?.map((menu: Menu) => (
         <button
-          className="rounded-lg bg-white px-3 py-1 hover:bg-gray-400"
+          className="rounded-lg bg-slate-900 px-3 py-1 hover:bg-slate-800"
           type="button"
           key={menu.id}
           onClick={() => _selectMenu(menu.name, menu.link)}
@@ -97,7 +94,7 @@ const AddMenuForm = () => {
     <div className="flex items-center gap-2">
       <div>Name:</div>
       <input
-        className="w-48 rounded-md border-2 px-1 hover:border-gray-600"
+        className="w-48 rounded-md bg-slate-900 px-1"
         type="text"
         placeholder="menu name"
         value={name}
@@ -105,7 +102,7 @@ const AddMenuForm = () => {
       />
       <div>Link:</div>
       <input
-        className="w-48 rounded-md border-2 px-1 hover:border-gray-600"
+        className="w-48 rounded-md bg-slate-900 px-1"
         type="text"
         placeholder="paste link here"
         value={link}
@@ -113,7 +110,7 @@ const AddMenuForm = () => {
       />
       <button
         type="button"
-        className="rounded-md bg-white p-1 hover:bg-gray-400"
+        className="rounded-md bg-slate-900 p-1 hover:bg-gray-400"
         onClick={_addMenu}
       >
         <PlusIcon className="h-4 w-4" />

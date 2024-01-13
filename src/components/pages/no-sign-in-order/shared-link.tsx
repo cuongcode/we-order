@@ -19,7 +19,7 @@ export const SharedLink = () => {
   return (
     <div className="flex flex-col gap-2">
       <div>Share this link :</div>
-      <div className="flex w-fit items-center gap-2 rounded-lg border-2 border-gray-300 px-3 py-1">
+      <div className="flex w-fit items-center gap-2 rounded-lg border border-slate-800 px-3 py-1 text-sm font-light">
         <div>
           https://we-order-omega.vercel.app/no-sign-in-order/{noSignInOrder.id}
         </div>
