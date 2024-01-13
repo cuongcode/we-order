@@ -211,7 +211,7 @@ const TableRow = ({
       key={row.id}
       className={clsx(
         'flex w-full items-center gap-1 rounded-md text-xs',
-        row.isTick ? 'bg-gray-400' : '',
+        row.isTick ? 'opacity-60' : '',
       )}
     >
       <div className="w-3">{rowIndex}</div>

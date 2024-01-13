@@ -81,7 +81,7 @@ const OptionsDropdown = ({
   return (
     <div
       ref={optionDropdownRef}
-      className={clsx('relative', row.isTick ? 'bg-gray-400' : '')}
+      className={clsx('relative', row.isTick ? 'opacity-60' : '')}
     >
       <button type="button" className="w-full" onClick={_onDropdown}>
         {row[field]}
@@ -101,7 +101,7 @@ const OptionsDropdown = ({
               key={option}
               type="button"
               className={clsx({
-                'bg-main-bg rounded-md text-center hover:bg-gray-500': true,
+                'bg-main-bg rounded-md text-center hover:bg-main-bbg': true,
                 'w-9 h-6': field === 'sugar' || field === 'ice',
                 'w-6 h-6': field === 'size',
                 'h-6 w-14': field === 'offerBy',

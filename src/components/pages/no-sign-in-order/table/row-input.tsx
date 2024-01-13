@@ -20,7 +20,7 @@ export const RowInput: FC<RowInputProps> = (props) => {
       <input
         className={clsx(
           'w-full bg-main-cbg font-semibold',
-          isTick ? 'bg-gray-400' : '',
+          isTick ? 'opacity-60' : '',
         )}
         {...rest}
       />
