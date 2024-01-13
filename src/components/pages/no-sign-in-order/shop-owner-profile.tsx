@@ -1,13 +1,17 @@
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
+import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { Text } from '@/components/base';
+import { Button, Text } from '@/components/base';
 import { Portal } from '@/components/common';
+import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { Icons } from '@/images';
 import { selector } from '@/redux';
 
+import { CheckPasswordPortal } from './check-password-portal';
 import { EditProfileButton } from './edit-profile-button';
 
 export const ShopOwnerProfile = () => {
@@ -33,7 +37,7 @@ export const ShopOwnerProfile = () => {
       </div>
       <TransferInfo className="mb-3 self-center" />
       <EditProfileButton className="absolute right-5 top-5" />
-      {/* <CloseOrderButton /> */}
+      <CloseOrderButton />
     </div>
   );
 };
@@ -81,49 +85,42 @@ const ShopOwnerImage = () => {
   );
 };
 
-// const CloseOrderButton = () => {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const { noSignInOrder } = useSelector(selector.order);
+const CloseOrderButton = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { noSignInOrder } = useSelector(selector.order);
 
-//   const _onCheckPassword = () => {
-//     setIsOpen(true);
-//   };
+  const _onCheckPassword = () => {
+    setIsOpen(true);
+  };
 
-//   const _updateOrder = async () => {
-//     setIsOpen(false);
-//     const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
-//     await updateDoc(docRef, {
-//       isClosed: !noSignInOrder.isClosed,
-//     });
-//   };
+  const _updateOrder = async () => {
+    setIsOpen(false);
+    const docRef = doc(db, 'no_sign_in_orders', noSignInOrder.id);
+    await updateDoc(docRef, {
+      isClosed: !noSignInOrder.isClosed,
+    });
+  };
 
-//   return (
-//     <>
-//       <button
-//         className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-slate-800 p-1 px-2 hover:bg-gray-400"
-//         onClick={_onCheckPassword}
-//       >
-//         {noSignInOrder.isClosed ? (
-//           <>
-//             <LockClosedIcon className="h-4 w-4" />
-//             <div className="min-w-max">Order is closed</div>
-//           </>
-//         ) : (
-//           <>
-//             <LockOpenIcon className="h-4 w-4" />
-//             <div className="min-w-max">Order is open</div>
-//           </>
-//         )}
-//       </button>
-//       {isOpen ? (
-//         <CheckPasswordPortal
-//           onClose={() => setIsOpen(false)}
-//           onEdit={_updateOrder}
-//         />
-//       ) : null}
-//     </>
-//   );
-// };
+  return (
+    <Button
+      preset="base"
+      className="absolute right-5 top-10"
+      onClick={_onCheckPassword}
+    >
+      {noSignInOrder.isClosed ? (
+        <LockClosedIcon className="h-4 w-4" />
+      ) : (
+        <LockOpenIcon className="h-4 w-4" />
+      )}
+      {isOpen ? (
+        <CheckPasswordPortal
+          onClose={() => setIsOpen(false)}
+          onEdit={_updateOrder}
+        />
+      ) : null}
+    </Button>
+  );
+};
 
 const TransferInfo = ({ className }: { className: string }) => {
   const { noSignInOrder } = useSelector(selector.order);
