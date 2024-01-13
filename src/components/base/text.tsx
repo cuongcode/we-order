@@ -36,6 +36,7 @@ const presetClassName = {
   p2: 'text-sm',
   p2p: 'text-sm font-medium',
   p3: 'text-xs',
+  p3t: 'text-xs font-extralight',
   p3p: 'text-xs font-medium',
   p4: 'text-xxs',
   p4p: 'text-xxs font-medium',
