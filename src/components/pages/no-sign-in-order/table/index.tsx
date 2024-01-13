@@ -1,13 +1,14 @@
-import { BarsArrowDownIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { doc, updateDoc } from 'firebase/firestore';
 import { debounce, range } from 'lodash';
+import type { FC, ReactNode } from 'react';
 import { useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
+import { Text } from '@/components/base';
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
-import { RowsActions, selector } from '@/redux';
+import { selector } from '@/redux';
 import type { Dish, DrinkTableRow } from '@/types';
 
 import { OfferedByFormula } from '../../order';
@@ -47,14 +48,14 @@ export const Table = ({ dishes }: { dishes: Dish[] }) => {
   return (
     <div
       className={clsx(
-        'flex flex-col gap-2 rounded-2xl px-8 py-5',
-        noSignInOrder.isClosed ? 'bg-main-cbg' : 'bg-main-bg',
+        'flex flex-col rounded-2xl py-5',
+        noSignInOrder.isClosed ? 'bg-main-bbg' : 'bg-main-bg',
       )}
     >
       <div className="hidden w-full md:block">
         <TableHeader />
       </div>
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-4 px-8 py-5">
         {rows.map((row: DrinkTableRow, index: number) => (
           <TableRow
             key={row.id}
@@ -71,33 +72,35 @@ export const Table = ({ dishes }: { dishes: Dish[] }) => {
 };
 
 const TableHeader = () => {
-  const { noSignInOrder } = useSelector(selector.order);
-  const { rows } = useSelector(selector.rows);
-  const dispatch = useDispatch();
+  // const { noSignInOrder } = useSelector(selector.order);
+  // const { rows } = useSelector(selector.rows);
+  // const dispatch = useDispatch();
 
-  const _SortDrinkName = () => {
-    const sortedRows = [...rows];
-    sortedRows.sort((rowA: DrinkTableRow, rowB: DrinkTableRow) => {
-      const x = rowA.drink.trim().toLowerCase();
-      const y = rowB.drink.trim().toLowerCase();
-      if (x < y) {
-        return -1;
-      }
-      if (x > y) {
-        return 1;
-      }
-      return 0;
-    });
-    dispatch(RowsActions.setRows(sortedRows));
-  };
+  // const _SortDrinkName = () => {
+  //   const sortedRows = [...rows];
+  //   sortedRows.sort((rowA: DrinkTableRow, rowB: DrinkTableRow) => {
+  //     const x = rowA.drink.trim().toLowerCase();
+  //     const y = rowB.drink.trim().toLowerCase();
+  //     if (x < y) {
+  //       return -1;
+  //     }
+  //     if (x > y) {
+  //       return 1;
+  //     }
+  //     return 0;
+  //   });
+  //   dispatch(RowsActions.setRows(sortedRows));
+  // };
 
   return (
-    <div className="mb-2 flex w-full items-center gap-1 border-b border-b-gray-800 pb-2 text-xs font-semibold">
+    <div className="flex w-full items-center gap-1 border-b border-b-gray-800 px-8 pb-1">
       <div className="w-3" />
-      <div className="w-14">Name</div>
+      <div className="w-14">
+        <Text preset="p3t" text="Name" />
+      </div>
       <div className="flex grow items-center gap-2">
-        <div>Drink</div>
-        {noSignInOrder.isClosed ? (
+        <Text preset="p3t" text="Drink" />
+        {/* {noSignInOrder.isClosed ? (
           <button
             onClick={_SortDrinkName}
             className="flex items-center gap-1 rounded-md bg-white px-1 font-normal"
@@ -105,15 +108,27 @@ const TableHeader = () => {
             <BarsArrowDownIcon className="h-4 w-4" />
             <div>A-Z</div>
           </button>
-        ) : null}
+        ) : null} */}
       </div>
-      <div className="w-32">Notes/Topping</div>
-      <div className="w-14 ">Price</div>
-      <div className="w-8">Size</div>
-      <div className="w-11">Sugar</div>
-      <div className="w-11">Ice</div>
-      <div className="w-16">Offered by</div>
-      <div className="w-24">Transfer</div>
+      <div className="w-32">
+        <Text preset="p3t" text="Notes/Topping" />
+      </div>
+      <div className="w-14 ">
+        <Text preset="p3t" text="Price" />
+      </div>
+      <div className="w-8">
+        <Text preset="p3t" text="Size" />
+      </div>
+      <div className="w-11">
+        <Text preset="p3t" text="Sugar" />
+      </div>
+      {/* <div className="w-11">Ice</div> */}
+      <div className="w-16">
+        <Text preset="p3t" text="Offered by" />
+      </div>
+      <div className="w-24">
+        <Text preset="p3t" text="Transfer" />
+      </div>
     </div>
   );
 };
@@ -293,13 +308,13 @@ const TableRow = ({
         field="sugar"
         options={PERCENTAGE_OPTIONS}
       />
-      <DropDownInput
+      {/* <DropDownInput
         className="z-20 w-11"
         isTick={row.isTick}
         row={row}
         field="ice"
         options={PERCENTAGE_OPTIONS}
-      />
+      /> */}
       <DropDownInput
         className="z-10 w-16"
         isTick={row.isTick}
@@ -307,17 +322,17 @@ const TableRow = ({
         field="offerBy"
         options={offerByOptions}
       />
-      <div className="flex w-24 items-center gap-1">
+      <div className="flex w-24 items-center gap-2">
         <ShowFormula transfer={transfer}>
           {row.offerBy !== '--' ? (
-            <div className="absolute -top-16 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-main-cbg p-2">
+            <FormulaCard className="absolute -top-20 right-0">
               <OfferedByFormula row={row} />
-            </div>
+            </FormulaCard>
           ) : (
-            <div className="absolute -top-28 right-0 z-50 flex flex-col gap-2 divide-y-2 rounded-lg bg-main-cbg p-2">
+            <FormulaCard className="absolute -top-36 right-0">
               <TransferFormula row={row} transfer={transfer} />
               <BonusFormula />
-            </div>
+            </FormulaCard>
           )}
         </ShowFormula>
         {noSignInOrder.isClosed ? (
@@ -326,6 +341,25 @@ const TableRow = ({
           <DeleteRowButton row={row} />
         )}
       </div>
+    </div>
+  );
+};
+
+interface FormulaCardProps {
+  children?: ReactNode;
+  className?: string;
+}
+
+const FormulaCard: FC<FormulaCardProps> = (props) => {
+  const { children, className } = props;
+  return (
+    <div
+      className={clsx(
+        'z-50 flex flex-col divide-y divide-main-bbg border border-main-bbg bg-main-cbg',
+        className,
+      )}
+    >
+      {children}
     </div>
   );
 };

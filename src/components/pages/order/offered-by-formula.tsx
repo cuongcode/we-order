@@ -4,7 +4,7 @@ import type { DrinkTableRow } from '@/types';
 
 export const OfferedByFormula = ({ row }: { row: DrinkTableRow }) => {
   return (
-    <div className="flex w-40 flex-col">
+    <div className="flex w-56 flex-col px-5 py-3">
       <div className="flex gap-1">
         <div>You are offered by</div>
         <div className="font-semibold">{row.offerBy.toLocaleUpperCase()}</div>

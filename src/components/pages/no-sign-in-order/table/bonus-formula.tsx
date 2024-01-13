@@ -11,7 +11,7 @@ export const BonusFormula = () => {
   const roundedBonus = Math.ceil(bonus / 500) * 500;
 
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-1 px-5 py-3">
       <div className="text-red-400">
         <div className="font-semibold">bonus</div>
         <div>{roundedBonus.toLocaleString('en-US')}</div>

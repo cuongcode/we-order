@@ -22,7 +22,7 @@ export const TransferFormula = ({
   );
 
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-1 px-5 py-3">
       <div>
         <div className="font-semibold">transfer</div>
         <div>{transfer?.toLocaleString('en-US')}</div>
