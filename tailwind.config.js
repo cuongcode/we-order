@@ -16,6 +16,12 @@ module.exports = {
     },
     extend: {
       colors: {
+        main: {
+          cbg: '#0c1437',
+          bg: '#111c44',
+          bbg: '#1b254b',
+          purple: '#7551FF',
+        },
         gray: {
           100: '#f7fafc',
           200: '#edf2f7',
@@ -41,6 +47,7 @@ module.exports = {
       },
       fontFamily: {
         nunito: ['Nunito'],
+        dmsan: ['DM+Sans'],
       },
     },
   },

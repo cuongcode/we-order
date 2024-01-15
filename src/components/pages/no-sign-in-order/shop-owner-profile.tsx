@@ -1,8 +1,10 @@
 import { LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import { Button, Text } from '@/components/base';
 import { Portal } from '@/components/common';
 import { db } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
@@ -10,15 +12,31 @@ import { Icons } from '@/images';
 import { selector } from '@/redux';
 
 import { CheckPasswordPortal } from './check-password-portal';
+import { EditProfileButton } from './edit-profile-button';
 
 export const ShopOwnerProfile = () => {
+  const { noSignInOrder } = useSelector(selector.order);
   return (
-    <div className="relative flex h-full w-full flex-col items-center rounded-3xl border-2 bg-white p-3 drop-shadow-md">
-      <div className="font-bold">SHOP OWNER</div>
-      <ShopOwnerImage />
-      <div className="mt-1">
-        <ShopOwnerNameInput />
+    <div className="relative flex w-full flex-col items-center gap-6 rounded-3xl bg-main-bg p-3">
+      <div className="flex h-28 w-full items-center justify-center rounded-2xl bg-main-cbg">
+        <div className="relative h-24 w-24">
+          <ShopOwnerImage />
+        </div>
       </div>
+      <div className="mt-11 flex flex-col">
+        <Text
+          preset="h3b"
+          text={noSignInOrder?.nickname}
+          className="self-center font-semibold"
+        />
+        <Text
+          preset="p2"
+          text="Shop Owner"
+          className="self-center font-light"
+        />
+      </div>
+      <TransferInfo className="mb-3 self-center" />
+      <EditProfileButton className="absolute right-5 top-5" />
       <CloseOrderButton />
     </div>
   );
@@ -36,10 +54,10 @@ const ShopOwnerImage = () => {
   };
 
   return (
-    <div className="relative rounded-full bg-gray-500 p-1">
+    <div className="absolute top-14 rounded-full bg-main-cbg p-[5px]">
       <button
         onClick={_onOpen}
-        className="flex h-20 w-20 rounded-full bg-gray-200"
+        className="flex h-24 w-24 origin-center rounded-full bg-main-bg"
       >
         <img
           className="h-full w-full rounded-full object-cover"
@@ -67,18 +85,6 @@ const ShopOwnerImage = () => {
   );
 };
 
-const ShopOwnerNameInput = () => {
-  const { noSignInOrder } = useSelector(selector.order);
-
-  return (
-    <div className="relative">
-      <div className="h-6 w-20 rounded-md border-2 border-white text-center">
-        {noSignInOrder?.nickname}
-      </div>
-    </div>
-  );
-};
-
 const CloseOrderButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { noSignInOrder } = useSelector(selector.order);
@@ -96,29 +102,55 @@ const CloseOrderButton = () => {
   };
 
   return (
-    <>
-      <button
-        className="absolute top-40 flex w-36 items-center gap-2 rounded-lg bg-gray-200 p-1 px-2 hover:bg-gray-400"
-        onClick={_onCheckPassword}
-      >
-        {noSignInOrder.isClosed ? (
-          <>
-            <LockClosedIcon className="h-4 w-4" />
-            <div className="min-w-max">Order is closed</div>
-          </>
-        ) : (
-          <>
-            <LockOpenIcon className="h-4 w-4" />
-            <div className="min-w-max">Order is open</div>
-          </>
-        )}
-      </button>
+    <Button
+      preset="base"
+      className="absolute right-5 top-10"
+      onClick={_onCheckPassword}
+    >
+      {noSignInOrder.isClosed ? (
+        <LockClosedIcon className="h-4 w-4" />
+      ) : (
+        <LockOpenIcon className="h-4 w-4" />
+      )}
       {isOpen ? (
         <CheckPasswordPortal
           onClose={() => setIsOpen(false)}
           onEdit={_updateOrder}
         />
       ) : null}
-    </>
+    </Button>
+  );
+};
+
+const TransferInfo = ({ className }: { className: string }) => {
+  const { noSignInOrder } = useSelector(selector.order);
+  return (
+    <div className={clsx('flex w-64 justify-between', className)}>
+      <div className="flex flex-col items-center">
+        <Text preset="h4b" text="Momo" />
+        <Text
+          preset="p2"
+          className="font-light"
+          text={noSignInOrder?.momo || '--'}
+        />
+      </div>
+      <div className="flex flex-col items-center">
+        <Text preset="h4b" text="Bank" />
+        <div className="flex items-center gap-3">
+          <Text
+            preset="p2"
+            className="font-light"
+            text={
+              noSignInOrder ? noSignInOrder.bank1Name?.toString() || '--' : ''
+            }
+          />
+          <Text
+            preset="p2"
+            className="font-light"
+            text={noSignInOrder ? noSignInOrder.bank1Number?.toString() : ''}
+          />
+        </div>
+      </div>
+    </div>
   );
 };

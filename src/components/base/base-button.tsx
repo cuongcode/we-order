@@ -44,5 +44,6 @@ export const Button: FC<ButtonProps> = (props) => {
 
 const presetBtClassName = {
   base: '',
-  primary: 'font-bold text-2xl text-white bg-violet-500 rounded-2xl py-2 px-6',
+  primary: 'font-bold text-sm text-white bg-violet-500 rounded-2xl h-11 px-6',
+  image: 'bg-violet-500 text-sm text-white rounded-full h-full p-1',
 };

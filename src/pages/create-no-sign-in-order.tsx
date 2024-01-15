@@ -3,9 +3,8 @@ import Router from 'next/router';
 import type { ReactNode } from 'react';
 import React, { useEffect, useState } from 'react';
 
-import { Button } from '@/components/base';
+import { BaseInput, Button, Text } from '@/components/base';
 import { db } from '@/firebase';
-import { LogoImages } from '@/images';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 import type { NoSignInOrder } from '@/types';
@@ -19,7 +18,9 @@ const CreateAnonymousOrderPage = () => {
   const [hasSpecialChars, setHasSpecialChars] = useState(false);
   const [nameIsTaken, setNameIsTaken] = useState(false);
   const [errors, setErrors] = useState<any>([]);
-  const [orderName, setOrderName] = useState('');
+  const [orderName, setOrderName] = useState(
+    `od-${Math.round(Math.random() * 1000000)}`,
+  );
   const [password, setPassword] = useState('');
   const [orderNamePool, setorderNamePool] = useState<any>([]);
 
@@ -104,57 +105,57 @@ const CreateAnonymousOrderPage = () => {
 
   return (
     <Main meta={<Meta title="WeOrder" description="" />}>
-      <div className="m-auto flex max-w-5xl flex-col font-semibold">
-        <img
-          className="mb-20 mt-12 w-[300px] self-center"
-          src={LogoImages.title_logo.src}
-          alt="title-logo"
-        />
-
-        <div className="flex w-full flex-col gap-4 text-sm">
-          <div className="m-auto flex flex-col gap-10">
-            <div className="flex flex-col gap-2">
-              <Input
-                title="Pick a name"
-                value={orderName}
-                onChange={_onOrderNameChange}
-                prefix={
-                  <div>https://we-order-omega.vercel.app/no-sign-in-order/</div>
-                }
-                errorText={
-                  <>
-                    {errors.includes('noNameError') ? (
-                      <div className="text-red-400">Please input a name</div>
-                    ) : null}
-                    {nameIsTaken && orderName !== '' ? (
-                      <div className="text-red-400">Name is taken</div>
-                    ) : null}
-                    {hasSpecialChars ? (
-                      <div className="text-red-400">
-                        Name should only includes A-Z, a-z, 0-9 or &#39;-&#39;
-                        and no space
-                      </div>
-                    ) : null}
-                  </>
-                }
-              />
-              <Input
-                title="Enter a password"
-                value={password}
-                onChange={_onOrderPasswordChange}
-                errorText={
-                  errors.includes('noPasswordError') ? (
-                    <div className="text-red-400">Please input a password</div>
-                  ) : null
-                }
-              />
-            </div>
-            <Button
-              className="self-center"
-              text="Create Order Page"
-              onClick={_onCreateNoSignInOrder}
+      <div className="m-auto flex max-w-xl flex-col">
+        <div className="flex flex-col gap-12">
+          <div className="flex flex-col ">
+            <Text preset="h1b" text="Create Order" />
+            <Text
+              preset="p2"
+              className="font-light"
+              text="Pick a name and password to create order"
             />
           </div>
+          <div className="flex flex-col gap-6">
+            <Input
+              title="Pick a name"
+              value={orderName}
+              placeholder="john-cena"
+              onChange={_onOrderNameChange}
+              prefix="https://we-order-omega.vercel.app/no-sign-in-order/"
+              errorText={
+                <>
+                  {errors.includes('noNameError') ? (
+                    <div className="text-red-400">Please input a name</div>
+                  ) : null}
+                  {nameIsTaken && orderName !== '' ? (
+                    <div className="text-red-400">Name is taken</div>
+                  ) : null}
+                  {hasSpecialChars ? (
+                    <div className="text-red-400">
+                      Name should only includes A-Z, a-z, 0-9 or &#39;-&#39; and
+                      no space
+                    </div>
+                  ) : null}
+                </>
+              }
+            />
+            <Input
+              title="Enter a password"
+              value={password}
+              placeholder="example: 123456"
+              onChange={_onOrderPasswordChange}
+              errorText={
+                errors.includes('noPasswordError') ? (
+                  <div className="text-red-400">Please input a password</div>
+                ) : null
+              }
+            />
+          </div>
+          <Button
+            text="Create Order Page"
+            className="self-stretch"
+            onClick={_onCreateNoSignInOrder}
+          />
         </div>
       </div>
     </Main>
@@ -169,29 +170,28 @@ const Input = ({
   onChange,
   errorText,
   prefix,
+  placeholder,
 }: {
   title: string;
   value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   errorText: ReactNode;
-  prefix?: ReactNode;
+  prefix?: string;
+  placeholder?: string;
 }) => {
   return (
-    <div className="relative mt-5">
-      <div className="text-lg font-semibold">{title}</div>
-      <div className="flex gap-2">
-        {prefix}
-        <div className="flex w-64 items-center rounded-md border-2 px-2">
-          <input
-            type="text"
-            placeholder="example: 12345"
-            className="w-full"
-            value={value}
-            onChange={onChange}
-          />
-        </div>
+    <div className="flex flex-col gap-2">
+      <div className="flex">
+        <Text text={title} preset="p1" />
+        <Text text="*" className="text-violet-500" preset="p1" />
       </div>
-      <div className="absolute">{errorText}</div>
+      <BaseInput
+        placeholder={placeholder}
+        errorText={errorText}
+        value={value}
+        onChange={onChange}
+        prefix={prefix}
+      />
     </div>
   );
 };

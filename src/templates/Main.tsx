@@ -1,10 +1,14 @@
-import { EllipsisVerticalIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowLeftCircleIcon,
+  EllipsisHorizontalCircleIcon,
+  PlusCircleIcon,
+} from '@heroicons/react/24/outline';
 import { signOut } from 'firebase/auth';
-import Link from 'next/link';
 import router from 'next/router';
 import { type ReactNode, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { Button, Text } from '@/components/base';
 import { auth } from '@/firebase';
 import { useCheckClickOutside } from '@/hooks';
 import { LogoImages } from '@/images';
@@ -16,41 +20,17 @@ type IMainProps = {
 };
 
 const Main = (props: IMainProps) => {
-  const { currentUser } = useSelector(selector.user);
-
   return (
-    <div className="w-full p-2 font-nunito text-gray-800 antialiased">
+    <div className="flex min-h-screen w-full flex-col bg-main-cbg p-2 font-dmsan text-white antialiased">
       {props.meta}
 
-      <div className="flex h-12 items-center justify-between rounded-xl bg-gray-400 py-1 pl-2 pr-4">
-        <div className="flex h-full items-center gap-4">
-          <Link className="h-full rounded-full bg-white p-2" href="/">
-            <img className="h-full" src={LogoImages.logo.src} alt="logo" />
-          </Link>
-        </div>
-        <div className="flex items-center gap-4">
-          {currentUser ? (
-            <Link
-              href="/create-order/"
-              className="rounded-lg bg-white px-2 py-1 hover:bg-gray-500"
-            >
-              New Order
-            </Link>
-          ) : (
-            <Link
-              href="/sign-in/"
-              className="rounded-lg bg-white px-2 py-1 hover:bg-gray-500"
-            >
-              Sign In
-            </Link>
-          )}
+      <Navbar />
 
-          {currentUser ? <div>Welcome {currentUser?.nickname}</div> : null}
-          {currentUser ? <SignOutDropdown /> : null}
-        </div>
-      </div>
+      <main className="flex min-h-0 flex-1 flex-col px-10">
+        {props.children}
+      </main>
 
-      <main>{props.children}</main>
+      <Footer />
     </div>
   );
 };
@@ -78,7 +58,7 @@ const SignOutDropdown = () => {
   return (
     <div ref={signOutRef} className="relative flex">
       <button onClick={_onDropdown} className="">
-        <EllipsisVerticalIcon className="h-5 w-5" />
+        <EllipsisHorizontalCircleIcon className="h-5 w-5" />
       </button>
       {isDropdown ? (
         <button
@@ -88,6 +68,54 @@ const SignOutDropdown = () => {
           Sign out
         </button>
       ) : null}
+    </div>
+  );
+};
+
+const Navbar = () => {
+  const { currentUser } = useSelector(selector.user);
+
+  const _onHome = () => {
+    router.push('/');
+  };
+  const _onSignIn = () => {
+    router.push('/sign-in/');
+  };
+  const _onCreateOrder = () => {
+    router.push('/create-order/');
+  };
+  return (
+    <div className="flex h-10 items-center justify-between">
+      <Text preset="h4" className="font-bold" text="We Order" />
+      <div className="flex h-full w-fit items-center gap-4 self-end rounded-full bg-main-bg p-2">
+        {currentUser ? (
+          <>
+            <Text preset="p2" text={`Welcome ${currentUser?.nickname}`} />
+            <Button preset="base" onClick={_onCreateOrder}>
+              <PlusCircleIcon className="h-5 w-5 text-white" />
+            </Button>
+            <SignOutDropdown />
+          </>
+        ) : (
+          <Button preset="base" onClick={_onSignIn}>
+            <ArrowLeftCircleIcon className="h-5 w-5 text-white" />
+          </Button>
+        )}
+        <Button preset="image" onClick={_onHome}>
+          <img className="h-full" src={LogoImages.logo.src} alt="logo" />
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const Footer = () => {
+  return (
+    <div className="mt-10 flex self-center">
+      <Text
+        preset="p3"
+        text="© 2024 We Oder. Made with love by Cuong Nguyen."
+      />
     </div>
   );
 };

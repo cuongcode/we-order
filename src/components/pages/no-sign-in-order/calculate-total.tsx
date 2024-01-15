@@ -30,12 +30,10 @@ export const CalculateTotal = () => {
   }, [currentTotal, currentShopOwnerPay]);
 
   return (
-    <div className="flex items-center rounded-xl bg-gray-200 px-3 pb-5 pt-9">
+    <div className="flex items-center rounded-xl bg-main-bg px-3 pb-5 pt-9">
       <div className="relative w-fit">
         <div className="absolute -top-5 left-1 text-sm">Total</div>
-        <div className="w-24 rounded-lg border-2 bg-gray-400 px-2 py-1">
-          {total}
-        </div>
+        <div className="w-24 rounded-lg bg-main-cbg px-2 py-1">{total}</div>
       </div>
       <PlusIcon className="h-5 w-5" />
       <ShipFeeInput noSignInOrder={noSignInOrder} />
@@ -44,7 +42,7 @@ export const CalculateTotal = () => {
       <Bars2Icon className="h-5 w-5" />
       <div className="relative ml-4 w-fit">
         <div className="absolute -top-5 left-1 text-sm">Shop Owner Pay</div>
-        <div className="w-32 rounded-lg border-2 bg-gray-400 px-2 py-1 text-center text-2xl">
+        <div className="w-32 rounded-lg bg-main-cbg px-2 py-1 text-center text-2xl">
           {shopOwnerPay}
         </div>
       </div>
@@ -64,7 +62,7 @@ const ShipFeeInput = ({ noSignInOrder }: { noSignInOrder: NoSignInOrder }) => {
     <div className="relative w-fit">
       <div className="absolute -top-5 left-1 text-sm">Ship Fee</div>
       <input
-        className="w-24 rounded-lg border-2 px-2 py-1 hover:border-gray-600"
+        className="w-24 rounded-lg bg-main-cbg px-2 py-1 hover:border-gray-600"
         type="number"
         value={noSignInOrder.shipFee}
         name="shipFee"
@@ -86,7 +84,7 @@ const DiscountInput = ({ noSignInOrder }: { noSignInOrder: NoSignInOrder }) => {
     <div className="relative w-fit">
       <div className="absolute -top-5 left-1 text-sm">Discount</div>
       <input
-        className="w-24 rounded-lg border-2 px-2 py-1 hover:border-gray-600"
+        className="w-24 rounded-lg bg-main-cbg px-2 py-1 hover:border-gray-600"
         type="number"
         value={noSignInOrder.discount}
         name="discount"
