@@ -8,7 +8,7 @@ export const ShowFormula = ({
   transfer: number | undefined;
   children: ReactNode;
 }) => {
-  const [isHover, setIsHover] = useState(true);
+  const [isHover, setIsHover] = useState(false);
 
   return (
     <div
